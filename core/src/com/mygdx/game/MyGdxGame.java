@@ -96,6 +96,9 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 	private Button  btn_right;
 	private Button  btn_left;
 
+	private boolean isRightTouchDown = false;
+	private boolean isLeftTouchDown = false;
+
 
 	@Override
 	public void create () {
@@ -192,10 +195,13 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 		btn_right.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				isRightTouchDown = true;
 				if (state == State.Standing){
 					state = State.Walking;
+
 				} else if (state == State.Jumping){
 					isJumpAndWalk=true;
+
 				}
 				isFacingRight = true;
 				if (velocity.x < 0){
@@ -207,6 +213,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 
 			@Override
 			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+				isRightTouchDown = false;
 				if (state == State.Walking){
 					state = State.Standing;
 				}
@@ -218,11 +225,13 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 		btn_left.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				isLeftTouchDown = true;
 				if (state == State.Standing){
 					state = State.Walking;
 				} else if (state == State.Jumping){
 					isJumpAndWalk=true;
 				}
+
 				isFacingRight = false;
 				if (velocity.x > 0){
 					velocity.x = -velocity.x;
@@ -233,6 +242,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 
 			@Override
 			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+				isLeftTouchDown = false;
 				if (state == State.Walking){
 					state = State.Standing;
 				}
@@ -403,6 +413,13 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 		}else  if (state == State.Jumping){
 			hero1Frame = isFacingRight? hero1Right : hero1Left;
 			if (isJumpAndWalk){
+
+				if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
+					velocity.x = 300;
+				}else if(isLeftTouchDown){
+					velocity.x = -300;
+				}
+
 				position.x = position.x + (velocity.x * deltaTime*0.3f);
 			}
 
@@ -427,9 +444,15 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 			if (collisionBottom){
 				velocity.y = 0;
 				state = State.Standing;
+				if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+					state = State.Walking;
+				}
 //	            isJumpAndWalk=true;
 			}else{
 				state = State.Jumping;
+				if(isLeftTouchDown || isRightTouchDown){//當在空中按住方向鍵時,isJumpAndWalk設為true
+					isJumpAndWalk=true;
+				}
 			}
 		}
 
@@ -481,6 +504,11 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 
 //	    Display HUD (Score & Lives)
 		HUDBatch.begin();
+
+//		if(isLeftTouchDown){
+//			state = State.Walking;
+//		}
+
 		font1.draw(HUDBatch, "SCORE:100", 20, 900);
 		spriteHero1.draw(HUDBatch);
 		spriteHero2.draw(HUDBatch);
