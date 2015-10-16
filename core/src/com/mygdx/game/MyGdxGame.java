@@ -285,7 +285,6 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 			y1 = ((position.y+i1)/32);
 			if (isCellBlocked(x1, y1)){
 				tempcount = tempcount+1;
-				System.out.println(tempcount);
 			}
 		}
 		if (tempcount > 0)
@@ -412,7 +411,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 			if (collisionTop){
 				velocity.y = -100;
 				state = State.Jumping;
-//		isJumpAndWalk=true;
+//		        isJumpAndWalk=true;
 			}
 
 			velocity.y -= MaxVelocity * deltaTime;
@@ -428,8 +427,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 			if (collisionBottom){
 				velocity.y = 0;
 				state = State.Standing;
-//	   isJumpAndWalk=true;
-
+//	            isJumpAndWalk=true;
 			}else{
 				state = State.Jumping;
 			}
