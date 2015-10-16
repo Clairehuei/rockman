@@ -1,16 +1,23 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
 /**
  * Created by 6193 on 2015/10/16.
  */
 public class BackgroundSound {
-    Sound sound;
+//    Sound sound;
+    Music music;
     public BackgroundSound(){
-        sound = Gdx.audio.newSound(Gdx.files.internal("sound/bgsound1.mp3"));
-        sound.loop(0.5f);
+//        sound = Gdx.audio.newSound(Gdx.files.internal("sound/bgsound1.wav"));
+//        //sound.loop(0.5f);
+//        sound.play();
+
+        music = Gdx.audio.newMusic(Gdx.files.internal("sound/bgsound1.ogg"));//.ogg的音檔loop才沒有問題,並且檔案大小也比.mp3還小(使用.map會有問題,貌似loop上限,會自動停止)
+        music.setLooping(true);
+        music.play();
     }
 
 }

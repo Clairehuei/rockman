@@ -5,6 +5,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -70,7 +72,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 
 	//	Sound sound;
 	BackgroundSound bgSound1;
-	GunSound gunSound1;
+	Sound gunSound;
 
 	public enum State {
 		Standing, Walking, Jumping
@@ -185,7 +187,6 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 		stage.addActor(btn_jump);
 
 		Gdx.input.setInputProcessor(stage);
-
 	}
 
 
@@ -536,6 +537,12 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 		bulletRight.dispose();
 		HUDBatch.dispose();
 		font1.dispose();
+		bgSound1.music.dispose();
+
+		if(gunSound!=null){
+			gunSound.dispose();
+		}
+
 	}
 
 	@Override
@@ -581,7 +588,13 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 
 
 	public void openFire(){
-		gunSound1 = new GunSound();
+
+		if(gunSound==null){
+			gunSound = Gdx.audio.newSound(Gdx.files.internal("sound/gun1.ogg"));
+		}
+
+		gunSound.play(0.5f);
+//		music.play();
 		if(isFacingRight){
 			bullet = new Bullet(position, bulletVelocityX);
 		}
