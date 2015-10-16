@@ -1,0 +1,85 @@
+
+mainmenu.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+creditsscreen
+  rotate: false
+  xy: 1, 281
+  size: 500, 700
+  orig: 500, 700
+  offset: 0, 0
+  index: -1
+facebookscreen
+  rotate: false
+  xy: 503, 281
+  size: 500, 700
+  orig: 500, 700
+  offset: 0, 0
+  index: -1
+facebookbutton
+  rotate: false
+  xy: 1, 214
+  size: 337, 65
+  orig: 337, 65
+  offset: 0, 0
+  index: -1
+creditsbutton
+  rotate: false
+  xy: 1, 143
+  size: 210, 69
+  orig: 210, 69
+  offset: 0, 0
+  index: -1
+optionsbutton
+  rotate: false
+  xy: 1, 72
+  size: 210, 69
+  orig: 210, 69
+  offset: 0, 0
+  index: -1
+startbutton
+  rotate: false
+  xy: 1, 1
+  size: 210, 69
+  orig: 210, 69
+  offset: 0, 0
+  index: -1
+backbutton
+  rotate: false
+  xy: 213, 144
+  size: 66, 68
+  orig: 66, 68
+  offset: 0, 0
+  index: -1
+
+mainmenu2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+levelscreen
+  rotate: false
+  xy: 1, 1
+  size: 500, 700
+  orig: 500, 700
+  offset: 0, 0
+  index: -1
+optionsscreen
+  rotate: false
+  xy: 503, 1
+  size: 500, 700
+  orig: 500, 700
+  offset: 0, 0
+  index: -1
+
+mainmenu3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+bg
+  rotate: false
+  xy: 1, 1
+  size: 479, 544
+  orig: 479, 544
+  offset: 0, 0
+  index: -1
