@@ -9,8 +9,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 /**主要畫面/選關卡(城鎮)
  * Created by 6193 on 2015/10/19.
@@ -57,16 +59,26 @@ public class HomeScreen implements Screen {
         imageStage3.setPosition(0,Gdx.graphics.getHeight()-imageStage3.getHeight());
         imageStage4.setPosition(0,Gdx.graphics.getHeight()-imageStage4.getHeight());
         imageStage5.setPosition(0,Gdx.graphics.getHeight()-imageStage5.getHeight());
+
+        imageStage1.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                playScreen1 = new PlayScreen1(game);
+                game.setScreen(playScreen1);
+                return true;
+            }
+        });
     }
 
     @Override
     public void show() {
         stage.addActor(splashImage);
         stage.addActor(imageStage1);
-        stage.addActor(imageStage2);
-        stage.addActor(imageStage3);
-        stage.addActor(imageStage4);
-        stage.addActor(imageStage5);
+//        stage.addActor(imageStage2);
+//        stage.addActor(imageStage3);
+//        stage.addActor(imageStage4);
+//        stage.addActor(imageStage5);
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override

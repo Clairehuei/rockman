@@ -105,7 +105,7 @@ public class PlayScreen1 implements Screen, InputProcessor {
     private boolean isLeftTouchDown = false;
 
     Game game;
-    MenuScreen menuScreen;
+    HomeScreen homeScreen;
 
     public PlayScreen1(Game game){
         this.game=game;
@@ -755,11 +755,9 @@ public class PlayScreen1 implements Screen, InputProcessor {
 
 
     public void backHome () {
-        System.out.println("backHome");
-        menuScreen=new MenuScreen(game);
-        this.game.setScreen(menuScreen);
+        homeScreen=new HomeScreen(game);
+        this.game.setScreen(homeScreen);
         dispose();
-        System.out.println("xxxxxxxxx");
     }
 
 }
