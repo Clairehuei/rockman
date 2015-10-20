@@ -360,7 +360,7 @@ public class PlayScreenTest implements Screen{
         camera.update();
 
 //		Set hero1's Frame & X, Y Positions
-        hero.setHero1Frame(hero.isFacingRight()?hero.getHero1StandingRight():hero.getHero1StandingLeft());
+        hero.setHero1Frame(hero.isFacingRight()?hero.getAnimationStandingRight().getKeyFrame(animationTime, true):hero.getAnimationStandingLeft().getKeyFrame(animationTime, true));
 
         if (hero.getCurrentAction().equals("Walking")){
 
@@ -390,7 +390,7 @@ public class PlayScreenTest implements Screen{
             }
 //********************************************************************************
         }else  if (hero.getCurrentAction().equals("Jumping")){
-            hero.setHero1Frame(hero.isFacingRight()?hero.getHero1Right():hero.getHero1Left());
+            hero.setHero1Frame(hero.isFacingRight()?hero.getAnimationJumpingRight().getKeyFrame(animationTime, true):hero.getAnimationJumpingLeft().getKeyFrame(animationTime, true));
             if (hero.isJumpAndWalk()){
 
                 if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力

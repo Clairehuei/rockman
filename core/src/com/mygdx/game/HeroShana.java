@@ -28,6 +28,8 @@ public class HeroShana extends Hero {
 
     private boolean isFacingRight;
     private boolean isJumpAndWalk = false;
+    private Animation animationStandingLeft;
+    private Animation animationStandingRight;
     private Animation animationWalkingLeft;
     private Animation animationWalkingRight;
     private Animation animationJumpingLeft;
@@ -43,24 +45,97 @@ public class HeroShana extends Hero {
         this.setCurrentAction("Jumping");
 
         //Load atlases and textures
-        hero1Atlas = new TextureAtlas(Gdx.files.internal("data/hero1atlas.pack"));
+        hero1Atlas = new TextureAtlas(Gdx.files.internal("hero/shana/heroShana.pack"));
 
         //Initialize hero1 Standing Left & Right, Walking Left & Right
-        hero1Right = hero1Atlas.findRegion("jumpright");
-        hero1StandingRight = hero1Atlas.findRegion("walk002");
-        TextureRegion[] frameWalkingRight = new TextureRegion[3];
-        frameWalkingRight[0] = hero1Atlas.findRegion("walk000");
-        frameWalkingRight[1] = hero1Atlas.findRegion("walk001");
-        frameWalkingRight[2] = hero1Atlas.findRegion("walk002");
-        animationWalkingRight = new Animation(FRAME_DURATION, frameWalkingRight);
+        //*****************************人物右邊設定*****************************
+//        hero1Right = hero1Atlas.findRegion("jumpright");
+        hero1StandingRight = hero1Atlas.findRegion("RunningRight5");
 
-        hero1Left = hero1Atlas.findRegion("jumpleft");
-        hero1StandingLeft = hero1Atlas.findRegion("walk005");
-        TextureRegion[] frameWalkingLeft = new TextureRegion[3];
-        frameWalkingLeft[0] = hero1Atlas.findRegion("walk003");
-        frameWalkingLeft[1] = hero1Atlas.findRegion("walk004");
-        frameWalkingLeft[2] = hero1Atlas.findRegion("walk005");
-        animationWalkingLeft = new Animation(FRAME_DURATION, frameWalkingLeft);
+        //右邊跳躍
+        TextureRegion[] frameJumpingRight = new TextureRegion[12];
+        frameJumpingRight[0] = hero1Atlas.findRegion("JumpingRight1");
+        frameJumpingRight[1] = hero1Atlas.findRegion("JumpingRight2");
+        frameJumpingRight[2] = hero1Atlas.findRegion("JumpingRight3");
+        frameJumpingRight[3] = hero1Atlas.findRegion("JumpingRight4");
+        frameJumpingRight[4] = hero1Atlas.findRegion("JumpingRight5");
+        frameJumpingRight[5] = hero1Atlas.findRegion("JumpingRight6");
+        frameJumpingRight[6] = hero1Atlas.findRegion("JumpingRight7");
+        frameJumpingRight[7] = hero1Atlas.findRegion("JumpingRight8");
+        frameJumpingRight[8] = hero1Atlas.findRegion("JumpingRight9");
+        frameJumpingRight[9] = hero1Atlas.findRegion("JumpingRight10");
+        frameJumpingRight[10] = hero1Atlas.findRegion("JumpingRight11");
+        frameJumpingRight[11] = hero1Atlas.findRegion("JumpingRight12");
+        animationJumpingRight = new Animation(FRAME_DURATION_JUMP, frameJumpingRight);
+
+        //右邊站立
+        TextureRegion[] frameStandingRight = new TextureRegion[6];
+        frameStandingRight[0] = hero1Atlas.findRegion("StandingRight1");
+        frameStandingRight[1] = hero1Atlas.findRegion("StandingRight2");
+        frameStandingRight[2] = hero1Atlas.findRegion("StandingRight3");
+        frameStandingRight[3] = hero1Atlas.findRegion("StandingRight4");
+        frameStandingRight[4] = hero1Atlas.findRegion("StandingRight5");
+        frameStandingRight[5] = hero1Atlas.findRegion("StandingRight6");
+        animationStandingRight = new Animation(FRAME_DURATION_STAND, frameStandingRight);
+
+
+        //右邊跑步
+        TextureRegion[] frameWalkingRight = new TextureRegion[8];
+        frameWalkingRight[0] = hero1Atlas.findRegion("RunningRight1");
+        frameWalkingRight[1] = hero1Atlas.findRegion("RunningRight2");
+        frameWalkingRight[2] = hero1Atlas.findRegion("RunningRight3");
+        frameWalkingRight[3] = hero1Atlas.findRegion("RunningRight4");
+        frameWalkingRight[4] = hero1Atlas.findRegion("RunningRight5");
+        frameWalkingRight[5] = hero1Atlas.findRegion("RunningRight6");
+        frameWalkingRight[6] = hero1Atlas.findRegion("RunningRight7");
+        frameWalkingRight[7] = hero1Atlas.findRegion("RunningRight8");
+        animationWalkingRight = new Animation(FRAME_DURATION_RUN, frameWalkingRight);
+
+
+
+
+
+        //*****************************人物左邊設定*****************************
+//        hero1Left = hero1Atlas.findRegion("jumpleft");
+        hero1StandingLeft = hero1Atlas.findRegion("RunningLeft5");
+
+        //左邊跳躍
+        TextureRegion[] frameJumpingLeft = new TextureRegion[12];
+        frameJumpingLeft[0] = hero1Atlas.findRegion("JumpingLeft1");
+        frameJumpingLeft[1] = hero1Atlas.findRegion("JumpingLeft2");
+        frameJumpingLeft[2] = hero1Atlas.findRegion("JumpingLeft3");
+        frameJumpingLeft[3] = hero1Atlas.findRegion("JumpingLeft4");
+        frameJumpingLeft[4] = hero1Atlas.findRegion("JumpingLeft5");
+        frameJumpingLeft[5] = hero1Atlas.findRegion("JumpingLeft6");
+        frameJumpingLeft[6] = hero1Atlas.findRegion("JumpingLeft7");
+        frameJumpingLeft[7] = hero1Atlas.findRegion("JumpingLeft8");
+        frameJumpingLeft[8] = hero1Atlas.findRegion("JumpingLeft9");
+        frameJumpingLeft[9] = hero1Atlas.findRegion("JumpingLeft10");
+        frameJumpingLeft[10] = hero1Atlas.findRegion("JumpingLeft11");
+        frameJumpingLeft[11] = hero1Atlas.findRegion("JumpingLeft12");
+        animationJumpingLeft = new Animation(FRAME_DURATION_JUMP, frameJumpingLeft);
+
+        //左邊站立
+        TextureRegion[] frameStandingLeft = new TextureRegion[6];
+        frameStandingLeft[0] = hero1Atlas.findRegion("StandingLeft1");
+        frameStandingLeft[1] = hero1Atlas.findRegion("StandingLeft2");
+        frameStandingLeft[2] = hero1Atlas.findRegion("StandingLeft3");
+        frameStandingLeft[3] = hero1Atlas.findRegion("StandingLeft4");
+        frameStandingLeft[4] = hero1Atlas.findRegion("StandingLeft5");
+        frameStandingLeft[5] = hero1Atlas.findRegion("StandingLeft6");
+        animationStandingLeft = new Animation(FRAME_DURATION_STAND, frameStandingLeft);
+
+        //左邊跑步
+        TextureRegion[] frameWalkingLeft = new TextureRegion[8];
+        frameWalkingLeft[0] = hero1Atlas.findRegion("RunningLeft1");
+        frameWalkingLeft[1] = hero1Atlas.findRegion("RunningLeft2");
+        frameWalkingLeft[2] = hero1Atlas.findRegion("RunningLeft3");
+        frameWalkingLeft[3] = hero1Atlas.findRegion("RunningLeft4");
+        frameWalkingLeft[4] = hero1Atlas.findRegion("RunningLeft5");
+        frameWalkingLeft[5] = hero1Atlas.findRegion("RunningLeft6");
+        frameWalkingLeft[6] = hero1Atlas.findRegion("RunningLeft7");
+        frameWalkingLeft[7] = hero1Atlas.findRegion("RunningLeft8");
+        animationWalkingLeft = new Animation(FRAME_DURATION_RUN, frameWalkingLeft);
 
 
         spriteHero1 = new Sprite(hero1StandingRight);
@@ -197,5 +272,37 @@ public class HeroShana extends Hero {
 
     public void setCurrentAction(String currentAction) {
         this.currentAction = currentAction;
+    }
+
+    public Animation getAnimationStandingLeft() {
+        return animationStandingLeft;
+    }
+
+    public void setAnimationStandingLeft(Animation animationStandingLeft) {
+        this.animationStandingLeft = animationStandingLeft;
+    }
+
+    public Animation getAnimationStandingRight() {
+        return animationStandingRight;
+    }
+
+    public void setAnimationStandingRight(Animation animationStandingRight) {
+        this.animationStandingRight = animationStandingRight;
+    }
+
+    public Animation getAnimationJumpingLeft() {
+        return animationJumpingLeft;
+    }
+
+    public void setAnimationJumpingLeft(Animation animationJumpingLeft) {
+        this.animationJumpingLeft = animationJumpingLeft;
+    }
+
+    public Animation getAnimationJumpingRight() {
+        return animationJumpingRight;
+    }
+
+    public void setAnimationJumpingRight(Animation animationJumpingRight) {
+        this.animationJumpingRight = animationJumpingRight;
     }
 }
