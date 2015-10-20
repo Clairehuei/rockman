@@ -2,15 +2,12 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -35,9 +32,8 @@ import java.util.ArrayList;
 /**遊戲第一關
  * Created by 6193 on 2015/10/19.
  */
-public class PlayScreen1 implements Screen, InputProcessor {
+public class PlayScreenTest implements Screen{
 
-    private static final float FRAME_DURATION = 1.0f / 15.0f;
     private Vector2 position = new Vector2();
     private Vector2 velocity = new Vector2();
     private float MaxVelocity = 300f;
@@ -55,12 +51,7 @@ public class PlayScreen1 implements Screen, InputProcessor {
     private OrthographicCamera camera;
     private Viewport viewport;
     private SpriteBatch batch;
-    private TextureAtlas hero1Atlas;
-    private TextureRegion hero1StandingLeft;
-    private TextureRegion hero1StandingRight;
-    private TextureRegion hero1Left;
-    private TextureRegion hero1Right;
-    private TextureRegion hero1Frame;
+
     private Sprite sprite;
     private TiledMapTileLayer.Cell cell;
     Texture bulletRight;
@@ -70,29 +61,18 @@ public class PlayScreen1 implements Screen, InputProcessor {
 
     private SpriteBatch HUDBatch;
     private BitmapFont font1;
-    private Sprite spriteHero1, spriteHero2, spriteHero3;
 
     //	Sound sound;
     BackgroundSound bgSound1;
     Sound gunSound;
 
-    public enum State {
-        Standing, Walking, Jumping
-    }
-    private State state;
-
-    private boolean isFacingRight;
-    private boolean isJumpAndWalk = false;
+    //碰撞判斷
     private boolean collisionLeft, collisionRight, collisionBottom, collisionTop;
-
-    private Animation animationWalkingLeft;
-    private Animation animationWalkingRight;
 
     TiledMapTileLayer foregroundLayer;
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
-    private Skin skin;
     private Skin btnSkin;
     private Stage stage;
     private Button btn_fire;
@@ -107,7 +87,9 @@ public class PlayScreen1 implements Screen, InputProcessor {
     Game game;
     HomeScreen homeScreen;
 
-    public PlayScreen1(Game game){
+    HeroShana hero;
+
+    public PlayScreenTest(Game game){
         this.game=game;
         init();
     }
@@ -121,8 +103,8 @@ public class PlayScreen1 implements Screen, InputProcessor {
         batch = new SpriteBatch();
         HUDBatch = new SpriteBatch();
 
-        isFacingRight = true;
-        state=State.Jumping;
+        hero = new HeroShana();
+
         position.x = 330;
         position.y = screenHeight;
         velocity.x = 300;
@@ -138,26 +120,6 @@ public class PlayScreen1 implements Screen, InputProcessor {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         foregroundLayer = (TiledMapTileLayer) tiledMap.getLayers().get("foreground");
 
-// 		Load atlases and textures
-        hero1Atlas = new TextureAtlas(Gdx.files.internal("data/hero1atlas.pack"));
-
-// 		Initialize hero1 Standing Left & Right, Walking Left & Right
-        hero1StandingRight = hero1Atlas.findRegion("walk002");
-        TextureRegion[] frameWalkingRight = new TextureRegion[3];
-        frameWalkingRight[0] = hero1Atlas.findRegion("walk000");
-        frameWalkingRight[1] = hero1Atlas.findRegion("walk001");
-        frameWalkingRight[2] = hero1Atlas.findRegion("walk002");
-        animationWalkingRight = new Animation(FRAME_DURATION, frameWalkingRight);
-        hero1Right = hero1Atlas.findRegion("jumpright");
-
-        hero1StandingLeft = hero1Atlas.findRegion("walk005");
-        TextureRegion[] frameWalkingLeft = new TextureRegion[3];
-        frameWalkingLeft[0] = hero1Atlas.findRegion("walk003");
-        frameWalkingLeft[1] = hero1Atlas.findRegion("walk004");
-        frameWalkingLeft[2] = hero1Atlas.findRegion("walk005");
-        animationWalkingLeft = new Animation(FRAME_DURATION, frameWalkingLeft);
-        hero1Left = hero1Atlas.findRegion("jumpleft");
-
         bulletRight = new Texture("data/bullet.png");
         bulletLeft = new TextureRegion(bulletRight);
         bulletLeft.flip(true, false);
@@ -168,23 +130,11 @@ public class PlayScreen1 implements Screen, InputProcessor {
         font1 = new BitmapFont();
         font1.setColor(Color.YELLOW);
 
-        spriteHero1 = new Sprite(hero1StandingRight);
-        spriteHero1.setPosition(880, 690);
-        spriteHero1.setScale(0.5f);
-        spriteHero2 = new Sprite(hero1StandingRight);
-        spriteHero2.setPosition(880 + 40, 690);
-        spriteHero2.setScale(0.5f);
-        spriteHero3 = new Sprite(hero1StandingRight);
-        spriteHero3.setPosition(880 + 80, 690);
-        spriteHero3.setScale(0.5f);
-
-
-
         stage = new Stage();
 
-        skin = new Skin(Gdx.files.internal("mainmenu.json"),new TextureAtlas("mainmenu.pack"));
         btnSkin = new Skin(Gdx.files.internal("data/btn.json"),new TextureAtlas("data/btn.pack"));
 
+        //設定功能按鈕
         setBtnDirection();
         setBtnFire();
         setBtnJump();
@@ -197,7 +147,6 @@ public class PlayScreen1 implements Screen, InputProcessor {
         stage.addActor(btn_home);
 
         Gdx.input.setInputProcessor(stage);
-
     }
 
 
@@ -209,14 +158,12 @@ public class PlayScreen1 implements Screen, InputProcessor {
             @Override
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 isRightTouchDown = true;
-                if (state == State.Standing){
-                    state = State.Walking;
-
-                } else if (state == State.Jumping){
-                    isJumpAndWalk=true;
-
+                if (hero.getCurrentAction().equals("Standing")){
+                    hero.setCurrentAction("Walking");
+                } else if (hero.getCurrentAction().equals("Jumping")){
+                    hero.setIsJumpAndWalk(true);
                 }
-                isFacingRight = true;
+                hero.setIsFacingRight(true);
                 if (velocity.x < 0){
                     velocity.x = -velocity.x;
                 }
@@ -227,8 +174,8 @@ public class PlayScreen1 implements Screen, InputProcessor {
             @Override
             public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
                 isRightTouchDown = false;
-                if (state == State.Walking){
-                    state = State.Standing;
+                if (hero.getCurrentAction().equals("Walking")){
+                    hero.setCurrentAction("Standing");
                 }
             }
         });
@@ -239,13 +186,13 @@ public class PlayScreen1 implements Screen, InputProcessor {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 isLeftTouchDown = true;
-                if (state == State.Standing) {
-                    state = State.Walking;
-                } else if (state == State.Jumping) {
-                    isJumpAndWalk = true;
+                if (hero.getCurrentAction().equals("Standing")) {
+                    hero.setCurrentAction("Walking");
+                } else if (hero.getCurrentAction().equals("Jumping")) {
+                    hero.setIsJumpAndWalk(true);
                 }
 
-                isFacingRight = false;
+                hero.setIsFacingRight(false);
                 if (velocity.x > 0) {
                     velocity.x = -velocity.x;
                 }
@@ -256,8 +203,8 @@ public class PlayScreen1 implements Screen, InputProcessor {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 isLeftTouchDown = false;
-                if (state == State.Walking) {
-                    state = State.Standing;
+                if (hero.getCurrentAction().equals("Walking")) {
+                    hero.setCurrentAction("Standing");
                 }
             }
         });
@@ -351,7 +298,7 @@ public class PlayScreen1 implements Screen, InputProcessor {
         tempcount1=0;
         collisionBottom = false;
 
-        if (!isFacingRight){
+        if (!hero.isFacingRight()){
             for (int j = 32 ; j<=64; j +=32){
                 j1 = new Float(j);
                 x1 = (position.x+j1)/32;
@@ -413,41 +360,38 @@ public class PlayScreen1 implements Screen, InputProcessor {
         camera.update();
 
 //		Set hero1's Frame & X, Y Positions
-        hero1Frame = isFacingRight? hero1StandingRight : hero1StandingLeft;
+        hero.setHero1Frame(hero.isFacingRight()?hero.getHero1StandingRight():hero.getHero1StandingLeft());
 
-        if (state == State.Walking){
-            hero1Frame = isFacingRight?
-                    animationWalkingRight.getKeyFrame(animationTime,true) :
-                    animationWalkingLeft.getKeyFrame(animationTime,true);
+        if (hero.getCurrentAction().equals("Walking")){
+
+            hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationWalkingRight().getKeyFrame(animationTime, true) : hero.getAnimationWalkingLeft().getKeyFrame(animationTime, true));
 
             collisionLeft = false;
             collisionRight = false;
-            if (isFacingRight){
+            if (hero.isFacingRight()){
                 collisionRight();
                 if (collisionRight)
                     velocity.x = 0;
                 else velocity.x = 300;
-//			  state = State.Standing;
             }
-            if (!isFacingRight){
+            if (!hero.isFacingRight()){
                 collisionLeft();
                 if (collisionLeft)
                     velocity.x = 0;
                 else velocity.x = -300;
-//  	 	  state = State.Standing;
             }
             position.x = position.x + (velocity.x * deltaTime);
 
             collisionBottom=false;
             collisionBottom();
             if (!collisionBottom){
-                state = State.Jumping;
+                hero.setCurrentAction("Jumping");
                 velocity.y=-300;
             }
 //********************************************************************************
-        }else  if (state == State.Jumping){
-            hero1Frame = isFacingRight? hero1Right : hero1Left;
-            if (isJumpAndWalk){
+        }else  if (hero.getCurrentAction().equals("Jumping")){
+            hero.setHero1Frame(hero.isFacingRight()?hero.getHero1Right():hero.getHero1Left());
+            if (hero.isJumpAndWalk()){
 
                 if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
                     velocity.x = 300;
@@ -462,8 +406,7 @@ public class PlayScreen1 implements Screen, InputProcessor {
             collisionTop();
             if (collisionTop){
                 velocity.y = -100;
-                state = State.Jumping;
-//		        isJumpAndWalk=true;
+                hero.setCurrentAction("Jumping");
             }
 
             velocity.y -= MaxVelocity * deltaTime;
@@ -478,15 +421,14 @@ public class PlayScreen1 implements Screen, InputProcessor {
             collisionBottom();
             if (collisionBottom){
                 velocity.y = 0;
-                state = State.Standing;
+                hero.setCurrentAction("Standing");
                 if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
-                    state = State.Walking;
+                    hero.setCurrentAction("Walking");
                 }
-//	            isJumpAndWalk=true;
             }else{
-                state = State.Jumping;
+                hero.setCurrentAction("Jumping");
                 if(isLeftTouchDown || isRightTouchDown){//當在空中按住方向鍵時,isJumpAndWalk設為true
-                    isJumpAndWalk=true;
+                    hero.setIsJumpAndWalk(true);
                 }
             }
         }
@@ -495,7 +437,7 @@ public class PlayScreen1 implements Screen, InputProcessor {
 
 
 //	    Store Spritesheet to sprite
-        sprite = new Sprite(hero1Frame);
+        sprite = new Sprite(hero.getHero1Frame());
         sprite.setPosition(position.x,position.y);
 
         tiledMapRenderer.setView(camera);
@@ -517,7 +459,7 @@ public class PlayScreen1 implements Screen, InputProcessor {
             if(currentBullet.TempbulletPosition.x> -100 &&
                     currentBullet.TempbulletPosition.x < (screenWidth*2 + 100)){
 
-                if (isFacingRight){
+                if (hero.isFacingRight()){
                     batch.draw(bulletRight, currentBullet.TempbulletPosition.x+32,
                             currentBullet.TempbulletPosition.y+16);
                 }
@@ -540,14 +482,10 @@ public class PlayScreen1 implements Screen, InputProcessor {
 //	    Display HUD (Score & Lives)
         HUDBatch.begin();
 
-//		if(isLeftTouchDown){
-//			state = State.Walking;
-//		}
-
         font1.draw(HUDBatch, "SCORE:100", 20, 900);
-        spriteHero1.draw(HUDBatch);
-        spriteHero2.draw(HUDBatch);
-        spriteHero3.draw(HUDBatch);
+        hero.getSpriteHero1().draw(HUDBatch);
+        hero.getSpriteHero2().draw(HUDBatch);
+        hero.getSpriteHero3().draw(HUDBatch);
 
         btn_right.draw(HUDBatch, 1f);
         btn_left.draw(HUDBatch, 1f);
@@ -560,7 +498,6 @@ public class PlayScreen1 implements Screen, InputProcessor {
 
     @Override
     public void resize(int width, int height) {
-        System.out.println("===PlayScreen1===width = "+width+"   height = "+height);
         viewport.update(width, height, false);
     }
 
@@ -582,7 +519,7 @@ public class PlayScreen1 implements Screen, InputProcessor {
     @Override
     public void dispose() {
         batch.dispose();
-        hero1Atlas.dispose();
+        hero.getHero1Atlas().dispose();
         bulletRight.dispose();
         HUDBatch.dispose();
         font1.dispose();
@@ -593,142 +530,6 @@ public class PlayScreen1 implements Screen, InputProcessor {
         }
     }
 
-    @Override
-    public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.LEFT) {
-            if (state == State.Standing){
-                state = State.Walking;
-            } else if (state == State.Jumping){
-                isJumpAndWalk=true;
-            }
-            isFacingRight = false;
-            if (velocity.x > 0){
-                velocity.x = -velocity.x;
-            }
-        }
-        else if(keycode == Input.Keys.RIGHT){
-            if (state == State.Standing){
-                state = State.Walking;
-            } else if (state == State.Jumping){
-                isJumpAndWalk=true;
-            }
-            isFacingRight = true;
-            if (velocity.x < 0){
-                velocity.x = -velocity.x;
-            }
-        }
-        else if ((keycode == Input.Keys.SPACE && state == State.Standing )
-                || (keycode == Input.Keys.SPACE && state == State.Walking )) {
-
-            velocity.x = 200;
-            if (isFacingRight == false){
-                velocity.x = -velocity.x;
-            }
-            velocity.y = MaxVelocity;
-            state = State.Jumping;
-            isJumpAndWalk=true;
-        }
-        else if (keycode == Input.Keys.F) {
-            openFire();
-        }
-        return true;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        if (state == State.Walking){
-            state = State.Standing;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(screenX < screenWidth/2 && screenY > screenHeight/2){
-            if (state == State.Standing){
-                state = State.Walking;
-            } else if (state == State.Jumping){
-                isJumpAndWalk=true;
-            }
-            isFacingRight = false;
-            if (velocity.x > 0){
-                velocity.x = -velocity.x;
-            }
-        }
-        else if(screenX > screenWidth/2 && screenY > screenHeight/2){
-            if (state == State.Standing){
-                state = State.Walking;
-            } else if (state == State.Jumping){
-                isJumpAndWalk=true;
-            }
-            isFacingRight = true;
-            if (velocity.x < 0){
-                velocity.x = -velocity.x;
-            }
-        }
-
-        else if ((screenX > screenWidth/3 && screenX < (screenWidth/3)*2
-                && screenY < screenHeight/2
-                && state == State.Standing)
-                || (screenX > screenWidth/3 && screenX < (screenWidth/3)*2
-                && screenY < screenHeight/2
-                && state == State.Walking)){
-            velocity.y = MaxVelocity;
-            state = State.Jumping;
-        }
-
-        else if (screenY < screenHeight/2 && screenX < screenWidth/3
-                && state == State.Standing){
-            velocity.y = MaxVelocity;
-            state = State.Jumping;
-            isJumpAndWalk=true;
-            isFacingRight = false;
-            if (velocity.x > 0){
-                velocity.x = -velocity.x;
-            }
-        }
-        else if (screenY < screenHeight/2 && screenX > (screenWidth/3)*2
-                && state == State.Standing){
-            velocity.y = MaxVelocity;
-            state = State.Jumping;
-            isJumpAndWalk=true;
-            isFacingRight = true;
-            if (velocity.x < 0){
-                velocity.x = -velocity.x;
-            }
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (state == State.Walking){
-            state = State.Standing;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
-    }
-
 
     public void openFire(){
 
@@ -737,8 +538,7 @@ public class PlayScreen1 implements Screen, InputProcessor {
         }
 
         gunSound.play(0.5f);
-//		music.play();
-        if(isFacingRight){
+        if(hero.isFacingRight()){
             bullet = new Bullet(position, bulletVelocityX);
         }
         else
@@ -748,8 +548,8 @@ public class PlayScreen1 implements Screen, InputProcessor {
 
     public void jump(){
         velocity.y = MaxVelocity;
-        state = State.Jumping;
-        isJumpAndWalk=true;
+        hero.setCurrentAction("Jumping");
+        hero.setIsJumpAndWalk(true);
     }
 
 

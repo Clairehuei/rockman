@@ -1,0 +1,26 @@
+
+hero1Atlas.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+walk000
+  rotate: false
+  xy: 1, 1
+  size: 70, 70
+  orig: 70, 70
+  offset: 0, 0
+  index: -1
+walk001
+  rotate: false
+  xy: 73, 1
+  size: 70, 70
+  orig: 70, 70
+  offset: 0, 0
+  index: -1
+walk002
+  rotate: false
+  xy: 145, 1
+  size: 70, 70
+  orig: 70, 70
+  offset: 0, 0
+  index: -1
