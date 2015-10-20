@@ -236,7 +236,7 @@ public class PlayScreenTest implements Screen{
 
     private void setBtnHome(){
         btn_home = new Button(btnSkin, "jumpbutton");
-        btn_home.setPosition(Gdx.graphics.getWidth()*3/4-300 , Gdx.graphics.getHeight()/7 );
+        btn_home.setPosition(0 , 610 );
         btn_home.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
