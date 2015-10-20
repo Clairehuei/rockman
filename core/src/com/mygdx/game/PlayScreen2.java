@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -50,10 +51,23 @@ public class PlayScreen2 implements Screen {
         xPosition = -(SCENE_WIDTH/2) ;
 
         // Load atlases and textures
-        hero1Atlas = new TextureAtlas(Gdx.files.internal("hero/shana/RunningRight.pack"));
+//        hero1Atlas = new TextureAtlas(Gdx.files.internal("hero/shana/RunningRight.pack"));
+        hero1Atlas = new TextureAtlas(Gdx.files.internal("hero/shana/heroShana.pack"));
+
+
+        TextureRegion[] frameWalkingRight = new TextureRegion[8];
+        frameWalkingRight[0] = hero1Atlas.findRegion("RunningRight1");
+        frameWalkingRight[1] = hero1Atlas.findRegion("RunningRight2");
+        frameWalkingRight[2] = hero1Atlas.findRegion("RunningRight3");
+        frameWalkingRight[3] = hero1Atlas.findRegion("RunningRight4");
+        frameWalkingRight[4] = hero1Atlas.findRegion("RunningRight5");
+        frameWalkingRight[5] = hero1Atlas.findRegion("RunningRight6");
+        frameWalkingRight[6] = hero1Atlas.findRegion("RunningRight7");
+        frameWalkingRight[7] = hero1Atlas.findRegion("RunningRight8");
 
         // Load animations
-        animation = new Animation(FRAME_DURATION, hero1Atlas.getRegions(), Animation.PlayMode.LOOP);
+//        animation = new Animation(FRAME_DURATION, hero1Atlas.getRegions(), Animation.PlayMode.LOOP);
+        animation = new Animation(FRAME_DURATION, frameWalkingRight);
 
     }
 
@@ -75,6 +89,7 @@ public class PlayScreen2 implements Screen {
         //Store Spritesheet to sprite
         sprite = new Sprite(animation.getKeyFrame(animationTime, true));
         sprite.setPosition(xPosition,0);
+        sprite.setScale(1.8f);
 
         //Set camera to batch and undate camera
         batch.setProjectionMatrix(camera.combined);

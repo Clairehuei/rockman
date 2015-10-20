@@ -16,15 +16,9 @@ public class HeroShana extends Hero {
     private static final float FRAME_DURATION_RUN = 1.0f / 15.0f;
     private static final float FRAME_DURATION_JUMP = 1.0f / 15.0f;
     private TextureAtlas hero1Atlas;
-    private TextureRegion hero1StandingLeft;
-    private TextureRegion hero1StandingRight;
-    private TextureRegion hero1Left;
-    private TextureRegion hero1Right;
     private TextureRegion hero1Frame;
-    private Sprite spriteHero1, spriteHero2, spriteHero3;
 
-
-    private String currentAction = "Standing";
+    private String currentAction = "Standing";//人物當前動作(預設為站立)
 
     private boolean isFacingRight;
     private boolean isJumpAndWalk = false;
@@ -32,8 +26,10 @@ public class HeroShana extends Hero {
     private Animation animationStandingRight;
     private Animation animationWalkingLeft;
     private Animation animationWalkingRight;
-    private Animation animationJumpingLeft;
-    private Animation animationJumpingRight;
+    private TextureRegion jumpingLeftUp;
+    private TextureRegion jumpingLeftDown;
+    private TextureRegion jumpingRightUp;
+    private TextureRegion jumpingRightDown;
 
 
     public HeroShana(){
@@ -49,24 +45,9 @@ public class HeroShana extends Hero {
 
         //Initialize hero1 Standing Left & Right, Walking Left & Right
         //*****************************人物右邊設定*****************************
-//        hero1Right = hero1Atlas.findRegion("jumpright");
-        hero1StandingRight = hero1Atlas.findRegion("RunningRight5");
-
         //右邊跳躍
-        TextureRegion[] frameJumpingRight = new TextureRegion[12];
-        frameJumpingRight[0] = hero1Atlas.findRegion("JumpingRight1");
-        frameJumpingRight[1] = hero1Atlas.findRegion("JumpingRight2");
-        frameJumpingRight[2] = hero1Atlas.findRegion("JumpingRight3");
-        frameJumpingRight[3] = hero1Atlas.findRegion("JumpingRight4");
-        frameJumpingRight[4] = hero1Atlas.findRegion("JumpingRight5");
-        frameJumpingRight[5] = hero1Atlas.findRegion("JumpingRight6");
-        frameJumpingRight[6] = hero1Atlas.findRegion("JumpingRight7");
-        frameJumpingRight[7] = hero1Atlas.findRegion("JumpingRight8");
-        frameJumpingRight[8] = hero1Atlas.findRegion("JumpingRight9");
-        frameJumpingRight[9] = hero1Atlas.findRegion("JumpingRight10");
-        frameJumpingRight[10] = hero1Atlas.findRegion("JumpingRight11");
-        frameJumpingRight[11] = hero1Atlas.findRegion("JumpingRight12");
-        animationJumpingRight = new Animation(FRAME_DURATION_JUMP, frameJumpingRight);
+        jumpingRightUp = hero1Atlas.findRegion("JumpingRight1");
+        jumpingRightDown = hero1Atlas.findRegion("JumpingRight2");
 
         //右邊站立
         TextureRegion[] frameStandingRight = new TextureRegion[6];
@@ -77,7 +58,6 @@ public class HeroShana extends Hero {
         frameStandingRight[4] = hero1Atlas.findRegion("StandingRight5");
         frameStandingRight[5] = hero1Atlas.findRegion("StandingRight6");
         animationStandingRight = new Animation(FRAME_DURATION_STAND, frameStandingRight);
-
 
         //右邊跑步
         TextureRegion[] frameWalkingRight = new TextureRegion[8];
@@ -92,28 +72,10 @@ public class HeroShana extends Hero {
         animationWalkingRight = new Animation(FRAME_DURATION_RUN, frameWalkingRight);
 
 
-
-
-
         //*****************************人物左邊設定*****************************
-//        hero1Left = hero1Atlas.findRegion("jumpleft");
-        hero1StandingLeft = hero1Atlas.findRegion("RunningLeft5");
-
         //左邊跳躍
-        TextureRegion[] frameJumpingLeft = new TextureRegion[12];
-        frameJumpingLeft[0] = hero1Atlas.findRegion("JumpingLeft1");
-        frameJumpingLeft[1] = hero1Atlas.findRegion("JumpingLeft2");
-        frameJumpingLeft[2] = hero1Atlas.findRegion("JumpingLeft3");
-        frameJumpingLeft[3] = hero1Atlas.findRegion("JumpingLeft4");
-        frameJumpingLeft[4] = hero1Atlas.findRegion("JumpingLeft5");
-        frameJumpingLeft[5] = hero1Atlas.findRegion("JumpingLeft6");
-        frameJumpingLeft[6] = hero1Atlas.findRegion("JumpingLeft7");
-        frameJumpingLeft[7] = hero1Atlas.findRegion("JumpingLeft8");
-        frameJumpingLeft[8] = hero1Atlas.findRegion("JumpingLeft9");
-        frameJumpingLeft[9] = hero1Atlas.findRegion("JumpingLeft10");
-        frameJumpingLeft[10] = hero1Atlas.findRegion("JumpingLeft11");
-        frameJumpingLeft[11] = hero1Atlas.findRegion("JumpingLeft12");
-        animationJumpingLeft = new Animation(FRAME_DURATION_JUMP, frameJumpingLeft);
+        jumpingLeftUp = hero1Atlas.findRegion("JumpingLeft1");
+        jumpingLeftDown = hero1Atlas.findRegion("JumpingLeft2");
 
         //左邊站立
         TextureRegion[] frameStandingLeft = new TextureRegion[6];
@@ -136,24 +98,7 @@ public class HeroShana extends Hero {
         frameWalkingLeft[6] = hero1Atlas.findRegion("RunningLeft7");
         frameWalkingLeft[7] = hero1Atlas.findRegion("RunningLeft8");
         animationWalkingLeft = new Animation(FRAME_DURATION_RUN, frameWalkingLeft);
-
-
-        spriteHero1 = new Sprite(hero1StandingRight);
-        spriteHero1.setPosition(880, 690);
-        spriteHero1.setScale(0.5f);
-
-        spriteHero2 = new Sprite(hero1StandingRight);
-        spriteHero2.setPosition(880 + 40, 690);
-        spriteHero2.setScale(0.5f);
-
-        spriteHero3 = new Sprite(hero1StandingRight);
-        spriteHero3.setPosition(880 + 80, 690);
-        spriteHero3.setScale(0.5f);
     }
-
-
-
-
 
 
     //*********************************setter/getter***************************************
@@ -178,68 +123,12 @@ public class HeroShana extends Hero {
         this.hero1Atlas = hero1Atlas;
     }
 
-    public TextureRegion getHero1StandingLeft() {
-        return hero1StandingLeft;
-    }
-
-    public void setHero1StandingLeft(TextureRegion hero1StandingLeft) {
-        this.hero1StandingLeft = hero1StandingLeft;
-    }
-
-    public TextureRegion getHero1StandingRight() {
-        return hero1StandingRight;
-    }
-
-    public void setHero1StandingRight(TextureRegion hero1StandingRight) {
-        this.hero1StandingRight = hero1StandingRight;
-    }
-
-    public TextureRegion getHero1Left() {
-        return hero1Left;
-    }
-
-    public void setHero1Left(TextureRegion hero1Left) {
-        this.hero1Left = hero1Left;
-    }
-
-    public TextureRegion getHero1Right() {
-        return hero1Right;
-    }
-
-    public void setHero1Right(TextureRegion hero1Right) {
-        this.hero1Right = hero1Right;
-    }
-
     public TextureRegion getHero1Frame() {
         return hero1Frame;
     }
 
     public void setHero1Frame(TextureRegion hero1Frame) {
         this.hero1Frame = hero1Frame;
-    }
-
-    public Sprite getSpriteHero1() {
-        return spriteHero1;
-    }
-
-    public void setSpriteHero1(Sprite spriteHero1) {
-        this.spriteHero1 = spriteHero1;
-    }
-
-    public Sprite getSpriteHero2() {
-        return spriteHero2;
-    }
-
-    public void setSpriteHero2(Sprite spriteHero2) {
-        this.spriteHero2 = spriteHero2;
-    }
-
-    public Sprite getSpriteHero3() {
-        return spriteHero3;
-    }
-
-    public void setSpriteHero3(Sprite spriteHero3) {
-        this.spriteHero3 = spriteHero3;
     }
 
     public boolean isFacingRight() {
@@ -290,19 +179,36 @@ public class HeroShana extends Hero {
         this.animationStandingRight = animationStandingRight;
     }
 
-    public Animation getAnimationJumpingLeft() {
-        return animationJumpingLeft;
+    public TextureRegion getJumpingLeftUp() {
+        return jumpingLeftUp;
     }
 
-    public void setAnimationJumpingLeft(Animation animationJumpingLeft) {
-        this.animationJumpingLeft = animationJumpingLeft;
+    public void setJumpingLeftUp(TextureRegion jumpingLeftUp) {
+        this.jumpingLeftUp = jumpingLeftUp;
     }
 
-    public Animation getAnimationJumpingRight() {
-        return animationJumpingRight;
+    public TextureRegion getJumpingLeftDown() {
+        return jumpingLeftDown;
     }
 
-    public void setAnimationJumpingRight(Animation animationJumpingRight) {
-        this.animationJumpingRight = animationJumpingRight;
+    public void setJumpingLeftDown(TextureRegion jumpingLeftDown) {
+        this.jumpingLeftDown = jumpingLeftDown;
     }
+
+    public TextureRegion getJumpingRightUp() {
+        return jumpingRightUp;
+    }
+
+    public void setJumpingRightUp(TextureRegion jumpingRightUp) {
+        this.jumpingRightUp = jumpingRightUp;
+    }
+
+    public TextureRegion getJumpingRightDown() {
+        return jumpingRightDown;
+    }
+
+    public void setJumpingRightDown(TextureRegion jumpingRightDown) {
+        this.jumpingRightDown = jumpingRightDown;
+    }
+
 }

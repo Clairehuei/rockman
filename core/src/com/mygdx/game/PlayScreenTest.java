@@ -34,7 +34,8 @@ import java.util.ArrayList;
  */
 public class PlayScreenTest implements Screen{
 
-    private Vector2 position = new Vector2();
+    private Vector2 position = new Vector2();//英雄當前位置
+    private Vector2 beforePosition = new Vector2();//英雄前一個位置
     private Vector2 velocity = new Vector2();
     private float MaxVelocity = 300f;
     private float deltaTime = 0.0f;
@@ -389,8 +390,8 @@ public class PlayScreenTest implements Screen{
                 velocity.y=-300;
             }
 //********************************************************************************
-        }else  if (hero.getCurrentAction().equals("Jumping")){
-            hero.setHero1Frame(hero.isFacingRight()?hero.getAnimationJumpingRight().getKeyFrame(animationTime, true):hero.getAnimationJumpingLeft().getKeyFrame(animationTime, true));
+        }else if (hero.getCurrentAction().equals("Jumping")){
+
             if (hero.isJumpAndWalk()){
 
                 if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
@@ -417,6 +418,20 @@ public class PlayScreenTest implements Screen{
 
             position.y = position.y + (velocity.y * deltaTime);
 
+            if(hero.isFacingRight()){//向右跳躍
+                if(position.y > beforePosition.y){//跳躍上升中
+                    hero.setHero1Frame(hero.getJumpingRightUp());
+                }else{//跳躍下降中
+                    hero.setHero1Frame(hero.getJumpingRightDown());
+                }
+            }else{//向左跳躍
+                if(position.y > beforePosition.y){//跳躍上升中
+                    hero.setHero1Frame(hero.getJumpingLeftUp());
+                }else{//跳躍下降中
+                    hero.setHero1Frame(hero.getJumpingLeftDown());
+                }
+            }
+
             collisionBottom=false;
             collisionBottom();
             if (collisionBottom){
@@ -437,8 +452,16 @@ public class PlayScreenTest implements Screen{
 
 
 //	    Store Spritesheet to sprite
-        sprite = new Sprite(hero.getHero1Frame());
+        if(sprite!=null){
+            sprite.setRegion(hero.getHero1Frame());
+            sprite.setSize(hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
+            sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+        }else{
+            sprite = new Sprite(hero.getHero1Frame());
+        }
+
         sprite.setPosition(position.x,position.y);
+        sprite.setScale(1.8f);//設定人物大小
 
         tiledMapRenderer.setView(camera);
         camera.position.x = position.x;
@@ -483,9 +506,6 @@ public class PlayScreenTest implements Screen{
         HUDBatch.begin();
 
         font1.draw(HUDBatch, "SCORE:100", 20, 900);
-        hero.getSpriteHero1().draw(HUDBatch);
-        hero.getSpriteHero2().draw(HUDBatch);
-        hero.getSpriteHero3().draw(HUDBatch);
 
         btn_right.draw(HUDBatch, 1f);
         btn_left.draw(HUDBatch, 1f);
@@ -494,6 +514,10 @@ public class PlayScreenTest implements Screen{
         btn_home.draw(HUDBatch, 1f);
 
         HUDBatch.end();
+
+        //設定英雄前一個位置
+        beforePosition.x = position.x;
+        beforePosition.y = position.y;
     }
 
     @Override
