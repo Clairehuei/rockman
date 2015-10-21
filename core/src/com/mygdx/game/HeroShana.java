@@ -2,7 +2,6 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -12,24 +11,27 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class HeroShana extends Hero {
 
     private static final float FRAME_DURATION = 1.0f / 15.0f;
-    private static final float FRAME_DURATION_STAND = 1.0f / 8.0f;
-    private static final float FRAME_DURATION_RUN = 1.0f / 15.0f;
-    private static final float FRAME_DURATION_JUMP = 1.0f / 15.0f;
-    private TextureAtlas hero1Atlas;
-    private TextureRegion hero1Frame;
+    private static final float FRAME_DURATION_STAND = 1.0f / 8.0f;//站立動畫的播放速度
+    private static final float FRAME_DURATION_RUN = 1.0f / 15.0f;//跑步動畫的播放速度
+    private static final float FRAME_DURATION_JUMP = 1.0f / 15.0f;//跳躍動畫的播放速度(暫時忽略)
+
+    private TextureAtlas hero1Atlas;//人物系列圖檔資源
+    private TextureRegion hero1Frame;//當前人物的畫面
 
     private String currentAction = "Standing";//人物當前動作(預設為站立)
 
-    private boolean isFacingRight;
-    private boolean isJumpAndWalk = false;
-    private Animation animationStandingLeft;
-    private Animation animationStandingRight;
-    private Animation animationWalkingLeft;
-    private Animation animationWalkingRight;
-    private TextureRegion jumpingLeftUp;
-    private TextureRegion jumpingLeftDown;
-    private TextureRegion jumpingRightUp;
-    private TextureRegion jumpingRightDown;
+    private boolean isFacingRight;//是否面向右邊
+    private boolean isJumpAndWalk = false;//是否在空中且跑步狀態
+
+    private Animation animationStandingLeft;//站立(左)動畫
+    private Animation animationStandingRight;//站立(右)動畫
+    private Animation animationWalkingLeft;//跑步(左)動畫
+    private Animation animationWalkingRight;//跑步(右)動畫
+
+    private TextureRegion jumpingLeftUp;//左前跳躍(上升中)
+    private TextureRegion jumpingLeftDown;//左前跳躍(下降中)
+    private TextureRegion jumpingRightUp;//右前跳躍(上升中)
+    private TextureRegion jumpingRightDown;//右前跳躍(下降中)
 
 
     public HeroShana(){
@@ -40,10 +42,10 @@ public class HeroShana extends Hero {
         isFacingRight = true;
         this.setCurrentAction("Jumping");
 
-        //Load atlases and textures
+        //讀取人物圖檔資源
         hero1Atlas = new TextureAtlas(Gdx.files.internal("hero/shana/heroShana.pack"));
 
-        //Initialize hero1 Standing Left & Right, Walking Left & Right
+        //開始初始化人物所有動作
         //*****************************人物右邊設定*****************************
         //右邊跳躍
         jumpingRightUp = hero1Atlas.findRegion("JumpingRight1");

@@ -36,8 +36,8 @@ public class PlayScreenTest implements Screen{
 
     private Vector2 position = new Vector2();//英雄當前位置
     private Vector2 beforePosition = new Vector2();//英雄前一個位置
-    private Vector2 velocity = new Vector2();
-    private float MaxVelocity = 300f;
+    private Vector2 velocity = new Vector2();//給予英雄的方向速度
+    private float MaxVelocity = 800f;//終端速度
     private float deltaTime = 0.0f;
     private float animationTime = 0.0f;
     private  float screenWidth;
@@ -48,11 +48,9 @@ public class PlayScreenTest implements Screen{
     private float x1, y1, i1, j1;
     private int tempcount, tempcount1;
     public int bulletVelocityX = 12;
-
     private OrthographicCamera camera;
     private Viewport viewport;
     private SpriteBatch batch;
-
     private Sprite sprite;
     private TiledMapTileLayer.Cell cell;
     Texture bulletRight;
@@ -63,32 +61,37 @@ public class PlayScreenTest implements Screen{
     private SpriteBatch HUDBatch;
     private BitmapFont font1;
 
-    //	Sound sound;
-    BackgroundSound bgSound1;
-    Sound gunSound;
+
+    BackgroundSound bgSound1;//背景音樂
+    Sound gunSound;//子彈音效
 
     //碰撞判斷
     private boolean collisionLeft, collisionRight, collisionBottom, collisionTop;
 
+    //地圖資源
     TiledMapTileLayer foregroundLayer;
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
 
     private Skin btnSkin;
     private Stage stage;
+
+    //玩家介面操控按鈕 [方向鍵] + [技能鍵]
     private Button btn_fire;
     private Button  btn_jump;
     private Button  btn_right;
     private Button  btn_left;
     private Button  btn_home;
 
-    private boolean isRightTouchDown = false;
-    private boolean isLeftTouchDown = false;
+    private boolean isRightTouchDown = false;//判斷是否持續按住 [向右方向鍵]
+    private boolean isLeftTouchDown = false;//判斷是否持續按住 [向左方向鍵]
+
+    private boolean isLeftSprintJump = false;//判斷是否為衝刺跳躍[左大跳]
+    private boolean isRightSprintJump = false;//判斷是否衝刺跳躍[右大跳]
 
     Game game;
-    HomeScreen homeScreen;
-
-    HeroShana hero;
+    HomeScreen homeScreen;//返回城鎮(關卡選擇)
+    HeroShana hero;//英雄人物
 
     public PlayScreenTest(Game game){
         this.game=game;
@@ -109,7 +112,7 @@ public class PlayScreenTest implements Screen{
         position.x = 330;
         position.y = screenHeight;
         velocity.x = 300;
-        velocity.y = -300;
+        velocity.y = -600;
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -126,7 +129,11 @@ public class PlayScreenTest implements Screen{
         bulletLeft.flip(true, false);
 
 
+        //設定背景音樂
         bgSound1 = new BackgroundSound();
+
+        //設定子彈音效
+        gunSound = Gdx.audio.newSound(Gdx.files.internal("sound/gun1.ogg"));
 
         font1 = new BitmapFont();
         font1.setColor(Color.YELLOW);
@@ -141,17 +148,22 @@ public class PlayScreenTest implements Screen{
         setBtnJump();
         setBtnHome();
 
+        //場景加入演員
         stage.addActor(btn_right);
         stage.addActor(btn_left);
         stage.addActor(btn_fire);
         stage.addActor(btn_jump);
         stage.addActor(btn_home);
 
-        Gdx.input.setInputProcessor(stage);
+        Gdx.input.setInputProcessor(stage);//將場景加入輸入(觸控)偵測
     }
 
 
     //***************************************************************************************************************
+
+    /**
+     * 方向鍵設定
+     */
     private void setBtnDirection(){
         btn_right = new Button(btnSkin, "rightbutton");
         btn_right.setPosition(Gdx.graphics.getWidth()/8+50, Gdx.graphics.getHeight() / 7);
@@ -212,6 +224,9 @@ public class PlayScreenTest implements Screen{
     }
 
 
+    /**
+     * 跳躍鍵設定
+     */
     private void setBtnJump(){
         btn_jump = new Button(btnSkin, "jumpbutton");
         btn_jump.setPosition(Gdx.graphics.getWidth()*3/4 , Gdx.graphics.getHeight()/7 );
@@ -223,6 +238,10 @@ public class PlayScreenTest implements Screen{
         });
     }
 
+
+    /**
+     * 技能鍵設定
+     */
     private void setBtnFire(){
         btn_fire = new Button(btnSkin, "firebutton");
         btn_fire.setPosition(Gdx.graphics.getWidth()-138, Gdx.graphics.getHeight() / 5);
@@ -235,6 +254,9 @@ public class PlayScreenTest implements Screen{
     }
 
 
+    /**
+     * 返回城鎮鍵設定
+     */
     private void setBtnHome(){
         btn_home = new Button(btnSkin, "jumpbutton");
         btn_home.setPosition(0 , 610 );
@@ -250,7 +272,12 @@ public class PlayScreenTest implements Screen{
 
 
     //********************************************************************************
-//  Collision Detection Method
+    /**
+     * 判斷是否為障礙物
+     * @param x
+     * @param y
+     * @return
+     */
     private	boolean isCellBlocked( float x, float y ){
 
         cell = foregroundLayer.getCell( (int)x, (int)y);
@@ -393,14 +420,17 @@ public class PlayScreenTest implements Screen{
         }else if (hero.getCurrentAction().equals("Jumping")){
 
             if (hero.isJumpAndWalk()){
-
-                if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
-                    velocity.x = 300;
-                }else if(isLeftTouchDown){
-                    velocity.x = -300;
+                if(!isRightSprintJump && !isLeftSprintJump){//原地跳後 才給予方向動力
+                    if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
+                        velocity.x = 300;
+                    }else if(isLeftTouchDown){
+                        velocity.x = -300;
+                    }
                 }
 
                 position.x = position.x + (velocity.x * deltaTime*0.3f);
+            }else{
+                velocity.x = 0;
             }
 
             collisionTop=false;
@@ -410,8 +440,8 @@ public class PlayScreenTest implements Screen{
                 hero.setCurrentAction("Jumping");
             }
 
-            velocity.y -= MaxVelocity * deltaTime;
-//	   Clamp velocity (Terminal Velocity)
+            velocity.y -= MaxVelocity * deltaTime*1.45f;
+//	   Clamp velocity (Terminal Velocity)終端速度
             if (velocity.y < -MaxVelocity){
                 velocity.y = -MaxVelocity;
             }
@@ -434,16 +464,18 @@ public class PlayScreenTest implements Screen{
 
             collisionBottom=false;
             collisionBottom();
-            if (collisionBottom){
+            if (collisionBottom){//已著地
                 velocity.y = 0;
                 hero.setCurrentAction("Standing");
                 if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
                     hero.setCurrentAction("Walking");
                 }
-            }else{
+            }else{//尚未著地
                 hero.setCurrentAction("Jumping");
                 if(isLeftTouchDown || isRightTouchDown){//當在空中按住方向鍵時,isJumpAndWalk設為true
                     hero.setIsJumpAndWalk(true);
+                }else{
+                    hero.setIsJumpAndWalk(false);
                 }
             }
         }
@@ -460,7 +492,7 @@ public class PlayScreenTest implements Screen{
             sprite = new Sprite(hero.getHero1Frame());
         }
 
-        sprite.setPosition(position.x,position.y);
+        sprite.setPosition(position.x, position.y);//設定人物位置
         sprite.setScale(1.8f);//設定人物大小
 
         tiledMapRenderer.setView(camera);
@@ -556,24 +588,36 @@ public class PlayScreenTest implements Screen{
 
 
     public void openFire(){
-
-        if(gunSound==null){
-            gunSound = Gdx.audio.newSound(Gdx.files.internal("sound/gun1.ogg"));
-        }
-
         gunSound.play(0.5f);
         if(hero.isFacingRight()){
             bullet = new Bullet(position, bulletVelocityX);
         }
-        else
+        else{
             bullet = new Bullet(position, -bulletVelocityX);
+        }
+
         bulletManager.add(bullet);
     }
 
     public void jump(){
-        velocity.y = MaxVelocity;
         hero.setCurrentAction("Jumping");
-        hero.setIsJumpAndWalk(true);
+
+        if(isRightTouchDown){//當在跑步中按住方向鍵時,額外給予x軸與y軸方向動力
+            hero.setIsJumpAndWalk(true);
+            isRightSprintJump = true;
+            velocity.x = 550;
+            velocity.y = 350;
+        }else if(isLeftTouchDown){
+            hero.setIsJumpAndWalk(true);
+            isLeftSprintJump = true;
+            velocity.x = -550;
+            velocity.y = 350;
+        }else{//原地跳
+            hero.setIsJumpAndWalk(false);
+            isRightSprintJump = false;
+            isLeftSprintJump = false;
+            velocity.y = 300;
+        }
     }
 
 
