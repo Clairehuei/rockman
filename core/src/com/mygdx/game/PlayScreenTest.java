@@ -62,6 +62,8 @@ public class PlayScreenTest implements Screen{
 
     private SpriteBatch HUDBatch;
     private BitmapFont font1;
+    private  float jumpY = 0.0f;
+    private  float v0 = 300.0f;
 
 
     BackgroundSound bgSound1;//背景音樂
@@ -97,6 +99,7 @@ public class PlayScreenTest implements Screen{
 
     private float currentHeroWidth = 0.0f;
     private float currentHeroHeight = 0.0f;
+//    boolean startGame = false;
 
     public PlayScreenTest(Game game){
         this.game=game;
@@ -105,6 +108,7 @@ public class PlayScreenTest implements Screen{
 
 
     public void init () {
+//        startGame = true;
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
@@ -115,7 +119,7 @@ public class PlayScreenTest implements Screen{
         hero = new HeroShana();
 
         position.x = screenWidth/2;
-        position.y = screenHeight;
+        position.y = 250;
         velocity.x = 300;
         velocity.y = -600;
 
@@ -126,7 +130,7 @@ public class PlayScreenTest implements Screen{
         camera.setToOrtho(false, w, h);//y軸向上
         camera.update();
 //        tiledMap = new TmxMapLoader().load("map/map.tmx");
-        tiledMap = new TmxMapLoader().load("map/newmap.tmx");
+        tiledMap = new TmxMapLoader().load("map/newmap2.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         foregroundLayer = (TiledMapTileLayer) tiledMap.getLayers().get("foreground");
 
@@ -342,6 +346,7 @@ public class PlayScreenTest implements Screen{
                 }
                 if (tempcount1 > 0){
                     collisionBottom = true;
+                    v0 = 300.0f;
                 }
 
             }
@@ -356,6 +361,7 @@ public class PlayScreenTest implements Screen{
                 }
                 if (tempcount1 > 0){
                     collisionBottom = true;
+                    v0 = 300.0f;
                 }
 
             }
@@ -437,9 +443,9 @@ public class PlayScreenTest implements Screen{
             if (hero.isJumpAndWalk()){
                 if(!isRightSprintJump && !isLeftSprintJump){//原地跳後 才給予方向動力
                     if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
-                        velocity.x = 300;
+                        velocity.x = 550;
                     }else if(isLeftTouchDown){
-                        velocity.x = -300;
+                        velocity.x = -550;
                     }
                 }
 
@@ -511,11 +517,21 @@ public class PlayScreenTest implements Screen{
 
         //人物著地後繪圖位置修正量
         if(collisionBottom){
-            deltay = 28.0f;
+            deltay = 22.0f;
         }else{
             deltay = 0.0f;
         }
 
+//        if(startGame){
+//            position.y = 22.0f;
+//            startGame = false;
+//            System.out.println("====position.y===== "+position.y);
+//        }else{
+//            System.out.println("position.y = "+position.y);
+//        }
+
+
+//        System.out.println("sprite.position.y = (position :" + position.y+" + deltay :"+deltay+") = "+position.y+deltay);
         sprite.setPosition(position.x, position.y+deltay);//設定人物位置
         sprite.setScale(1.8f);//設定人物大小
 
@@ -563,11 +579,13 @@ public class PlayScreenTest implements Screen{
 
         font1.draw(HUDBatch, "SCORE:100", 20, 900);
 
-        btn_right.draw(HUDBatch, 1f);
-        btn_left.draw(HUDBatch, 1f);
-        btn_fire.draw(HUDBatch, 1f);
-        btn_jump.draw(HUDBatch, 1f);
-        btn_home.draw(HUDBatch, 1f);
+//        btn_right.draw(HUDBatch, 1f);
+//        btn_left.draw(HUDBatch, 1f);
+//        btn_fire.draw(HUDBatch, 1f);
+//        btn_jump.draw(HUDBatch, 1f);
+//        btn_home.draw(HUDBatch, 1f);
+        stage.act();
+        stage.draw();
 
         HUDBatch.end();
 
@@ -629,12 +647,12 @@ public class PlayScreenTest implements Screen{
         if(isRightTouchDown){//當在跑步中按住方向鍵時,額外給予x軸與y軸方向動力
             hero.setIsJumpAndWalk(true);
             isRightSprintJump = true;
-            velocity.x = 550;
+            velocity.x = 850;
             velocity.y = 350;
         }else if(isLeftTouchDown){
             hero.setIsJumpAndWalk(true);
             isLeftSprintJump = true;
-            velocity.x = -550;
+            velocity.x = -850;
             velocity.y = 350;
         }else{//原地跳
             hero.setIsJumpAndWalk(false);
@@ -642,6 +660,8 @@ public class PlayScreenTest implements Screen{
             isLeftSprintJump = false;
             velocity.y = 300;
         }
+
+        jumpY = position.y;
     }
 
 
@@ -659,12 +679,47 @@ public class PlayScreenTest implements Screen{
     public float calJumpY(){
         float tempY = 0.0f;
 
-        velocity.y -= MaxVelocity * deltaTime*1.45f;
-//	   Clamp velocity (Terminal Velocity)終端速度
-        if (velocity.y < -MaxVelocity){
-            velocity.y = -MaxVelocity;
+        //原版
+//        velocity.y -= MaxVelocity * deltaTime*1.45f;
+////	   Clamp velocity (Terminal Velocity)終端速度
+//        if (velocity.y < -MaxVelocity){
+//            velocity.y = -MaxVelocity;
+//        }
+//        position.y = position.y + (velocity.y * deltaTime);
+
+
+        float g = -10;
+
+        if(v0==0.0f){
+            g = -15000;
         }
-        position.y = position.y + (velocity.y * deltaTime);
+
+       //新版
+        velocity.y = v0 + ((g)*deltaTime);
+
+//        if (velocity.y < -MaxVelocity){
+//            velocity.y = -MaxVelocity;
+//        }
+
+        //jumpY
+
+        tempY = position.y + (velocity.y * deltaTime);
+
+
+
+        if(tempY > beforePosition.y) {//跳躍上升中
+            if(tempY>=jumpY+110){//到達頂點
+                v0 = 0.0f;
+                jumpY = 0.0f;
+            }else{//未到達頂點
+                v0 = 300.0f;
+            }
+        }else{//跳躍下降中
+
+        }
+
+
+
 
         return tempY;
     }
