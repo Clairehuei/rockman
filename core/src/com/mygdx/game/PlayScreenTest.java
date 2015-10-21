@@ -19,6 +19,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -57,6 +58,7 @@ public class PlayScreenTest implements Screen{
     TextureRegion bulletLeft;
     Bullet bullet, currentBullet;
     ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
+    private float deltay = 0.0f;
 
     private SpriteBatch HUDBatch;
     private BitmapFont font1;
@@ -93,6 +95,9 @@ public class PlayScreenTest implements Screen{
     HomeScreen homeScreen;//返回城鎮(關卡選擇)
     HeroShana hero;//英雄人物
 
+    private float currentHeroWidth = 0.0f;
+    private float currentHeroHeight = 0.0f;
+
     public PlayScreenTest(Game game){
         this.game=game;
         init();
@@ -109,7 +114,7 @@ public class PlayScreenTest implements Screen{
 
         hero = new HeroShana();
 
-        position.x = 330;
+        position.x = screenWidth/2;
         position.y = screenHeight;
         velocity.x = 300;
         velocity.y = -600;
@@ -118,9 +123,10 @@ public class PlayScreenTest implements Screen{
         float h = Gdx.graphics.getHeight();
 
 //		camera = new OrthographicCamera();
-        camera.setToOrtho(false,w,h);
+        camera.setToOrtho(false, w, h);//y軸向上
         camera.update();
-        tiledMap = new TmxMapLoader().load("map/map.tmx");
+//        tiledMap = new TmxMapLoader().load("map/map.tmx");
+        tiledMap = new TmxMapLoader().load("map/newmap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         foregroundLayer = (TiledMapTileLayer) tiledMap.getLayers().get("foreground");
 
@@ -334,8 +340,10 @@ public class PlayScreenTest implements Screen{
                 if (isCellBlocked(x1, y1)){
                     tempcount1 = tempcount1+1;
                 }
-                if (tempcount1 > 0)
+                if (tempcount1 > 0){
                     collisionBottom = true;
+                }
+
             }
         }
         else {
@@ -346,8 +354,10 @@ public class PlayScreenTest implements Screen{
                 if (isCellBlocked(x1, y1)){
                     tempcount1 = tempcount1+1;
                 }
-                if (tempcount1 > 0)
+                if (tempcount1 > 0){
                     collisionBottom = true;
+                }
+
             }
         }
         return false;
@@ -393,6 +403,11 @@ public class PlayScreenTest implements Screen{
         if (hero.getCurrentAction().equals("Walking")){
 
             hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationWalkingRight().getKeyFrame(animationTime, true) : hero.getAnimationWalkingLeft().getKeyFrame(animationTime, true));
+
+//            currentHeroWidth = hero.getHero1Frame().getRegionWidth();
+//            currentHeroHeight = hero.getHero1Frame().getRegionHeight();
+
+//            System.out.println("當前人物 width:"+currentHeroWidth+" height:"+currentHeroHeight);
 
             collisionLeft = false;
             collisionRight = false;
@@ -440,13 +455,14 @@ public class PlayScreenTest implements Screen{
                 hero.setCurrentAction("Jumping");
             }
 
-            velocity.y -= MaxVelocity * deltaTime*1.45f;
-//	   Clamp velocity (Terminal Velocity)終端速度
-            if (velocity.y < -MaxVelocity){
-                velocity.y = -MaxVelocity;
-            }
+//            velocity.y -= MaxVelocity * deltaTime*1.45f;
+////	   Clamp velocity (Terminal Velocity)終端速度
+//            if (velocity.y < -MaxVelocity){
+//                velocity.y = -MaxVelocity;
+//            }
+//            position.y = position.y + (velocity.y * deltaTime);
 
-            position.y = position.y + (velocity.y * deltaTime);
+            position.y = calJumpY();
 
             if(hero.isFacingRight()){//向右跳躍
                 if(position.y > beforePosition.y){//跳躍上升中
@@ -492,14 +508,22 @@ public class PlayScreenTest implements Screen{
             sprite = new Sprite(hero.getHero1Frame());
         }
 
-        sprite.setPosition(position.x, position.y);//設定人物位置
+
+        //人物著地後繪圖位置修正量
+        if(collisionBottom){
+            deltay = 28.0f;
+        }else{
+            deltay = 0.0f;
+        }
+
+        sprite.setPosition(position.x, position.y+deltay);//設定人物位置
         sprite.setScale(1.8f);//設定人物大小
 
         tiledMapRenderer.setView(camera);
         camera.position.x = position.x;
         tiledMapRenderer.render(background);
         tiledMapRenderer.render(foreground);
-        tiledMapRenderer.render(upperlayer);
+//        tiledMapRenderer.render(upperlayer);
 //	    Display on Screen
         batch.begin();
         sprite.draw(batch);
@@ -516,11 +540,11 @@ public class PlayScreenTest implements Screen{
 
                 if (hero.isFacingRight()){
                     batch.draw(bulletRight, currentBullet.TempbulletPosition.x+32,
-                            currentBullet.TempbulletPosition.y+16);
+                            currentBullet.TempbulletPosition.y+16+deltay);
                 }
                 else
                     batch.draw(bulletLeft, currentBullet.TempbulletPosition.x,
-                            currentBullet.TempbulletPosition.y+16);
+                            currentBullet.TempbulletPosition.y+16+deltay);
             }
             else{
                 bulletManager.remove(bulletCounter);
@@ -625,6 +649,24 @@ public class PlayScreenTest implements Screen{
         homeScreen=new HomeScreen(game);
         this.game.setScreen(homeScreen);
         dispose();
+    }
+
+
+    /**
+     * 計算跳躍位置
+     * @return
+     */
+    public float calJumpY(){
+        float tempY = 0.0f;
+
+        velocity.y -= MaxVelocity * deltaTime*1.45f;
+//	   Clamp velocity (Terminal Velocity)終端速度
+        if (velocity.y < -MaxVelocity){
+            velocity.y = -MaxVelocity;
+        }
+        position.y = position.y + (velocity.y * deltaTime);
+
+        return tempY;
     }
 
 }
