@@ -3,14 +3,21 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -34,7 +41,14 @@ public class PlayScreen2 implements Screen {
     private Texture texture;
     private static final float SCENE_WIDTH = Gdx.graphics.getWidth();
     private static final float SCENE_HEIGHT = Gdx.graphics.getHeight();
-
+    private SpriteBatch HUDBatch;
+    private BitmapFont font1;
+    //地圖資源
+    TiledMapTileLayer foregroundLayer;
+    TiledMap tiledMap;
+    TiledMapRenderer tiledMapRenderer;
+    private int[] background = new int[] {0};
+    private int[] foreground = new int[] {1};
 
 
 
@@ -44,11 +58,22 @@ public class PlayScreen2 implements Screen {
     }
 
     public void init(){
+//        camera = new OrthographicCamera();
+//        viewport = new FitViewport(SCENE_WIDTH, SCENE_HEIGHT, camera);
+
+
+
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+
         camera = new OrthographicCamera();
-        viewport = new FitViewport(SCENE_WIDTH, SCENE_HEIGHT, camera);
+        viewport = new FitViewport(SCENE_WIDTH, SCENE_HEIGHT, camera);//設置鏡頭大小
+        camera.setToOrtho(false, w, h);//y軸向上
+        camera.update();
+
         batch = new SpriteBatch();
         deltaTime = 0.0f;
-        xPosition = -(SCENE_WIDTH/2) ;
+        xPosition = 0 ;
 
         // Load atlases and textures
 //        hero1Atlas = new TextureAtlas(Gdx.files.internal("hero/shana/RunningRight.pack"));
@@ -69,6 +94,14 @@ public class PlayScreen2 implements Screen {
 //        animation = new Animation(FRAME_DURATION, hero1Atlas.getRegions(), Animation.PlayMode.LOOP);
         animation = new Animation(FRAME_DURATION, frameWalkingRight);
 
+        HUDBatch = new SpriteBatch();
+        font1 = new BitmapFont();
+        font1.setColor(Color.YELLOW);
+
+        tiledMap = new TmxMapLoader().load("map/newmap2.tmx");
+
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        foregroundLayer = (TiledMapTileLayer) tiledMap.getLayers().get("foreground");
     }
 
 
@@ -95,6 +128,11 @@ public class PlayScreen2 implements Screen {
         batch.setProjectionMatrix(camera.combined);
         camera.update();
 
+        tiledMapRenderer.setView(camera);
+        tiledMapRenderer.render(background);
+        tiledMapRenderer.render(foreground);
+
+
         //Display on Screen
         batch.begin();
         sprite.draw(batch);
@@ -102,6 +140,10 @@ public class PlayScreen2 implements Screen {
 
         //update xPosition
         xPosition = xPosition + (speed*deltaTime);
+
+        HUDBatch.begin();
+        font1.draw(HUDBatch, "SCORE:100", 100, 450);
+        HUDBatch.end();
 
     }
 
@@ -130,5 +172,7 @@ public class PlayScreen2 implements Screen {
         texture.dispose();
         batch.dispose();
         hero1Atlas.dispose();
+        HUDBatch.dispose();
+        font1.dispose();
     }
 }

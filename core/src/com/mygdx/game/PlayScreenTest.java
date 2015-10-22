@@ -19,7 +19,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -36,6 +35,7 @@ import java.util.ArrayList;
 public class PlayScreenTest implements Screen{
 
     private Vector2 position = new Vector2();//英雄當前位置
+    private Vector2 bossPosition = new Vector2();//魔王當前位置
     private Vector2 beforePosition = new Vector2();//英雄前一個位置
     private Vector2 velocity = new Vector2();//給予英雄的方向速度
     private float MaxVelocity = 800f;//終端速度
@@ -53,6 +53,7 @@ public class PlayScreenTest implements Screen{
     private Viewport viewport;
     private SpriteBatch batch;
     private Sprite sprite;
+    private Sprite spriteBoss;
     private TiledMapTileLayer.Cell cell;
     Texture bulletRight;
     TextureRegion bulletLeft;
@@ -60,8 +61,10 @@ public class PlayScreenTest implements Screen{
     ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
     private float deltay = 0.0f;
 
+    private SpriteBatch controlBatch;
     private SpriteBatch HUDBatch;
     private BitmapFont font1;
+    private BitmapFont font2;
     private  float jumpY = 0.0f;
     private  float v0 = 300.0f;
 
@@ -96,10 +99,19 @@ public class PlayScreenTest implements Screen{
     Game game;
     HomeScreen homeScreen;//返回城鎮(關卡選擇)
     HeroShana hero;//英雄人物
+    BossKing1 boss;//魔王
+    private int HERO_SCORE = 100;
+    private int BOSS_SCORE = 100;
 
     private float currentHeroWidth = 0.0f;
     private float currentHeroHeight = 0.0f;
 //    boolean startGame = false;
+
+    private float stageWidth = 0.0f;
+
+    boolean touchBossP1 = false;
+    boolean touchBossP2 = false;
+    boolean hitOnBoss = false;
 
     public PlayScreenTest(Game game){
         this.game=game;
@@ -109,30 +121,43 @@ public class PlayScreenTest implements Screen{
 
     public void init () {
 //        startGame = true;
+        Gdx.app.log("==init()===", "start init()");
+
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(screenWidth, screenHeight, camera);
+
         batch = new SpriteBatch();
         HUDBatch = new SpriteBatch();
+        controlBatch = new SpriteBatch();
 
         hero = new HeroShana();
+        boss = new BossKing1();
 
-        position.x = screenWidth/2;
-        position.y = 250;
-        velocity.x = 300;
-        velocity.y = -600;
+        position.x = screenWidth/2;//英雄初始位置X
+        position.y = 250;//英雄初始位置Y
+        velocity.x = 300;//英雄X軸初始速度
+        velocity.y = -600;//英雄Y軸初始速度
+
+        bossPosition.x = 800;
+        bossPosition.y = 86;
+
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
-//		camera = new OrthographicCamera();
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(screenWidth, screenHeight, camera);//設置鏡頭大小
         camera.setToOrtho(false, w, h);//y軸向上
         camera.update();
+
 //        tiledMap = new TmxMapLoader().load("map/map.tmx");
         tiledMap = new TmxMapLoader().load("map/newmap2.tmx");
+
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         foregroundLayer = (TiledMapTileLayer) tiledMap.getLayers().get("foreground");
+
+        stageWidth = foregroundLayer.getWidth()*foregroundLayer.getTileWidth();
+        System.out.println("場景寬度:"+stageWidth);
 
         bulletRight = new Texture("data/bullet.png");
         bulletLeft = new TextureRegion(bulletRight);
@@ -147,6 +172,9 @@ public class PlayScreenTest implements Screen{
 
         font1 = new BitmapFont();
         font1.setColor(Color.YELLOW);
+
+        font2 = new BitmapFont();
+        font2.setColor(Color.RED);
 
         stage = new Stage();
 
@@ -298,6 +326,63 @@ public class PlayScreenTest implements Screen{
         }
         return false;
     }
+
+
+    /**
+     * 判斷英雄本體是否接觸魔王
+     * @param x
+     * @param y
+     * @return
+     */
+    private	boolean isTouchBoss(float x, float y){
+
+        if(x+hero.getHero1Frame().getRegionWidth()>=bossPosition.x-5 && x+hero.getHero1Frame().getRegionWidth()<=bossPosition.x){
+            touchBossP1 = true;
+            touchBossP2 = false;
+            return true;
+        }else if(x-5<=bossPosition.x+boss.getHero1Frame().getRegionWidth() && x+hero.getHero1Frame().getRegionWidth()>=bossPosition.x+boss.getHero1Frame().getRegionWidth()){
+            touchBossP1 = false;
+            touchBossP2 = true;
+            return true;
+        }else{
+            touchBossP1 = false;
+            touchBossP2 = false;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * 判斷是否攻擊到魔王
+     * @param x
+     * @param y
+     * @return
+     */
+    private	boolean isHitBoss(float x, float y, float w, float h){
+
+        if(x+w>=bossPosition.x-5 && x+w<=bossPosition.x){
+            if( (y+h > bossPosition.y+boss.getHero1Frame().getRegionHeight() && y< bossPosition.y+boss.getHero1Frame().getRegionHeight())
+                    || (y+h<=bossPosition.y+boss.getHero1Frame().getRegionHeight() && y>=bossPosition.y)
+                    || (y+h>bossPosition.y && y<bossPosition.y)){
+                hitOnBoss = true;
+                return true;
+            }
+        }else if(x-5<=bossPosition.x+boss.getHero1Frame().getRegionWidth() && x+w>=bossPosition.x+boss.getHero1Frame().getRegionWidth()){
+            if( (y+h > bossPosition.y+boss.getHero1Frame().getRegionHeight() && y< bossPosition.y+boss.getHero1Frame().getRegionHeight())
+                    || (y+h<=bossPosition.y+boss.getHero1Frame().getRegionHeight() && y>=bossPosition.y)
+                    || (y+h>bossPosition.y && y<bossPosition.y)){
+                hitOnBoss = true;
+                return true;
+            }
+        }else{
+            hitOnBoss = false;
+        }
+
+        return false;
+    }
+
+
     //********************************************************************************
 //  Left Collision Detection
     public	boolean collisionLeft() {
@@ -406,6 +491,8 @@ public class PlayScreenTest implements Screen{
 //		Set hero1's Frame & X, Y Positions
         hero.setHero1Frame(hero.isFacingRight()?hero.getAnimationStandingRight().getKeyFrame(animationTime, true):hero.getAnimationStandingLeft().getKeyFrame(animationTime, true));
 
+        boss.setHero1Frame(boss.isFacingRight()?hero.getAnimationStandingRight().getKeyFrame(animationTime, true):boss.getAnimationStandingLeft().getKeyFrame(animationTime, true));
+
         if (hero.getCurrentAction().equals("Walking")){
 
             hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationWalkingRight().getKeyFrame(animationTime, true) : hero.getAnimationWalkingLeft().getKeyFrame(animationTime, true));
@@ -418,16 +505,30 @@ public class PlayScreenTest implements Screen{
             collisionLeft = false;
             collisionRight = false;
             if (hero.isFacingRight()){
-                collisionRight();
-                if (collisionRight)
+                collisionRight();//偵測是否碰撞障礙物
+                isTouchBoss(position.x, position.y);
+                if (collisionRight){
                     velocity.x = 0;
-                else velocity.x = 300;
+                } else if(touchBossP1){
+                    velocity.x = 0;
+                } else if(touchBossP2){
+                    velocity.x = 300;
+                } else{
+                    velocity.x = 300;
+                }
             }
             if (!hero.isFacingRight()){
                 collisionLeft();
-                if (collisionLeft)
+                isTouchBoss(position.x, position.y);
+                if (collisionLeft){
                     velocity.x = 0;
-                else velocity.x = -300;
+                } else if(touchBossP1){
+                    velocity.x = -300;
+                } else if(touchBossP2){
+                    velocity.x = 0;
+                } else {
+                    velocity.x = -300;
+                }
             }
             position.x = position.x + (velocity.x * deltaTime);
 
@@ -514,6 +615,14 @@ public class PlayScreenTest implements Screen{
             sprite = new Sprite(hero.getHero1Frame());
         }
 
+        if(spriteBoss!=null){
+            spriteBoss.setRegion(boss.getHero1Frame());
+            spriteBoss.setSize(boss.getHero1Frame().getRegionWidth(), boss.getHero1Frame().getRegionHeight());
+            spriteBoss.setOrigin(spriteBoss.getWidth() / 2, spriteBoss.getHeight() / 2);
+        }else{
+            spriteBoss = new Sprite(boss.getHero1Frame());
+        }
+
 
         //人物著地後繪圖位置修正量
         if(collisionBottom){
@@ -532,35 +641,59 @@ public class PlayScreenTest implements Screen{
 
 
 //        System.out.println("sprite.position.y = (position :" + position.y+" + deltay :"+deltay+") = "+position.y+deltay);
-        sprite.setPosition(position.x, position.y+deltay);//設定人物位置
+        sprite.setPosition(position.x, position.y + deltay);//設定人物位置
         sprite.setScale(1.8f);//設定人物大小
 
+        spriteBoss.setPosition(bossPosition.x, bossPosition.y);//設定魔王位置
+        spriteBoss.setScale(1.8f);//設定魔王大小
+
         tiledMapRenderer.setView(camera);
-        camera.position.x = position.x;
+
+        //調整鏡頭位置
+        if(position.x>=screenWidth/2 && position.x<=(stageWidth-(screenWidth/2))){//中間區域
+            //跟隨英雄
+            camera.position.x = position.x;
+        }else if(position.x<screenWidth/2){//最左邊
+            camera.position.x = screenWidth/2;
+        }else if(position.x>(stageWidth-(screenWidth/2))){//最右邊
+            camera.position.x = stageWidth-(screenWidth/2);
+        }
+
         tiledMapRenderer.render(background);
         tiledMapRenderer.render(foreground);
 //        tiledMapRenderer.render(upperlayer);
 //	    Display on Screen
         batch.begin();
         sprite.draw(batch);
+        spriteBoss.draw(batch);
 
-//********************************************************************************
+        //********************************************************************************
         int bulletCounter = 0;
         while (bulletCounter < bulletManager.size())
         {
             currentBullet = bulletManager.get(bulletCounter);
             currentBullet.update();
 
+            //判斷是否擊中目標
+            isHitBoss(currentBullet.TempbulletPosition.x, currentBullet.TempbulletPosition.y, bulletRight.getWidth(), bulletRight.getHeight());
+            if(hitOnBoss){//擊中
+                BOSS_SCORE = BOSS_SCORE-1;
+                bulletManager.remove(bulletCounter);
+                if(bulletManager.size() > 0){
+                    bulletCounter--;
+                }
+            }
+
             if(currentBullet.TempbulletPosition.x> -100 &&
                     currentBullet.TempbulletPosition.x < (screenWidth*2 + 100)){
 
                 if (hero.isFacingRight()){
                     batch.draw(bulletRight, currentBullet.TempbulletPosition.x+32,
-                            currentBullet.TempbulletPosition.y+16+deltay);
+                            currentBullet.TempbulletPosition.y+16);//deltay
                 }
                 else
                     batch.draw(bulletLeft, currentBullet.TempbulletPosition.x,
-                            currentBullet.TempbulletPosition.y+16+deltay);
+                            currentBullet.TempbulletPosition.y+16);//deltay
             }
             else{
                 bulletManager.remove(bulletCounter);
@@ -571,27 +704,36 @@ public class PlayScreenTest implements Screen{
             }
             bulletCounter++;
         }
+
+
 //********************************************************************************
         batch.end();
 
-//	    Display HUD (Score & Lives)
+
+//	    顯示分數or生命值
         HUDBatch.begin();
+        font1.draw(HUDBatch, "HERO:" + HERO_SCORE, 550, 700);
+        font2.draw(HUDBatch, "BOSS:" + BOSS_SCORE, 750, 700);
+        HUDBatch.end();
 
-        font1.draw(HUDBatch, "SCORE:100", 20, 900);
-
-//        btn_right.draw(HUDBatch, 1f);
-//        btn_left.draw(HUDBatch, 1f);
-//        btn_fire.draw(HUDBatch, 1f);
-//        btn_jump.draw(HUDBatch, 1f);
-//        btn_home.draw(HUDBatch, 1f);
+        //顯示控制按鈕
+        controlBatch.begin();
         stage.act();
         stage.draw();
-
-        HUDBatch.end();
+        controlBatch.end();
 
         //設定英雄前一個位置
         beforePosition.x = position.x;
         beforePosition.y = position.y;
+
+
+        //將魔王的方向面對英雄
+        if(position.x<=bossPosition.x){
+            boss.setIsFacingRight(false);
+        }else{
+            boss.setIsFacingRight(true);
+        }
+
     }
 
     @Override
@@ -618,8 +760,10 @@ public class PlayScreenTest implements Screen{
     public void dispose() {
         batch.dispose();
         hero.getHero1Atlas().dispose();
+        boss.getHero1Atlas().dispose();
         bulletRight.dispose();
         HUDBatch.dispose();
+        controlBatch.dispose();
         font1.dispose();
         bgSound1.music.dispose();
 
