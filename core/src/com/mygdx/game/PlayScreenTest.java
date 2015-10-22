@@ -40,6 +40,7 @@ public class PlayScreenTest implements Screen{
     private Vector2 velocity = new Vector2();//給予英雄的方向速度
     private float MaxVelocity = 800f;//終端速度
     private float deltaTime = 0.0f;
+    private float runTime = 0.0f;
     private float animationTime = 0.0f;
     private  float screenWidth;
     private  float screenHeight;
@@ -518,11 +519,6 @@ public class PlayScreenTest implements Screen{
 
                 hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationWalkingRight().getKeyFrame(animationTime, true) : hero.getAnimationWalkingLeft().getKeyFrame(animationTime, true));
 
-//            currentHeroWidth = hero.getHero1Frame().getRegionWidth();
-//            currentHeroHeight = hero.getHero1Frame().getRegionHeight();
-
-//            System.out.println("當前人物 width:"+currentHeroWidth+" height:"+currentHeroHeight);
-
                 collisionLeft = false;
                 collisionRight = false;
                 if (hero.isFacingRight()){
@@ -595,8 +591,10 @@ public class PlayScreenTest implements Screen{
                 if(hero.isFacingRight()){//向右跳躍
                     if(position.y > beforePosition.y){//跳躍上升中
                         hero.setHero1Frame(hero.getJumpingRightUp());
+                        System.out.println("[向右跳躍]--[跳躍上升中]");
                     }else{//跳躍下降中
                         hero.setHero1Frame(hero.getJumpingRightDown());
+                        System.out.println("[向右跳躍]--[跳躍下降中]");
                     }
                 }else{//向左跳躍
                     if(position.y > beforePosition.y){//跳躍上升中
@@ -623,43 +621,25 @@ public class PlayScreenTest implements Screen{
                     }
                 }
             }else if (hero.getCurrentAction().equals("Atking1")){
-
+                runTime+=Gdx.graphics.getDeltaTime();
                 hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttaRight().getKeyFrame(animationTime, true) : hero.getAnimationAttaLeft().getKeyFrame(animationTime, true));
 
+//                //動畫中,每一動作的持續時間
+//                System.out.println("hero.getAnimationAttaRight().getFrameDuration() = " + hero.getAnimationAttaRight().getFrameDuration());
+//
+//                //此動畫的總時間 = (每一格的持續時間 X 總動畫格數)
+//                System.out.println("hero.getAnimationAttaRight().getAnimationDuration() = "+hero.getAnimationAttaRight().getAnimationDuration());
 
-//                if(hero.getAnimationAttaRight().isAnimationFinished(animationTime)){
-//                    hero.setCurrentAction("Standing");
-//                }
+                if(hero.getAnimationAttaRight().isAnimationFinished(runTime)){
 
-//                collisionLeft = false;
-//                collisionRight = false;
-//                if (hero.isFacingRight()){
-//                    collisionRight();//偵測是否碰撞障礙物
-//                    isTouchBoss(position.x, position.y);
-//                    if (collisionRight){
-//                        velocity.x = 0;
-//                    } else if(touchBossP1){
-//                        velocity.x = 0;
-//                    } else if(touchBossP2){
-//                        velocity.x = 300;
-//                    } else{
-//                        velocity.x = 300;
-//                    }
-//                }
-//                if (!hero.isFacingRight()){
-//                    collisionLeft();
-//                    isTouchBoss(position.x, position.y);
-//                    if (collisionLeft){
-//                        velocity.x = 0;
-//                    } else if(touchBossP1){
-//                        velocity.x = -300;
-//                    } else if(touchBossP2){
-//                        velocity.x = 0;
-//                    } else {
-//                        velocity.x = -300;
-//                    }
-//                }
-//                position.x = position.x + (velocity.x * deltaTime);
+                    if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                        hero.setCurrentAction("Walking");
+                    }else{
+                        hero.setCurrentAction("Standing");
+                    }
+
+                    runTime = 0.0f;
+                }
 
                 collisionBottom=false;
                 collisionBottom();
@@ -685,26 +665,26 @@ public class PlayScreenTest implements Screen{
 
 
 
-            //將魔王的方向面對英雄
-            if(position.x<=bossPosition.x){
-                boss.setIsFacingRight(false);
-            }else{
-                boss.setIsFacingRight(true);
-            }
-
-            //step1. 亂數選擇魔王的行為
-            if(!isSearchHero){
-
-            }
-
-            //step2. 根據魔王的行為進行設定相關動作
-            if(boss.getCurrentAction().equals("Standing")){//發呆
-
-            }else if(boss.getCurrentAction().equals("Running")){//追蹤玩家
-
-            }else if(boss.getCurrentAction().equals("Jump")){//跳躍
-
-            }
+//            //將魔王的方向面對英雄
+//            if(position.x<=bossPosition.x){
+//                boss.setIsFacingRight(false);
+//            }else{
+//                boss.setIsFacingRight(true);
+//            }
+//
+//            //step1. 亂數選擇魔王的行為
+//            if(!isSearchHero){
+//
+//            }
+//
+//            //step2. 根據魔王的行為進行設定相關動作
+//            if(boss.getCurrentAction().equals("Standing")){//發呆
+//
+//            }else if(boss.getCurrentAction().equals("Running")){//追蹤玩家
+//
+//            }else if(boss.getCurrentAction().equals("Jump")){//跳躍
+//
+//            }
 
 
 
@@ -726,16 +706,6 @@ public class PlayScreenTest implements Screen{
                 deltay = 0.0f;
             }
 
-//        if(startGame){
-//            position.y = 22.0f;
-//            startGame = false;
-//            System.out.println("====position.y===== "+position.y);
-//        }else{
-//            System.out.println("position.y = "+position.y);
-//        }
-
-
-//        System.out.println("sprite.position.y = (position :" + position.y+" + deltay :"+deltay+") = "+position.y+deltay);
             sprite.setPosition(position.x, position.y + deltay);//設定人物位置
             sprite.setScale(1.8f);//設定人物大小
 
@@ -907,6 +877,7 @@ public class PlayScreenTest implements Screen{
 
     public void atk1(){
         hero.setCurrentAction("Atking1");
+        runTime = 0.0f;
     }
 
 
@@ -924,15 +895,6 @@ public class PlayScreenTest implements Screen{
     public float calJumpY(){
         float tempY = 0.0f;
 
-        //原版
-//        velocity.y -= MaxVelocity * deltaTime*1.45f;
-////	   Clamp velocity (Terminal Velocity)終端速度
-//        if (velocity.y < -MaxVelocity){
-//            velocity.y = -MaxVelocity;
-//        }
-//        position.y = position.y + (velocity.y * deltaTime);
-
-
         float g = -10;
 
         if(v0==0.0f){
@@ -942,15 +904,7 @@ public class PlayScreenTest implements Screen{
        //新版
         velocity.y = v0 + ((g)*deltaTime);
 
-//        if (velocity.y < -MaxVelocity){
-//            velocity.y = -MaxVelocity;
-//        }
-
-        //jumpY
-
         tempY = position.y + (velocity.y * deltaTime);
-
-
 
         if(tempY > beforePosition.y) {//跳躍上升中
             if(tempY>=jumpY+110){//到達頂點

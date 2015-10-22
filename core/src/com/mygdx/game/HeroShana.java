@@ -13,7 +13,7 @@ public class HeroShana extends Hero {
     private static final float FRAME_DURATION = 1.0f / 15.0f;
     private static final float FRAME_DURATION_STAND = 1.0f / 8.0f;//站立動畫的播放速度
     private static final float FRAME_DURATION_RUN = 1.0f / 15.0f;//跑步動畫的播放速度
-    private static final float FRAME_DURATION_ATK1 = 1.0f / 13.0f;//普通攻擊(A模式)的播放速度
+    private static final float FRAME_DURATION_ATK1 = 1.0f / 13.0f;//普通攻擊(A模式)的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_JUMP = 1.0f / 15.0f;//跳躍動畫的播放速度(暫時忽略)
 
     private TextureAtlas hero1Atlas;//人物系列圖檔資源
@@ -158,6 +158,7 @@ public class HeroShana extends Hero {
     }
 
     public void setHero1Frame(TextureRegion hero1Frame) {
+//        System.out.println("hero1Frame.hashCode() = "+hero1Frame.hashCode());
         this.hero1Frame = hero1Frame;
     }
 
