@@ -89,6 +89,7 @@ public class PlayScreenTest implements Screen{
     private Button  btn_right;
     private Button  btn_left;
     private Button  btn_home;
+    private Button  btn_atk1;
 
     private boolean isRightTouchDown = false;//判斷是否持續按住 [向右方向鍵]
     private boolean isLeftTouchDown = false;//判斷是否持續按住 [向左方向鍵]
@@ -112,6 +113,9 @@ public class PlayScreenTest implements Screen{
     boolean touchBossP1 = false;
     boolean touchBossP2 = false;
     boolean hitOnBoss = false;
+    String gameStatus = "Running";//Running:進行中  Sotp:暫停  Win:勝利  Lose:失敗
+
+    boolean isSearchHero = false;
 
     public PlayScreenTest(Game game){
         this.game=game;
@@ -185,6 +189,7 @@ public class PlayScreenTest implements Screen{
         setBtnFire();
         setBtnJump();
         setBtnHome();
+        setBtnAtk1();
 
         //場景加入演員
         stage.addActor(btn_right);
@@ -192,6 +197,7 @@ public class PlayScreenTest implements Screen{
         stage.addActor(btn_fire);
         stage.addActor(btn_jump);
         stage.addActor(btn_home);
+        stage.addActor(btn_atk1);
 
         Gdx.input.setInputProcessor(stage);//將場景加入輸入(觸控)偵測
     }
@@ -287,6 +293,18 @@ public class PlayScreenTest implements Screen{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 openFire();
+            }
+        });
+    }
+
+
+    private void setBtnAtk1(){
+        btn_atk1 = new Button(btnSkin, "firebutton");
+        btn_atk1.setPosition(Gdx.graphics.getWidth()-138, 10);
+        btn_atk1.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                atk1();
             }
         });
     }
@@ -488,79 +506,82 @@ public class PlayScreenTest implements Screen{
         batch.setProjectionMatrix(camera.combined);
         camera.update();
 
+
+        //Running:進行中  Sotp:暫停  Win:勝利  Lose:失敗
+        if(gameStatus.equals("Running")){
 //		Set hero1's Frame & X, Y Positions
-        hero.setHero1Frame(hero.isFacingRight()?hero.getAnimationStandingRight().getKeyFrame(animationTime, true):hero.getAnimationStandingLeft().getKeyFrame(animationTime, true));
+            hero.setHero1Frame(hero.isFacingRight()?hero.getAnimationStandingRight().getKeyFrame(animationTime, true):hero.getAnimationStandingLeft().getKeyFrame(animationTime, true));
 
-        boss.setHero1Frame(boss.isFacingRight()?hero.getAnimationStandingRight().getKeyFrame(animationTime, true):boss.getAnimationStandingLeft().getKeyFrame(animationTime, true));
+            boss.setHero1Frame(boss.isFacingRight()?hero.getAnimationStandingRight().getKeyFrame(animationTime, true):boss.getAnimationStandingLeft().getKeyFrame(animationTime, true));
 
-        if (hero.getCurrentAction().equals("Walking")){
+            if (hero.getCurrentAction().equals("Walking")){
 
-            hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationWalkingRight().getKeyFrame(animationTime, true) : hero.getAnimationWalkingLeft().getKeyFrame(animationTime, true));
+                hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationWalkingRight().getKeyFrame(animationTime, true) : hero.getAnimationWalkingLeft().getKeyFrame(animationTime, true));
 
 //            currentHeroWidth = hero.getHero1Frame().getRegionWidth();
 //            currentHeroHeight = hero.getHero1Frame().getRegionHeight();
 
 //            System.out.println("當前人物 width:"+currentHeroWidth+" height:"+currentHeroHeight);
 
-            collisionLeft = false;
-            collisionRight = false;
-            if (hero.isFacingRight()){
-                collisionRight();//偵測是否碰撞障礙物
-                isTouchBoss(position.x, position.y);
-                if (collisionRight){
-                    velocity.x = 0;
-                } else if(touchBossP1){
-                    velocity.x = 0;
-                } else if(touchBossP2){
-                    velocity.x = 300;
-                } else{
-                    velocity.x = 300;
-                }
-            }
-            if (!hero.isFacingRight()){
-                collisionLeft();
-                isTouchBoss(position.x, position.y);
-                if (collisionLeft){
-                    velocity.x = 0;
-                } else if(touchBossP1){
-                    velocity.x = -300;
-                } else if(touchBossP2){
-                    velocity.x = 0;
-                } else {
-                    velocity.x = -300;
-                }
-            }
-            position.x = position.x + (velocity.x * deltaTime);
-
-            collisionBottom=false;
-            collisionBottom();
-            if (!collisionBottom){
-                hero.setCurrentAction("Jumping");
-                velocity.y=-300;
-            }
-//********************************************************************************
-        }else if (hero.getCurrentAction().equals("Jumping")){
-
-            if (hero.isJumpAndWalk()){
-                if(!isRightSprintJump && !isLeftSprintJump){//原地跳後 才給予方向動力
-                    if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
-                        velocity.x = 550;
-                    }else if(isLeftTouchDown){
-                        velocity.x = -550;
+                collisionLeft = false;
+                collisionRight = false;
+                if (hero.isFacingRight()){
+                    collisionRight();//偵測是否碰撞障礙物
+                    isTouchBoss(position.x, position.y);
+                    if (collisionRight){
+                        velocity.x = 0;
+                    } else if(touchBossP1){
+                        velocity.x = 0;
+                    } else if(touchBossP2){
+                        velocity.x = 300;
+                    } else{
+                        velocity.x = 300;
                     }
                 }
+                if (!hero.isFacingRight()){
+                    collisionLeft();
+                    isTouchBoss(position.x, position.y);
+                    if (collisionLeft){
+                        velocity.x = 0;
+                    } else if(touchBossP1){
+                        velocity.x = -300;
+                    } else if(touchBossP2){
+                        velocity.x = 0;
+                    } else {
+                        velocity.x = -300;
+                    }
+                }
+                position.x = position.x + (velocity.x * deltaTime);
 
-                position.x = position.x + (velocity.x * deltaTime*0.3f);
-            }else{
-                velocity.x = 0;
-            }
+                collisionBottom=false;
+                collisionBottom();
+                if (!collisionBottom){
+                    hero.setCurrentAction("Jumping");
+                    velocity.y=-300;
+                }
+//********************************************************************************
+            }else if (hero.getCurrentAction().equals("Jumping")){
 
-            collisionTop=false;
-            collisionTop();
-            if (collisionTop){
-                velocity.y = -100;
-                hero.setCurrentAction("Jumping");
-            }
+                if (hero.isJumpAndWalk()){
+                    if(!isRightSprintJump && !isLeftSprintJump){//原地跳後 才給予方向動力
+                        if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
+                            velocity.x = 550;
+                        }else if(isLeftTouchDown){
+                            velocity.x = -550;
+                        }
+                    }
+
+                    position.x = position.x + (velocity.x * deltaTime*0.3f);
+                }else{
+                    velocity.x = 0;
+                }
+
+                collisionTop=false;
+                collisionTop();
+                if (collisionTop){
+                    velocity.y = -100;
+                    hero.setCurrentAction("Jumping");
+                }
 
 //            velocity.y -= MaxVelocity * deltaTime*1.45f;
 ////	   Clamp velocity (Terminal Velocity)終端速度
@@ -569,67 +590,141 @@ public class PlayScreenTest implements Screen{
 //            }
 //            position.y = position.y + (velocity.y * deltaTime);
 
-            position.y = calJumpY();
+                position.y = calJumpY();
 
-            if(hero.isFacingRight()){//向右跳躍
-                if(position.y > beforePosition.y){//跳躍上升中
-                    hero.setHero1Frame(hero.getJumpingRightUp());
-                }else{//跳躍下降中
-                    hero.setHero1Frame(hero.getJumpingRightDown());
+                if(hero.isFacingRight()){//向右跳躍
+                    if(position.y > beforePosition.y){//跳躍上升中
+                        hero.setHero1Frame(hero.getJumpingRightUp());
+                    }else{//跳躍下降中
+                        hero.setHero1Frame(hero.getJumpingRightDown());
+                    }
+                }else{//向左跳躍
+                    if(position.y > beforePosition.y){//跳躍上升中
+                        hero.setHero1Frame(hero.getJumpingLeftUp());
+                    }else{//跳躍下降中
+                        hero.setHero1Frame(hero.getJumpingLeftDown());
+                    }
                 }
-            }else{//向左跳躍
-                if(position.y > beforePosition.y){//跳躍上升中
-                    hero.setHero1Frame(hero.getJumpingLeftUp());
-                }else{//跳躍下降中
-                    hero.setHero1Frame(hero.getJumpingLeftDown());
-                }
-            }
 
-            collisionBottom=false;
-            collisionBottom();
-            if (collisionBottom){//已著地
-                velocity.y = 0;
-                hero.setCurrentAction("Standing");
-                if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
-                    hero.setCurrentAction("Walking");
+                collisionBottom=false;
+                collisionBottom();
+                if (collisionBottom){//已著地
+                    velocity.y = 0;
+                    hero.setCurrentAction("Standing");
+                    if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                        hero.setCurrentAction("Walking");
+                    }
+                }else{//尚未著地
+                    hero.setCurrentAction("Jumping");
+                    if(isLeftTouchDown || isRightTouchDown){//當在空中按住方向鍵時,isJumpAndWalk設為true
+                        hero.setIsJumpAndWalk(true);
+                    }else{
+                        hero.setIsJumpAndWalk(false);
+                    }
                 }
-            }else{//尚未著地
-                hero.setCurrentAction("Jumping");
-                if(isLeftTouchDown || isRightTouchDown){//當在空中按住方向鍵時,isJumpAndWalk設為true
-                    hero.setIsJumpAndWalk(true);
-                }else{
-                    hero.setIsJumpAndWalk(false);
+            }else if (hero.getCurrentAction().equals("Atking1")){
+
+                hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttaRight().getKeyFrame(animationTime, true) : hero.getAnimationAttaLeft().getKeyFrame(animationTime, true));
+
+
+//                if(hero.getAnimationAttaRight().isAnimationFinished(animationTime)){
+//                    hero.setCurrentAction("Standing");
+//                }
+
+//                collisionLeft = false;
+//                collisionRight = false;
+//                if (hero.isFacingRight()){
+//                    collisionRight();//偵測是否碰撞障礙物
+//                    isTouchBoss(position.x, position.y);
+//                    if (collisionRight){
+//                        velocity.x = 0;
+//                    } else if(touchBossP1){
+//                        velocity.x = 0;
+//                    } else if(touchBossP2){
+//                        velocity.x = 300;
+//                    } else{
+//                        velocity.x = 300;
+//                    }
+//                }
+//                if (!hero.isFacingRight()){
+//                    collisionLeft();
+//                    isTouchBoss(position.x, position.y);
+//                    if (collisionLeft){
+//                        velocity.x = 0;
+//                    } else if(touchBossP1){
+//                        velocity.x = -300;
+//                    } else if(touchBossP2){
+//                        velocity.x = 0;
+//                    } else {
+//                        velocity.x = -300;
+//                    }
+//                }
+//                position.x = position.x + (velocity.x * deltaTime);
+
+                collisionBottom=false;
+                collisionBottom();
+                if (!collisionBottom){
+                    hero.setCurrentAction("Jumping");
+                    velocity.y=-300;
                 }
+//********************************************************************************
             }
-        }
 
 //********************************************************************************
 
 
 //	    Store Spritesheet to sprite
-        if(sprite!=null){
-            sprite.setRegion(hero.getHero1Frame());
-            sprite.setSize(hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
-            sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
-        }else{
-            sprite = new Sprite(hero.getHero1Frame());
-        }
-
-        if(spriteBoss!=null){
-            spriteBoss.setRegion(boss.getHero1Frame());
-            spriteBoss.setSize(boss.getHero1Frame().getRegionWidth(), boss.getHero1Frame().getRegionHeight());
-            spriteBoss.setOrigin(spriteBoss.getWidth() / 2, spriteBoss.getHeight() / 2);
-        }else{
-            spriteBoss = new Sprite(boss.getHero1Frame());
-        }
+            if(sprite!=null){
+                sprite.setRegion(hero.getHero1Frame());
+                sprite.setSize(hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
+                sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+            }else{
+                sprite = new Sprite(hero.getHero1Frame());
+            }
 
 
-        //人物著地後繪圖位置修正量
-        if(collisionBottom){
-            deltay = 22.0f;
-        }else{
-            deltay = 0.0f;
-        }
+
+
+            //將魔王的方向面對英雄
+            if(position.x<=bossPosition.x){
+                boss.setIsFacingRight(false);
+            }else{
+                boss.setIsFacingRight(true);
+            }
+
+            //step1. 亂數選擇魔王的行為
+            if(!isSearchHero){
+
+            }
+
+            //step2. 根據魔王的行為進行設定相關動作
+            if(boss.getCurrentAction().equals("Standing")){//發呆
+
+            }else if(boss.getCurrentAction().equals("Running")){//追蹤玩家
+
+            }else if(boss.getCurrentAction().equals("Jump")){//跳躍
+
+            }
+
+
+
+
+
+            if(spriteBoss!=null){
+                spriteBoss.setRegion(boss.getHero1Frame());
+                spriteBoss.setSize(boss.getHero1Frame().getRegionWidth(), boss.getHero1Frame().getRegionHeight());
+                spriteBoss.setOrigin(spriteBoss.getWidth() / 2, spriteBoss.getHeight() / 2);
+            }else{
+                spriteBoss = new Sprite(boss.getHero1Frame());
+            }
+
+
+            //人物著地後繪圖位置修正量
+            if(collisionBottom){
+                deltay = 22.0f;
+            }else{
+                deltay = 0.0f;
+            }
 
 //        if(startGame){
 //            position.y = 22.0f;
@@ -641,74 +736,88 @@ public class PlayScreenTest implements Screen{
 
 
 //        System.out.println("sprite.position.y = (position :" + position.y+" + deltay :"+deltay+") = "+position.y+deltay);
-        sprite.setPosition(position.x, position.y + deltay);//設定人物位置
-        sprite.setScale(1.8f);//設定人物大小
+            sprite.setPosition(position.x, position.y + deltay);//設定人物位置
+            sprite.setScale(1.8f);//設定人物大小
 
-        spriteBoss.setPosition(bossPosition.x, bossPosition.y);//設定魔王位置
-        spriteBoss.setScale(1.8f);//設定魔王大小
+            spriteBoss.setPosition(bossPosition.x, bossPosition.y);//設定魔王位置
+            spriteBoss.setScale(1.8f);//設定魔王大小
 
-        tiledMapRenderer.setView(camera);
+            tiledMapRenderer.setView(camera);
 
-        //調整鏡頭位置
-        if(position.x>=screenWidth/2 && position.x<=(stageWidth-(screenWidth/2))){//中間區域
-            //跟隨英雄
-            camera.position.x = position.x;
-        }else if(position.x<screenWidth/2){//最左邊
-            camera.position.x = screenWidth/2;
-        }else if(position.x>(stageWidth-(screenWidth/2))){//最右邊
-            camera.position.x = stageWidth-(screenWidth/2);
-        }
+            //調整鏡頭位置
+            if(position.x>=screenWidth/2 && position.x<=(stageWidth-(screenWidth/2))){//中間區域
+                //跟隨英雄
+                camera.position.x = position.x;
+            }else if(position.x<screenWidth/2){//最左邊
+                camera.position.x = screenWidth/2;
+            }else if(position.x>(stageWidth-(screenWidth/2))){//最右邊
+                camera.position.x = stageWidth-(screenWidth/2);
+            }
 
-        tiledMapRenderer.render(background);
-        tiledMapRenderer.render(foreground);
+            tiledMapRenderer.render(background);
+            tiledMapRenderer.render(foreground);
 //        tiledMapRenderer.render(upperlayer);
 //	    Display on Screen
-        batch.begin();
-        sprite.draw(batch);
-        spriteBoss.draw(batch);
+            batch.begin();
+            sprite.draw(batch);
+            spriteBoss.draw(batch);
 
-        //********************************************************************************
-        int bulletCounter = 0;
-        while (bulletCounter < bulletManager.size())
-        {
-            currentBullet = bulletManager.get(bulletCounter);
-            currentBullet.update();
+            //********************************************************************************
+            int bulletCounter = 0;
+            while (bulletCounter < bulletManager.size())
+            {
+                currentBullet = bulletManager.get(bulletCounter);
+                currentBullet.update();
 
-            //判斷是否擊中目標
-            isHitBoss(currentBullet.TempbulletPosition.x, currentBullet.TempbulletPosition.y, bulletRight.getWidth(), bulletRight.getHeight());
-            if(hitOnBoss){//擊中
-                BOSS_SCORE = BOSS_SCORE-1;
-                bulletManager.remove(bulletCounter);
-                if(bulletManager.size() > 0){
-                    bulletCounter--;
-                }
-            }
-
-            if(currentBullet.TempbulletPosition.x> -100 &&
-                    currentBullet.TempbulletPosition.x < (screenWidth*2 + 100)){
-
-                if (hero.isFacingRight()){
-                    batch.draw(bulletRight, currentBullet.TempbulletPosition.x+32,
-                            currentBullet.TempbulletPosition.y+16);//deltay
-                }
-                else
-                    batch.draw(bulletLeft, currentBullet.TempbulletPosition.x,
-                            currentBullet.TempbulletPosition.y+16);//deltay
-            }
-            else{
-                bulletManager.remove(bulletCounter);
-                if(bulletManager.size() > 0){
-                    bulletCounter--;
+                //判斷是否擊中目標
+                isHitBoss(currentBullet.TempbulletPosition.x, currentBullet.TempbulletPosition.y, bulletRight.getWidth(), bulletRight.getHeight());
+                if(hitOnBoss){//擊中
+                    BOSS_SCORE = BOSS_SCORE-1;
+                    bulletManager.remove(bulletCounter);
+                    if(bulletManager.size() > 0){
+                        bulletCounter--;
+                    }
                 }
 
+                if(currentBullet.TempbulletPosition.x> -100 &&
+                        currentBullet.TempbulletPosition.x < (screenWidth*2 + 100)){
+
+                    if (hero.isFacingRight()){
+                        batch.draw(bulletRight, currentBullet.TempbulletPosition.x+32,
+                                currentBullet.TempbulletPosition.y+16);//deltay
+                    }
+                    else
+                        batch.draw(bulletLeft, currentBullet.TempbulletPosition.x,
+                                currentBullet.TempbulletPosition.y+16);//deltay
+                }
+                else{
+                    bulletManager.remove(bulletCounter);
+                    if(bulletManager.size() > 0){
+                        bulletCounter--;
+                    }
+
+                }
+                bulletCounter++;
             }
-            bulletCounter++;
-        }
 
 
 //********************************************************************************
-        batch.end();
+            batch.end();
 
+            //設定英雄前一個位置
+            beforePosition.x = position.x;
+            beforePosition.y = position.y;
+
+
+
+
+        }else if(gameStatus.equals("Sotp")){
+
+        }else if(gameStatus.equals("Win")){
+
+        }else if(gameStatus.equals("Lose")){
+
+        }
 
 //	    顯示分數or生命值
         HUDBatch.begin();
@@ -721,19 +830,6 @@ public class PlayScreenTest implements Screen{
         stage.act();
         stage.draw();
         controlBatch.end();
-
-        //設定英雄前一個位置
-        beforePosition.x = position.x;
-        beforePosition.y = position.y;
-
-
-        //將魔王的方向面對英雄
-        if(position.x<=bossPosition.x){
-            boss.setIsFacingRight(false);
-        }else{
-            boss.setIsFacingRight(true);
-        }
-
     }
 
     @Override
@@ -806,6 +902,11 @@ public class PlayScreenTest implements Screen{
         }
 
         jumpY = position.y;
+    }
+
+
+    public void atk1(){
+        hero.setCurrentAction("Atking1");
     }
 
 
