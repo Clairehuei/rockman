@@ -402,6 +402,31 @@ public class PlayScreenTest implements Screen{
     }
 
 
+    /**
+     * 判斷普通攻擊是否攻擊到魔王
+     * @param x
+     * @param y
+     * @return
+     */
+    private	boolean isHitBoss2(float x, float y, float w, float h){
+//        System.out.println("x = "+x+" w = "+w+" b.x = "+bossPosition.x+" b.w = "+bossPosition.x+boss.getHero1Frame().getRegionWidth());
+        if(x+w>=bossPosition.x-10 && x<=bossPosition.x){
+            hitOnBoss = true;
+//            System.out.println("P1 砍中");
+            return true;
+        }else if(x-10<=bossPosition.x+boss.getHero1Frame().getRegionWidth() && x>bossPosition.x){
+            hitOnBoss = true;
+//            System.out.println("P2 砍中");
+            return true;
+        }else{
+            hitOnBoss = false;
+//            System.out.println("未擊中");
+        }
+
+        return false;
+    }
+
+
     //********************************************************************************
 //  Left Collision Detection
     public	boolean collisionLeft() {
@@ -516,7 +541,7 @@ public class PlayScreenTest implements Screen{
             boss.setHero1Frame(boss.isFacingRight()?hero.getAnimationStandingRight().getKeyFrame(animationTime, true):boss.getAnimationStandingLeft().getKeyFrame(animationTime, true));
 
             if (hero.getCurrentAction().equals("Walking")){
-
+                runTime = 0.0f;
                 hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationWalkingRight().getKeyFrame(animationTime, true) : hero.getAnimationWalkingLeft().getKeyFrame(animationTime, true));
 
                 collisionLeft = false;
@@ -557,7 +582,7 @@ public class PlayScreenTest implements Screen{
                 }
 //********************************************************************************
             }else if (hero.getCurrentAction().equals("Jumping")){
-
+                runTime = 0.0f;
                 if (hero.isJumpAndWalk()){
                     if(!isRightSprintJump && !isLeftSprintJump){//原地跳後 才給予方向動力
                         if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
@@ -623,6 +648,7 @@ public class PlayScreenTest implements Screen{
             }else if (hero.getCurrentAction().equals("Atking1")){
                 runTime+=Gdx.graphics.getDeltaTime();
                 hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttaRight().getKeyFrame(animationTime, true) : hero.getAnimationAttaLeft().getKeyFrame(animationTime, true));
+                hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttaRight() : hero.getAnimationAttaLeft());
 
 //                //動畫中,每一動作的持續時間
 //                System.out.println("hero.getAnimationAttaRight().getFrameDuration() = " + hero.getAnimationAttaRight().getFrameDuration());
@@ -630,12 +656,14 @@ public class PlayScreenTest implements Screen{
 //                //此動畫的總時間 = (每一格的持續時間 X 總動畫格數)
 //                System.out.println("hero.getAnimationAttaRight().getAnimationDuration() = "+hero.getAnimationAttaRight().getAnimationDuration());
 
-                if(hero.getAnimationAttaRight().isAnimationFinished(runTime)){
+                if(hero.getCurrentAnimation().isAnimationFinished(runTime)){
 
                     if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
                         hero.setCurrentAction("Walking");
+                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
                     }else{
                         hero.setCurrentAction("Standing");
+                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
                     }
 
                     runTime = 0.0f;
@@ -647,6 +675,13 @@ public class PlayScreenTest implements Screen{
                     hero.setCurrentAction("Jumping");
                     velocity.y=-300;
                 }
+
+                //判斷是否擊中目標
+                isHitBoss2(position.x, position.y, hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
+                if (hitOnBoss){//擊中
+                    BOSS_SCORE = BOSS_SCORE-1;
+                }
+
 //********************************************************************************
             }
 
@@ -876,8 +911,9 @@ public class PlayScreenTest implements Screen{
 
 
     public void atk1(){
-        hero.setCurrentAction("Atking1");
-        runTime = 0.0f;
+        if(runTime==0.0f){//防止快速連點
+            hero.setCurrentAction("Atking1");
+        }
     }
 
 

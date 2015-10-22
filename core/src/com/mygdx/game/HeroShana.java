@@ -31,6 +31,8 @@ public class HeroShana extends Hero {
     private Animation animationAttaRight;//普通攻擊(A模式)(右)動畫
     private Animation animationAttaLeft;//普通攻擊(A模式)(左)動畫
 
+    private Animation currentAnimation;//英雄當前執行的動畫
+
     private TextureRegion jumpingLeftUp;//左前跳躍(上升中)
     private TextureRegion jumpingLeftDown;//左前跳躍(下降中)
     private TextureRegion jumpingRightUp;//右前跳躍(上升中)
@@ -256,5 +258,13 @@ public class HeroShana extends Hero {
 
     public void setAnimationAttaLeft(Animation animationAttaLeft) {
         this.animationAttaLeft = animationAttaLeft;
+    }
+
+    public Animation getCurrentAnimation() {
+        return currentAnimation;
+    }
+
+    public void setCurrentAnimation(Animation currentAnimation) {
+        this.currentAnimation = currentAnimation;
     }
 }
