@@ -40,7 +40,9 @@ public class PlayScreenTest implements Screen{
     private Vector2 velocity = new Vector2();//給予英雄的方向速度
     private float MaxVelocity = 800f;//終端速度
     private float deltaTime = 0.0f;
-    private float runTime = 0.0f;//英雄普通攻擊A模式動畫累積時間
+    private float atkaRunTime = 0.0f;//英雄普通攻擊A模式動畫累積時間
+    private float atkbRunTime = 0.0f;//英雄普通攻擊B模式動畫累積時間
+    private float atkcRunTime = 0.0f;//英雄普通攻擊C模式動畫累積時間
     private float bossHurtRunTime = 0.0f;//魔王受傷動畫累積時間
     private float heroResultRunTime = 0.0f;//英雄戰鬥結果動畫累積時間
     private float bossResultRunTime = 0.0f;//魔王戰鬥結果動畫累積時間
@@ -108,7 +110,7 @@ public class PlayScreenTest implements Screen{
     HeroShana hero;//英雄人物
     BossKing1 boss;//魔王
     private int HERO_SCORE = 100;
-    private int BOSS_SCORE = 100;
+    private int BOSS_SCORE = 1000;
 
     private float currentHeroWidth = 0.0f;
     private float currentHeroHeight = 0.0f;
@@ -123,6 +125,9 @@ public class PlayScreenTest implements Screen{
 
     boolean isSearchHero = false;
     int clickNumber = 0;
+    boolean canAtkLv1 = false;
+    boolean canAtkLv2 = false;
+    boolean canAtkLv3 = false;
 
     public PlayScreenTest(Game game){
         this.game=game;
@@ -313,6 +318,31 @@ public class PlayScreenTest implements Screen{
             public void clicked(InputEvent event, float x, float y) {
                 atk1();
                 clickNumber = getTapCount();
+                if(clickNumber==1){
+                    canAtkLv1 = true;
+                }else if(clickNumber==2){
+                    canAtkLv2 = true;
+                }else if(clickNumber==3){
+                    canAtkLv3 = true;
+                }else{
+                    if(canAtkLv3){//有第三階段攻擊,尚未結束
+                        if(canAtkLv2){//有第二階段攻擊,尚未結束
+                            if(canAtkLv1){//有第一階段攻擊,尚未結束
+                                canAtkLv2 = true;
+                            }else{//無第1階段,表示正在進行第2階段攻擊
+                                canAtkLv3 = true;
+                            }
+                        }else{//無第2階段,表示正在進行第三階段攻擊
+                            canAtkLv1 = true;
+                        }
+                    }else if(canAtkLv2){//有第二階段攻擊,尚未結束
+                        canAtkLv3 = true;
+                    }else if(canAtkLv1){//有第一階段攻擊,尚未結束
+                        canAtkLv2 = true;
+                    }else{//其餘情形列為目前無攻擊狀態
+                        canAtkLv1 = true;
+                    }
+                }
 //                System.out.println("clickNumber = "+clickNumber);
             }
         });
@@ -549,7 +579,9 @@ public class PlayScreenTest implements Screen{
             boss.setHero1Frame(boss.isFacingRight()?hero.getAnimationStandingRight().getKeyFrame(animationTime, true):boss.getAnimationStandingLeft().getKeyFrame(animationTime, true));
 
             if (hero.getCurrentAction().equals("Walking")){
-                runTime = 0.0f;
+                atkaRunTime = 0.0f;
+                atkbRunTime = 0.0f;
+                atkcRunTime = 0.0f;
                 hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationWalkingRight().getKeyFrame(animationTime, true) : hero.getAnimationWalkingLeft().getKeyFrame(animationTime, true));
 
                 collisionLeft = false;
@@ -590,7 +622,9 @@ public class PlayScreenTest implements Screen{
                 }
 //********************************************************************************
             }else if (hero.getCurrentAction().equals("Jumping")){
-                runTime = 0.0f;
+                atkaRunTime = 0.0f;
+                atkbRunTime = 0.0f;
+                atkcRunTime = 0.0f;
                 if (hero.isJumpAndWalk()){
                     if(!isRightSprintJump && !isLeftSprintJump){//原地跳後 才給予方向動力
                         if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
@@ -652,9 +686,86 @@ public class PlayScreenTest implements Screen{
                     }
                 }
             }else if (hero.getCurrentAction().equals("Atking1")){
-                runTime+=Gdx.graphics.getDeltaTime();
-                hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttaRight().getKeyFrame(animationTime, true) : hero.getAnimationAttaLeft().getKeyFrame(animationTime, true));
-                hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttaRight() : hero.getAnimationAttaLeft());
+//                System.out.println("canAtkLv1 = "+canAtkLv1+"   canAtkLv2 = "+canAtkLv2+"    canAtkLv3 = "+canAtkLv3);
+
+                if(canAtkLv3){
+                    if(!canAtkLv2){
+                        atkcRunTime+=Gdx.graphics.getDeltaTime();
+                        hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttcRight().getKeyFrame(animationTime, true) : hero.getAnimationAttcLeft().getKeyFrame(animationTime, true));
+                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttcRight() : hero.getAnimationAttcLeft());
+
+                        if(hero.isFacingRight()){
+                            position.x = position.x+1;
+                        }else{
+                            position.x = position.x-1;
+                        }
+
+                        if(hero.getCurrentAnimation().isAnimationFinished(atkcRunTime)) {//當前第三階段攻擊動畫結束
+                            canAtkLv3 = false;
+                            if(!canAtkLv1){//停止攻擊(無新一輪的攻擊)
+                                if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                                    hero.setCurrentAction("Walking");
+                                    hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
+                                }else{
+                                    hero.setCurrentAction("Standing");
+                                    hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
+                                }
+                            }
+
+                            atkcRunTime = 0.0f;
+                        }
+                    }
+                }
+
+                if(canAtkLv2){
+                    if(!canAtkLv1){
+                        atkbRunTime+=Gdx.graphics.getDeltaTime();
+                        hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttbRight().getKeyFrame(animationTime, true) : hero.getAnimationAttbLeft().getKeyFrame(animationTime, true));
+                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttbRight() : hero.getAnimationAttbLeft());
+                        if(hero.isFacingRight()){
+                            position.x = position.x+1;
+                        }else{
+                            position.x = position.x-1;
+                        }
+                        if(hero.getCurrentAnimation().isAnimationFinished(atkbRunTime)){//當前第二階段攻擊動畫結束
+                            if(canAtkLv3){//有第三階段攻擊
+                                canAtkLv2 = false;
+                            }else{//停止攻擊
+                                if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                                    hero.setCurrentAction("Walking");
+                                    hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
+                                }else{
+                                    hero.setCurrentAction("Standing");
+                                    hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
+                                }
+                            }
+
+                            atkbRunTime = 0.0f;
+                        }
+                    }
+                }
+
+                if(canAtkLv1){
+                    atkaRunTime+=Gdx.graphics.getDeltaTime();
+                    hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttaRight().getKeyFrame(animationTime, true) : hero.getAnimationAttaLeft().getKeyFrame(animationTime, true));
+                    hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttaRight() : hero.getAnimationAttaLeft());
+
+                    if(hero.getCurrentAnimation().isAnimationFinished(atkaRunTime)){//當前第一階段攻擊動畫結束
+                        if(canAtkLv2){//有第二階段攻擊
+                            canAtkLv1 = false;
+                        }else{//停止攻擊
+                            if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                                hero.setCurrentAction("Walking");
+                                hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
+                            }else{
+                                hero.setCurrentAction("Standing");
+                                hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
+                            }
+                        }
+
+                        atkaRunTime = 0.0f;
+                    }
+                }
 
 //                //動畫中,每一動作的持續時間
 //                System.out.println("hero.getAnimationAttaRight().getFrameDuration() = " + hero.getAnimationAttaRight().getFrameDuration());
@@ -663,18 +774,22 @@ public class PlayScreenTest implements Screen{
 //                System.out.println("hero.getAnimationAttaRight().getAnimationDuration() = "+hero.getAnimationAttaRight().getAnimationDuration());
 //                System.out.println("runTime = "+runTime);
 //                System.out.println("FrameIndex = "+hero.getAnimationAttaRight().getKeyFrameIndex(runTime));
-                if(hero.getCurrentAnimation().isAnimationFinished(runTime)){
 
-                    if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
-                        hero.setCurrentAction("Walking");
-                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
-                    }else{
-                        hero.setCurrentAction("Standing");
-                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
-                    }
+//                if(hero.getCurrentAnimation().isAnimationFinished(atkaRunTime)){
+//
+//                    if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+//                        hero.setCurrentAction("Walking");
+//                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
+//                    }else{
+//                        hero.setCurrentAction("Standing");
+//                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
+//                    }
+//
+//                    atkaRunTime = 0.0f;
+//                }
 
-                    runTime = 0.0f;
-                }
+
+
 
                 collisionBottom=false;
                 collisionBottom();
@@ -687,7 +802,7 @@ public class PlayScreenTest implements Screen{
                 isHitBoss2(position.x, position.y, hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
                 if (hitOnBoss){//擊中
                     boss.setCurrentAction("Hurt");
-                    BOSS_SCORE = BOSS_SCORE-5;
+                    BOSS_SCORE = BOSS_SCORE-1;
                 }
 
 //********************************************************************************
@@ -854,6 +969,7 @@ public class PlayScreenTest implements Screen{
             }
 
 
+            System.out.println("current action = "+hero.getCurrentAction());
 
 
         }else if(gameStatus.equals("Sotp")){
@@ -1112,9 +1228,7 @@ public class PlayScreenTest implements Screen{
 
 
     public void atk1(){
-        if(runTime==0.0f){//防止快速連點
-            hero.setCurrentAction("Atking1");
-        }
+        hero.setCurrentAction("Atking1");
     }
 
 

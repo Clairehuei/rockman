@@ -18,6 +18,8 @@ public class HeroShana extends Hero {
     private static final float FRAME_DURATION_LOSE = 1.0f / 4.5f;//死亡動畫的播放速度
     private static final float FRAME_DURATION_LOSEKEEP = 1.0f / 2.5f;//死亡持續姿勢動畫的播放速度
     private static final float FRAME_DURATION_ATK1 = 1.0f / 14.0f;//普通攻擊(A模式)的播放速度 = 每一格動作的播放間隔時間
+    private static final float FRAME_DURATION_ATK2 = 1.0f / 14.0f;//普通攻擊(B模式)的播放速度 = 每一格動作的播放間隔時間
+    private static final float FRAME_DURATION_ATK3 = 1.0f / 14.0f;//普通攻擊(C模式)的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_HURT = 1.0f / 15.0f;//受傷的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_JUMP = 1.0f / 15.0f;//跳躍動畫的播放速度(暫時忽略)
 
@@ -35,6 +37,10 @@ public class HeroShana extends Hero {
     private Animation animationWalkingRight;//跑步(右)動畫
     private Animation animationAttaRight;//普通攻擊(A模式)(右)動畫
     private Animation animationAttaLeft;//普通攻擊(A模式)(左)動畫
+    private Animation animationAttbRight;//普通攻擊(B模式)(右)動畫
+    private Animation animationAttbLeft;//普通攻擊(B模式)(左)動畫
+    private Animation animationAttcRight;//普通攻擊(C模式)(右)動畫
+    private Animation animationAttcLeft;//普通攻擊(C模式)(左)動畫
     private Animation animationHurtLeft;//受傷(左)動畫
     private Animation animationHurtRight;//受傷(右)動畫
     private Animation animationWin;//勝利動畫
@@ -103,6 +109,29 @@ public class HeroShana extends Hero {
         frameAtkaRight[7] = hero1Atlas.findRegion("RightATTA8");
         animationAttaRight = new Animation(FRAME_DURATION_ATK1, frameAtkaRight);
 
+        //右邊普通攻擊(B模式)
+        TextureRegion[] frameAtkbRight = new TextureRegion[8];
+        frameAtkbRight[0] = hero1Atlas.findRegion("RightATTB1");
+        frameAtkbRight[1] = hero1Atlas.findRegion("RightATTB2");
+        frameAtkbRight[2] = hero1Atlas.findRegion("RightATTB3");
+        frameAtkbRight[3] = hero1Atlas.findRegion("RightATTB4");
+        frameAtkbRight[4] = hero1Atlas.findRegion("RightATTB5");
+        frameAtkbRight[5] = hero1Atlas.findRegion("RightATTB6");
+        frameAtkbRight[6] = hero1Atlas.findRegion("RightATTB7");
+        frameAtkbRight[7] = hero1Atlas.findRegion("RightATTB8");
+        animationAttbRight = new Animation(FRAME_DURATION_ATK2, frameAtkbRight);
+
+        //右邊普通攻擊(C模式)
+        TextureRegion[] frameAtkcRight = new TextureRegion[7];
+        frameAtkcRight[0] = hero1Atlas.findRegion("RightATTC1");
+        frameAtkcRight[1] = hero1Atlas.findRegion("RightATTC2");
+        frameAtkcRight[2] = hero1Atlas.findRegion("RightATTC3");
+        frameAtkcRight[3] = hero1Atlas.findRegion("RightATTC4");
+        frameAtkcRight[4] = hero1Atlas.findRegion("RightATTC5");
+        frameAtkcRight[5] = hero1Atlas.findRegion("RightATTC6");
+        frameAtkcRight[6] = hero1Atlas.findRegion("RightATTC7");
+        animationAttcRight = new Animation(FRAME_DURATION_ATK3, frameAtkcRight);
+
         //右邊受傷
         TextureRegion[] frameHurtRight = new TextureRegion[3];
         frameHurtRight[0] = hero1Atlas.findRegion("HurtRight");
@@ -163,6 +192,29 @@ public class HeroShana extends Hero {
         frameAtkaLeft[6] = hero1Atlas.findRegion("LeftATTA7");
         frameAtkaLeft[7] = hero1Atlas.findRegion("LeftATTA8");
         animationAttaLeft = new Animation(FRAME_DURATION_ATK1, frameAtkaLeft);
+
+        //左邊普通攻擊(B模式)
+        TextureRegion[] frameAtkbLeft = new TextureRegion[8];
+        frameAtkbLeft[0] = hero1Atlas.findRegion("LeftATTB1");
+        frameAtkbLeft[1] = hero1Atlas.findRegion("LeftATTB2");
+        frameAtkbLeft[2] = hero1Atlas.findRegion("LeftATTB3");
+        frameAtkbLeft[3] = hero1Atlas.findRegion("LeftATTB4");
+        frameAtkbLeft[4] = hero1Atlas.findRegion("LeftATTB5");
+        frameAtkbLeft[5] = hero1Atlas.findRegion("LeftATTB6");
+        frameAtkbLeft[6] = hero1Atlas.findRegion("LeftATTB7");
+        frameAtkbLeft[7] = hero1Atlas.findRegion("LeftATTB8");
+        animationAttbLeft = new Animation(FRAME_DURATION_ATK2, frameAtkbLeft);
+
+        //左邊普通攻擊(C模式)
+        TextureRegion[] frameAtkcLeft = new TextureRegion[7];
+        frameAtkcLeft[0] = hero1Atlas.findRegion("LeftATTC1");
+        frameAtkcLeft[1] = hero1Atlas.findRegion("LeftATTC2");
+        frameAtkcLeft[2] = hero1Atlas.findRegion("LeftATTC3");
+        frameAtkcLeft[3] = hero1Atlas.findRegion("LeftATTC4");
+        frameAtkcLeft[4] = hero1Atlas.findRegion("LeftATTC5");
+        frameAtkcLeft[5] = hero1Atlas.findRegion("LeftATTC6");
+        frameAtkcLeft[6] = hero1Atlas.findRegion("LeftATTC7");
+        animationAttcLeft = new Animation(FRAME_DURATION_ATK3, frameAtkcLeft);
 
         //左邊受傷
         TextureRegion[] frameHurtLeft = new TextureRegion[3];
@@ -406,5 +458,37 @@ public class HeroShana extends Hero {
 
     public void setAnimationLoseKeepLeft(Animation animationLoseKeepLeft) {
         this.animationLoseKeepLeft = animationLoseKeepLeft;
+    }
+
+    public Animation getAnimationAttbRight() {
+        return animationAttbRight;
+    }
+
+    public void setAnimationAttbRight(Animation animationAttbRight) {
+        this.animationAttbRight = animationAttbRight;
+    }
+
+    public Animation getAnimationAttbLeft() {
+        return animationAttbLeft;
+    }
+
+    public void setAnimationAttbLeft(Animation animationAttbLeft) {
+        this.animationAttbLeft = animationAttbLeft;
+    }
+
+    public Animation getAnimationAttcRight() {
+        return animationAttcRight;
+    }
+
+    public void setAnimationAttcRight(Animation animationAttcRight) {
+        this.animationAttcRight = animationAttcRight;
+    }
+
+    public Animation getAnimationAttcLeft() {
+        return animationAttcLeft;
+    }
+
+    public void setAnimationAttcLeft(Animation animationAttcLeft) {
+        this.animationAttcLeft = animationAttcLeft;
     }
 }
