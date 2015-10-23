@@ -40,7 +40,10 @@ public class PlayScreenTest implements Screen{
     private Vector2 velocity = new Vector2();//給予英雄的方向速度
     private float MaxVelocity = 800f;//終端速度
     private float deltaTime = 0.0f;
-    private float runTime = 0.0f;
+    private float runTime = 0.0f;//英雄普通攻擊A模式動畫累積時間
+    private float bossHurtRunTime = 0.0f;//魔王受傷動畫累積時間
+    private float heroResultRunTime = 0.0f;//英雄戰鬥結果動畫累積時間
+    private float bossResultRunTime = 0.0f;//魔王戰鬥結果動畫累積時間
     private float animationTime = 0.0f;
     private  float screenWidth;
     private  float screenHeight;
@@ -68,6 +71,8 @@ public class PlayScreenTest implements Screen{
     private BitmapFont font2;
     private  float jumpY = 0.0f;
     private  float v0 = 300.0f;
+    private boolean heroResultKeep = false;
+    private boolean bossResultKeep = false;
 
 
     BackgroundSound bgSound1;//背景音樂
@@ -117,6 +122,7 @@ public class PlayScreenTest implements Screen{
     String gameStatus = "Running";//Running:進行中  Sotp:暫停  Win:勝利  Lose:失敗
 
     boolean isSearchHero = false;
+    int clickNumber = 0;
 
     public PlayScreenTest(Game game){
         this.game=game;
@@ -306,6 +312,8 @@ public class PlayScreenTest implements Screen{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 atk1();
+                clickNumber = getTapCount();
+//                System.out.println("clickNumber = "+clickNumber);
             }
         });
     }
@@ -616,10 +624,8 @@ public class PlayScreenTest implements Screen{
                 if(hero.isFacingRight()){//向右跳躍
                     if(position.y > beforePosition.y){//跳躍上升中
                         hero.setHero1Frame(hero.getJumpingRightUp());
-                        System.out.println("[向右跳躍]--[跳躍上升中]");
                     }else{//跳躍下降中
                         hero.setHero1Frame(hero.getJumpingRightDown());
-                        System.out.println("[向右跳躍]--[跳躍下降中]");
                     }
                 }else{//向左跳躍
                     if(position.y > beforePosition.y){//跳躍上升中
@@ -655,7 +661,8 @@ public class PlayScreenTest implements Screen{
 //
 //                //此動畫的總時間 = (每一格的持續時間 X 總動畫格數)
 //                System.out.println("hero.getAnimationAttaRight().getAnimationDuration() = "+hero.getAnimationAttaRight().getAnimationDuration());
-
+//                System.out.println("runTime = "+runTime);
+//                System.out.println("FrameIndex = "+hero.getAnimationAttaRight().getKeyFrameIndex(runTime));
                 if(hero.getCurrentAnimation().isAnimationFinished(runTime)){
 
                     if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
@@ -679,7 +686,8 @@ public class PlayScreenTest implements Screen{
                 //判斷是否擊中目標
                 isHitBoss2(position.x, position.y, hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
                 if (hitOnBoss){//擊中
-                    BOSS_SCORE = BOSS_SCORE-1;
+                    boss.setCurrentAction("Hurt");
+                    BOSS_SCORE = BOSS_SCORE-5;
                 }
 
 //********************************************************************************
@@ -700,12 +708,37 @@ public class PlayScreenTest implements Screen{
 
 
 
-//            //將魔王的方向面對英雄
-//            if(position.x<=bossPosition.x){
-//                boss.setIsFacingRight(false);
-//            }else{
-//                boss.setIsFacingRight(true);
-//            }
+            //將魔王的方向面對英雄
+            if(position.x<=bossPosition.x){
+                boss.setIsFacingRight(false);
+            }else{
+                boss.setIsFacingRight(true);
+            }
+
+
+
+            if(boss.getCurrentAction().equals("Standing")){
+                boss.setHero1Frame(boss.isFacingRight()?hero.getAnimationStandingRight().getKeyFrame(animationTime, true):boss.getAnimationStandingLeft().getKeyFrame(animationTime, true));
+            } else if(boss.getCurrentAction().equals("Hurt")){
+                bossHurtRunTime+=Gdx.graphics.getDeltaTime();
+                boss.setHero1Frame(boss.isFacingRight() ? boss.getAnimationHurtRight().getKeyFrame(animationTime, true) : boss.getAnimationHurtLeft().getKeyFrame(animationTime, true));
+                boss.setCurrentAnimation(boss.isFacingRight() ? boss.getAnimationHurtRight() : boss.getAnimationHurtLeft());
+
+                if(boss.isFacingRight()){
+                    bossPosition.x = bossPosition.x-1;
+                }else{
+                    bossPosition.x = bossPosition.x+1;
+                }
+
+
+                if(boss.getCurrentAnimation().isAnimationFinished(bossHurtRunTime)){
+
+                    boss.setCurrentAction("Standing");
+                    boss.setCurrentAnimation(boss.isFacingRight() ? boss.getAnimationStandingRight() : boss.getAnimationStandingLeft());
+
+                    bossHurtRunTime = 0.0f;
+                }
+            }
 //
 //            //step1. 亂數選擇魔王的行為
 //            if(!isSearchHero){
@@ -764,8 +797,9 @@ public class PlayScreenTest implements Screen{
 //        tiledMapRenderer.render(upperlayer);
 //	    Display on Screen
             batch.begin();
-            sprite.draw(batch);
             spriteBoss.draw(batch);
+            sprite.draw(batch);
+
 
             //********************************************************************************
             int bulletCounter = 0;
@@ -813,6 +847,12 @@ public class PlayScreenTest implements Screen{
             beforePosition.x = position.x;
             beforePosition.y = position.y;
 
+            if(BOSS_SCORE<=0){
+                gameStatus = "Win";
+            }else if(HERO_SCORE<=0){
+                gameStatus = "Lose";
+            }
+
 
 
 
@@ -820,8 +860,169 @@ public class PlayScreenTest implements Screen{
 
         }else if(gameStatus.equals("Win")){
 
+            if(!heroResultKeep){//第一次顯示英雄戰鬥結果
+                heroResultRunTime+=Gdx.graphics.getDeltaTime();
+                hero.setCurrentAction("Win");
+                hero.setHero1Frame(hero.getAnimationWin().getKeyFrame(animationTime, true));
+                hero.setCurrentAnimation(hero.getAnimationWin());
+                if(hero.getCurrentAnimation().isAnimationFinished(heroResultRunTime)){
+                    heroResultRunTime = 0.0f;
+                    heroResultKeep = true;
+                }
+            }else{//持續顯示英雄戰鬥結果
+                hero.setCurrentAction("WinKeep");
+                hero.setHero1Frame(hero.getAnimationWinKeep().getKeyFrame(animationTime, true));
+                hero.setCurrentAnimation(hero.getAnimationWinKeep());
+            }
+
+            sprite.setRegion(hero.getHero1Frame());
+            sprite.setSize(hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
+            sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+
+            //-------------------------------------------------------------------------------------------------------
+
+
+            if(!bossResultKeep){//第一次顯示魔王戰鬥結果
+                bossResultRunTime+=Gdx.graphics.getDeltaTime();
+                boss.setCurrentAction("Lose");
+                boss.setHero1Frame(boss.isFacingRight() ? boss.getAnimationLoseRight().getKeyFrame(animationTime, true) : boss.getAnimationLoseLeft().getKeyFrame(animationTime, true));
+                boss.setCurrentAnimation(boss.isFacingRight() ? boss.getAnimationLoseRight() : boss.getAnimationLoseLeft());
+
+                if(boss.isFacingRight()){
+                    bossPosition.x = bossPosition.x-2;
+                }else{
+                    bossPosition.x = bossPosition.x+2;
+                }
+
+                if(boss.getCurrentAnimation().isAnimationFinished(bossResultRunTime)){
+                    bossResultRunTime = 0.0f;
+                    bossResultKeep = true;
+                }
+            }else{//持續顯示魔王戰鬥結果
+                boss.setCurrentAction("LoseKeep");
+                boss.setHero1Frame(boss.isFacingRight() ? boss.getAnimationLoseKeepRight().getKeyFrame(animationTime, true) : boss.getAnimationLoseKeepLeft().getKeyFrame(animationTime, true));
+                boss.setCurrentAnimation(boss.isFacingRight()?boss.getAnimationLoseKeepRight():boss.getAnimationLoseKeepLeft());
+            }
+
+
+
+            spriteBoss.setRegion(boss.getHero1Frame());
+            spriteBoss.setSize(boss.getHero1Frame().getRegionWidth(), boss.getHero1Frame().getRegionHeight());
+            spriteBoss.setOrigin(spriteBoss.getWidth() / 2, spriteBoss.getHeight() / 2);
+
+            //人物著地後繪圖位置修正量
+            if(collisionBottom){
+                deltay = 22.0f;
+            }else{
+                deltay = 0.0f;
+            }
+
+            sprite.setPosition(position.x, position.y + deltay);//設定人物位置
+            sprite.setScale(1.8f);//設定人物大小
+
+            spriteBoss.setPosition(bossPosition.x, bossPosition.y);//設定魔王位置
+            spriteBoss.setScale(1.8f);//設定魔王大小
+
+            tiledMapRenderer.setView(camera);
+
+            //調整鏡頭位置
+            if(position.x>=screenWidth/2 && position.x<=(stageWidth-(screenWidth/2))){//中間區域
+                //跟隨英雄
+                camera.position.x = position.x;
+            }else if(position.x<screenWidth/2){//最左邊
+                camera.position.x = screenWidth/2;
+            }else if(position.x>(stageWidth-(screenWidth/2))){//最右邊
+                camera.position.x = stageWidth-(screenWidth/2);
+            }
+
+            tiledMapRenderer.render(background);
+            tiledMapRenderer.render(foreground);
+//	    Display on Screen
+            batch.begin();
+            spriteBoss.draw(batch);
+            sprite.draw(batch);
+            batch.end();
+
         }else if(gameStatus.equals("Lose")){
 
+            if(!heroResultKeep){//第一次顯示英雄戰鬥結果
+                heroResultRunTime+=Gdx.graphics.getDeltaTime();
+                hero.setCurrentAction("Lose");
+                hero.setHero1Frame(hero.isFacingRight()?hero.getAnimationLoseRight().getKeyFrame(animationTime, true):hero.getAnimationLoseLeft().getKeyFrame(animationTime, true));
+                hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationLoseRight() : hero.getAnimationLoseLeft());
+                if(hero.isFacingRight()){
+                    position.x = position.x-2;
+                }else{
+                    position.x = position.x+2;
+                }
+                if(hero.getCurrentAnimation().isAnimationFinished(heroResultRunTime)){
+                    heroResultRunTime = 0.0f;
+                    heroResultKeep = true;
+                }
+            }else{//持續顯示英雄戰鬥結果
+                hero.setCurrentAction("LoseKeep");
+                hero.setHero1Frame(hero.isFacingRight()?hero.getAnimationLoseKeepRight().getKeyFrame(animationTime, true):hero.getAnimationLoseKeepLeft().getKeyFrame(animationTime, true));
+                hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationLoseKeepRight() : hero.getAnimationLoseKeepLeft());
+            }
+
+            sprite.setRegion(hero.getHero1Frame());
+            sprite.setSize(hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
+            sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+
+            //--------------------------------------------------------------------------------------------------------------------
+
+            if(!bossResultKeep){//第一次顯示魔王戰鬥結果
+                bossResultRunTime+=Gdx.graphics.getDeltaTime();
+                boss.setCurrentAction("Win");
+                boss.setHero1Frame(boss.getAnimationWin().getKeyFrame(animationTime, true));
+                boss.setCurrentAnimation(boss.getAnimationWin());
+                if(boss.getCurrentAnimation().isAnimationFinished(bossResultRunTime)){
+                    bossResultRunTime = 0.0f;
+                    bossResultKeep = true;
+                }
+            }else{//持續顯示魔王戰鬥結果
+                boss.setCurrentAction("WinKeep");
+                boss.setHero1Frame(boss.getAnimationWinKeep().getKeyFrame(animationTime, true));
+                boss.setCurrentAnimation(boss.getAnimationWinKeep());
+            }
+
+            spriteBoss.setRegion(boss.getHero1Frame());
+            spriteBoss.setSize(boss.getHero1Frame().getRegionWidth(), boss.getHero1Frame().getRegionHeight());
+            spriteBoss.setOrigin(spriteBoss.getWidth() / 2, spriteBoss.getHeight() / 2);
+
+            //人物著地後繪圖位置修正量
+            if(collisionBottom){
+                deltay = 22.0f;
+            }else{
+                deltay = 0.0f;
+            }
+
+            sprite.setPosition(position.x, position.y + deltay);//設定人物位置
+            sprite.setScale(1.8f);//設定人物大小
+
+            spriteBoss.setPosition(bossPosition.x, bossPosition.y);//設定魔王位置
+            spriteBoss.setScale(1.8f);//設定魔王大小
+
+            tiledMapRenderer.setView(camera);
+
+            //調整鏡頭位置
+            if(position.x>=screenWidth/2 && position.x<=(stageWidth-(screenWidth/2))){//中間區域
+                //跟隨英雄
+                camera.position.x = position.x;
+            }else if(position.x<screenWidth/2){//最左邊
+                camera.position.x = screenWidth/2;
+            }else if(position.x>(stageWidth-(screenWidth/2))){//最右邊
+                camera.position.x = stageWidth-(screenWidth/2);
+            }
+
+            tiledMapRenderer.render(background);
+            tiledMapRenderer.render(foreground);
+//        tiledMapRenderer.render(upperlayer);
+//	    Display on Screen
+            batch.begin();
+            spriteBoss.draw(batch);
+            sprite.draw(batch);
+            batch.end();
         }
 
 //	    顯示分數or生命值

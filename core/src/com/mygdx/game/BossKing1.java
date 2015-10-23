@@ -13,6 +13,12 @@ public class BossKing1 extends Boss {
     private static final float FRAME_DURATION = 1.0f / 15.0f;
     private static final float FRAME_DURATION_STAND = 1.0f / 8.0f;//站立動畫的播放速度
     private static final float FRAME_DURATION_RUN = 1.0f / 15.0f;//跑步動畫的播放速度
+    private static final float FRAME_DURATION_WIN = 1.0f / 8.0f;//勝利動畫的播放速度
+    private static final float FRAME_DURATION_WINKEEP = 1.0f / 8.0f;//勝利持續姿勢動畫的播放速度
+    private static final float FRAME_DURATION_LOSE = 1.0f / 4.5f;//死亡動畫的播放速度
+    private static final float FRAME_DURATION_LOSEKEEP = 1.0f / 2.5f;//死亡持續姿勢動畫的播放速度
+    private static final float FRAME_DURATION_ATK1 = 1.0f / 14.0f;//普通攻擊(A模式)的播放速度 = 每一格動作的播放間隔時間
+    private static final float FRAME_DURATION_HURT = 1.0f / 15.0f;//受傷的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_JUMP = 1.0f / 15.0f;//跳躍動畫的播放速度(暫時忽略)
 
     private TextureAtlas hero1Atlas;//人物系列圖檔資源
@@ -27,6 +33,18 @@ public class BossKing1 extends Boss {
     private Animation animationStandingRight;//站立(右)動畫
     private Animation animationWalkingLeft;//跑步(左)動畫
     private Animation animationWalkingRight;//跑步(右)動畫
+    private Animation animationAttaRight;//普通攻擊(A模式)(右)動畫
+    private Animation animationAttaLeft;//普通攻擊(A模式)(左)動畫
+    private Animation animationHurtLeft;//受傷(左)動畫
+    private Animation animationHurtRight;//受傷(右)動畫
+    private Animation animationWin;//勝利動畫
+    private Animation animationWinKeep;//勝利持續姿勢動畫
+    private Animation animationLoseRight;//死亡(右)動畫
+    private Animation animationLoseLeft;//死亡(左)動畫
+    private Animation animationLoseKeepRight;//死亡持續姿勢(右)動畫
+    private Animation animationLoseKeepLeft;//死亡持續姿勢(左)動畫
+
+    private Animation currentAnimation;//英雄當前執行的動畫
 
     private TextureRegion jumpingLeftUp;//左前跳躍(上升中)
     private TextureRegion jumpingLeftDown;//左前跳躍(下降中)
@@ -39,7 +57,7 @@ public class BossKing1 extends Boss {
     }
 
     public void init(){
-        isFacingRight = false;
+        isFacingRight = true;
         this.setCurrentAction("Jumping");
 
         //讀取人物圖檔資源
@@ -73,6 +91,39 @@ public class BossKing1 extends Boss {
         frameWalkingRight[7] = hero1Atlas.findRegion("RunningRight8");
         animationWalkingRight = new Animation(FRAME_DURATION_RUN, frameWalkingRight);
 
+        //右邊普通攻擊(A模式)
+        TextureRegion[] frameAtkaRight = new TextureRegion[8];
+        frameAtkaRight[0] = hero1Atlas.findRegion("RightATTA1");
+        frameAtkaRight[1] = hero1Atlas.findRegion("RightATTA2");
+        frameAtkaRight[2] = hero1Atlas.findRegion("RightATTA3");
+        frameAtkaRight[3] = hero1Atlas.findRegion("RightATTA4");
+        frameAtkaRight[4] = hero1Atlas.findRegion("RightATTA5");
+        frameAtkaRight[5] = hero1Atlas.findRegion("RightATTA6");
+        frameAtkaRight[6] = hero1Atlas.findRegion("RightATTA7");
+        frameAtkaRight[7] = hero1Atlas.findRegion("RightATTA8");
+        animationAttaRight = new Animation(FRAME_DURATION_ATK1, frameAtkaRight);
+
+        //右邊受傷
+        TextureRegion[] frameHurtRight = new TextureRegion[3];
+        frameHurtRight[0] = hero1Atlas.findRegion("HurtRight");
+        frameHurtRight[1] = hero1Atlas.findRegion("HurtRight");
+        frameHurtRight[2] = hero1Atlas.findRegion("HurtRight");
+        animationHurtRight = new Animation(FRAME_DURATION_HURT, frameHurtRight);
+
+        //右邊死亡
+        TextureRegion[] frameLoseRight = new TextureRegion[3];
+        frameLoseRight[0] = hero1Atlas.findRegion("LoseRight1");
+        frameLoseRight[1] = hero1Atlas.findRegion("LoseRight2");
+        frameLoseRight[2] = hero1Atlas.findRegion("LoseRight3");
+        animationLoseRight = new Animation(FRAME_DURATION_LOSE, frameLoseRight);
+
+        //右邊死亡持續姿勢
+        TextureRegion[] frameLoseKeepRight = new TextureRegion[3];
+        frameLoseKeepRight[0] = hero1Atlas.findRegion("LoseRight3");
+        frameLoseKeepRight[1] = hero1Atlas.findRegion("LoseRight3");
+        frameLoseKeepRight[2] = hero1Atlas.findRegion("LoseRight3");
+        animationLoseKeepRight = new Animation(FRAME_DURATION_LOSEKEEP, frameLoseKeepRight);
+
 
         //*****************************人物左邊設定*****************************
         //左邊跳躍
@@ -100,6 +151,61 @@ public class BossKing1 extends Boss {
         frameWalkingLeft[6] = hero1Atlas.findRegion("RunningLeft7");
         frameWalkingLeft[7] = hero1Atlas.findRegion("RunningLeft8");
         animationWalkingLeft = new Animation(FRAME_DURATION_RUN, frameWalkingLeft);
+
+        //左邊普通攻擊(A模式)
+        TextureRegion[] frameAtkaLeft = new TextureRegion[8];
+        frameAtkaLeft[0] = hero1Atlas.findRegion("LeftATTA1");
+        frameAtkaLeft[1] = hero1Atlas.findRegion("LeftATTA2");
+        frameAtkaLeft[2] = hero1Atlas.findRegion("LeftATTA3");
+        frameAtkaLeft[3] = hero1Atlas.findRegion("LeftATTA4");
+        frameAtkaLeft[4] = hero1Atlas.findRegion("LeftATTA5");
+        frameAtkaLeft[5] = hero1Atlas.findRegion("LeftATTA6");
+        frameAtkaLeft[6] = hero1Atlas.findRegion("LeftATTA7");
+        frameAtkaLeft[7] = hero1Atlas.findRegion("LeftATTA8");
+        animationAttaLeft = new Animation(FRAME_DURATION_ATK1, frameAtkaLeft);
+
+        //左邊受傷
+        TextureRegion[] frameHurtLeft = new TextureRegion[3];
+        frameHurtLeft[0] = hero1Atlas.findRegion("HurtLeft");
+        frameHurtLeft[1] = hero1Atlas.findRegion("HurtLeft");
+        frameHurtLeft[2] = hero1Atlas.findRegion("HurtLeft");
+        animationHurtLeft = new Animation(FRAME_DURATION_HURT, frameHurtLeft);
+
+        //左邊死亡
+        TextureRegion[] frameLoseLeft = new TextureRegion[3];
+        frameLoseLeft[0] = hero1Atlas.findRegion("LoseLeft1");
+        frameLoseLeft[1] = hero1Atlas.findRegion("LoseLeft2");
+        frameLoseLeft[2] = hero1Atlas.findRegion("LoseLeft3");
+        animationLoseLeft = new Animation(FRAME_DURATION_LOSE, frameLoseLeft);
+
+        //左邊死亡持續姿勢
+        TextureRegion[] frameLoseKeepLeft = new TextureRegion[3];
+        frameLoseKeepLeft[0] = hero1Atlas.findRegion("LoseLeft3");
+        frameLoseKeepLeft[1] = hero1Atlas.findRegion("LoseLeft3");
+        frameLoseKeepLeft[2] = hero1Atlas.findRegion("LoseLeft3");
+        animationLoseKeepLeft = new Animation(FRAME_DURATION_LOSEKEEP, frameLoseKeepLeft);
+
+
+
+
+        //勝利
+        TextureRegion[] frameWin = new TextureRegion[8];
+        frameWin[0] = hero1Atlas.findRegion("Win1");
+        frameWin[1] = hero1Atlas.findRegion("Win2");
+        frameWin[2] = hero1Atlas.findRegion("Win3");
+        frameWin[3] = hero1Atlas.findRegion("Win4");
+        frameWin[4] = hero1Atlas.findRegion("Win5");
+        frameWin[5] = hero1Atlas.findRegion("Win6");
+        frameWin[6] = hero1Atlas.findRegion("Win7");
+        frameWin[7] = hero1Atlas.findRegion("Win8");
+        animationWin = new Animation(FRAME_DURATION_WIN, frameWin);
+
+        //勝利持續姿勢
+        TextureRegion[] frameWinKeep = new TextureRegion[3];
+        frameWinKeep[0] = hero1Atlas.findRegion("WinKeep1");
+        frameWinKeep[1] = hero1Atlas.findRegion("WinKeep2");
+        frameWinKeep[2] = hero1Atlas.findRegion("WinKeep3");
+        animationWinKeep = new Animation(FRAME_DURATION_WINKEEP, frameWinKeep);
     }
 
 
@@ -130,6 +236,7 @@ public class BossKing1 extends Boss {
     }
 
     public void setHero1Frame(TextureRegion hero1Frame) {
+//        System.out.println("hero1Frame.hashCode() = "+hero1Frame.hashCode());
         this.hero1Frame = hero1Frame;
     }
 
@@ -211,6 +318,94 @@ public class BossKing1 extends Boss {
 
     public void setJumpingRightDown(TextureRegion jumpingRightDown) {
         this.jumpingRightDown = jumpingRightDown;
+    }
+
+    public Animation getAnimationAttaRight() {
+        return animationAttaRight;
+    }
+
+    public void setAnimationAttaRight(Animation animationAttaRight) {
+        this.animationAttaRight = animationAttaRight;
+    }
+
+    public Animation getAnimationAttaLeft() {
+        return animationAttaLeft;
+    }
+
+    public void setAnimationAttaLeft(Animation animationAttaLeft) {
+        this.animationAttaLeft = animationAttaLeft;
+    }
+
+    public Animation getCurrentAnimation() {
+        return currentAnimation;
+    }
+
+    public void setCurrentAnimation(Animation currentAnimation) {
+        this.currentAnimation = currentAnimation;
+    }
+
+    public Animation getAnimationHurtLeft() {
+        return animationHurtLeft;
+    }
+
+    public void setAnimationHurtLeft(Animation animationHurtLeft) {
+        this.animationHurtLeft = animationHurtLeft;
+    }
+
+    public Animation getAnimationHurtRight() {
+        return animationHurtRight;
+    }
+
+    public void setAnimationHurtRight(Animation animationHurtRight) {
+        this.animationHurtRight = animationHurtRight;
+    }
+
+    public Animation getAnimationWin() {
+        return animationWin;
+    }
+
+    public void setAnimationWin(Animation animationWin) {
+        this.animationWin = animationWin;
+    }
+
+    public Animation getAnimationLoseRight() {
+        return animationLoseRight;
+    }
+
+    public void setAnimationLoseRight(Animation animationLoseRight) {
+        this.animationLoseRight = animationLoseRight;
+    }
+
+    public Animation getAnimationLoseLeft() {
+        return animationLoseLeft;
+    }
+
+    public void setAnimationLoseLeft(Animation animationLoseLeft) {
+        this.animationLoseLeft = animationLoseLeft;
+    }
+
+    public Animation getAnimationWinKeep() {
+        return animationWinKeep;
+    }
+
+    public void setAnimationWinKeep(Animation animationWinKeep) {
+        this.animationWinKeep = animationWinKeep;
+    }
+
+    public Animation getAnimationLoseKeepRight() {
+        return animationLoseKeepRight;
+    }
+
+    public void setAnimationLoseKeepRight(Animation animationLoseKeepRight) {
+        this.animationLoseKeepRight = animationLoseKeepRight;
+    }
+
+    public Animation getAnimationLoseKeepLeft() {
+        return animationLoseKeepLeft;
+    }
+
+    public void setAnimationLoseKeepLeft(Animation animationLoseKeepLeft) {
+        this.animationLoseKeepLeft = animationLoseKeepLeft;
     }
 
 }
