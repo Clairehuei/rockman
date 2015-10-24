@@ -324,26 +324,33 @@ public class PlayScreenTest implements Screen{
                     canAtkLv2 = true;
                 }else if(clickNumber==3){
                     canAtkLv3 = true;
-                }else{
-                    if(canAtkLv3){//有第三階段攻擊,尚未結束
-                        if(canAtkLv2){//有第二階段攻擊,尚未結束
-                            if(canAtkLv1){//有第一階段攻擊,尚未結束
-                                canAtkLv2 = true;
-                            }else{//無第1階段,表示正在進行第2階段攻擊
-                                canAtkLv3 = true;
-                            }
-                        }else{//無第2階段,表示正在進行第三階段攻擊
-                            canAtkLv1 = true;
-                        }
-                    }else if(canAtkLv2){//有第二階段攻擊,尚未結束
-                        canAtkLv3 = true;
-                    }else if(canAtkLv1){//有第一階段攻擊,尚未結束
-                        canAtkLv2 = true;
-                    }else{//其餘情形列為目前無攻擊狀態
-                        canAtkLv1 = true;
-                    }
                 }
-//                System.out.println("clickNumber = "+clickNumber);
+                else{
+                    if(!canAtkLv3 && !canAtkLv2 && !canAtkLv1){
+                        canAtkLv1 = true;
+                    }else if(canAtkLv1){
+                        canAtkLv2 = true;
+                    }else if(canAtkLv2){
+                        canAtkLv3 = true;
+                    }
+//                    if(canAtkLv3){//有第三階段攻擊,尚未結束
+//                        if(canAtkLv2){//有第二階段攻擊,尚未結束
+//                            if(canAtkLv1){//有第一階段攻擊,尚未結束
+//                                canAtkLv2 = true;
+//                            }else{//無第1階段,表示正在進行第2階段攻擊
+//                                canAtkLv3 = true;
+//                            }
+//                        }else{//無第2階段,表示正在進行第三階段攻擊
+//                            canAtkLv1 = true;
+//                        }
+//                    }else if(canAtkLv2){//有第二階段攻擊,尚未結束
+//                        canAtkLv3 = true;
+//                    }else if(canAtkLv1){//有第一階段攻擊,尚未結束
+//                        canAtkLv2 = true;
+//                    }else{//其餘情形列為目前無攻擊狀態
+//                        canAtkLv1 = true;
+//                    }
+                }
             }
         });
     }
@@ -447,18 +454,14 @@ public class PlayScreenTest implements Screen{
      * @return
      */
     private	boolean isHitBoss2(float x, float y, float w, float h){
-//        System.out.println("x = "+x+" w = "+w+" b.x = "+bossPosition.x+" b.w = "+bossPosition.x+boss.getHero1Frame().getRegionWidth());
         if(x+w>=bossPosition.x-10 && x<=bossPosition.x){
             hitOnBoss = true;
-//            System.out.println("P1 砍中");
             return true;
         }else if(x-10<=bossPosition.x+boss.getHero1Frame().getRegionWidth() && x>bossPosition.x){
             hitOnBoss = true;
-//            System.out.println("P2 砍中");
             return true;
         }else{
             hitOnBoss = false;
-//            System.out.println("未擊中");
         }
 
         return false;
@@ -686,7 +689,16 @@ public class PlayScreenTest implements Screen{
                     }
                 }
             }else if (hero.getCurrentAction().equals("Atking1")){
-//                System.out.println("canAtkLv1 = "+canAtkLv1+"   canAtkLv2 = "+canAtkLv2+"    canAtkLv3 = "+canAtkLv3);
+
+                if(!canAtkLv3 && !canAtkLv2 && !canAtkLv1){
+                    if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                        hero.setCurrentAction("Walking");
+                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
+                    }else{
+                        hero.setCurrentAction("Standing");
+                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
+                    }
+                }
 
                 if(canAtkLv3){
                     if(!canAtkLv2){
@@ -702,17 +714,16 @@ public class PlayScreenTest implements Screen{
 
                         if(hero.getCurrentAnimation().isAnimationFinished(atkcRunTime)) {//當前第三階段攻擊動畫結束
                             canAtkLv3 = false;
-                            if(!canAtkLv1){//停止攻擊(無新一輪的攻擊)
-                                if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
-                                    hero.setCurrentAction("Walking");
-                                    hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
-                                }else{
-                                    hero.setCurrentAction("Standing");
-                                    hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
-                                }
+                            atkcRunTime = 0.0f;
+
+                            if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                                hero.setCurrentAction("Walking");
+                                hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
+                            }else{
+                                hero.setCurrentAction("Standing");
+                                hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
                             }
 
-                            atkcRunTime = 0.0f;
                         }
                     }
                 }
@@ -728,9 +739,10 @@ public class PlayScreenTest implements Screen{
                             position.x = position.x-1;
                         }
                         if(hero.getCurrentAnimation().isAnimationFinished(atkbRunTime)){//當前第二階段攻擊動畫結束
-                            if(canAtkLv3){//有第三階段攻擊
-                                canAtkLv2 = false;
-                            }else{//停止攻擊
+                            canAtkLv2 = false;
+                            atkbRunTime = 0.0f;
+                            if(!canAtkLv3){//沒有第三階段攻擊
+                                //停止攻擊
                                 if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
                                     hero.setCurrentAction("Walking");
                                     hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
@@ -739,8 +751,6 @@ public class PlayScreenTest implements Screen{
                                     hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
                                 }
                             }
-
-                            atkbRunTime = 0.0f;
                         }
                     }
                 }
@@ -751,9 +761,10 @@ public class PlayScreenTest implements Screen{
                     hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttaRight() : hero.getAnimationAttaLeft());
 
                     if(hero.getCurrentAnimation().isAnimationFinished(atkaRunTime)){//當前第一階段攻擊動畫結束
-                        if(canAtkLv2){//有第二階段攻擊
-                            canAtkLv1 = false;
-                        }else{//停止攻擊
+                        canAtkLv1 = false;
+                        atkaRunTime = 0.0f;
+                        if(!canAtkLv2){//沒有第二階段攻擊
+                            //停止攻擊
                             if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
                                 hero.setCurrentAction("Walking");
                                 hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
@@ -762,8 +773,6 @@ public class PlayScreenTest implements Screen{
                                 hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
                             }
                         }
-
-                        atkaRunTime = 0.0f;
                     }
                 }
 
@@ -967,10 +976,6 @@ public class PlayScreenTest implements Screen{
             }else if(HERO_SCORE<=0){
                 gameStatus = "Lose";
             }
-
-
-            System.out.println("current action = "+hero.getCurrentAction());
-
 
         }else if(gameStatus.equals("Sotp")){
 
