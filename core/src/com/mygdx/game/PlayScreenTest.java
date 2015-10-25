@@ -731,8 +731,8 @@ public class PlayScreenTest implements Screen{
                 if(canAtkLv2){
                     if(!canAtkLv1){
                         atkbRunTime+=Gdx.graphics.getDeltaTime();
-                        hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttbRight().getKeyFrame(animationTime, true) : hero.getAnimationAttbLeft().getKeyFrame(animationTime, true));
-                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttbRight() : hero.getAnimationAttbLeft());
+                        hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttaRight().getKeyFrame(animationTime, true) : hero.getAnimationAttaLeft().getKeyFrame(animationTime, true));
+                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttaRight() : hero.getAnimationAttaLeft());
                         if(hero.isFacingRight()){
                             position.x = position.x+1;
                         }else{
@@ -757,8 +757,8 @@ public class PlayScreenTest implements Screen{
 
                 if(canAtkLv1){
                     atkaRunTime+=Gdx.graphics.getDeltaTime();
-                    hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttaRight().getKeyFrame(animationTime, true) : hero.getAnimationAttaLeft().getKeyFrame(animationTime, true));
-                    hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttaRight() : hero.getAnimationAttaLeft());
+                    hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttbRight().getKeyFrame(animationTime, true) : hero.getAnimationAttbLeft().getKeyFrame(animationTime, true));
+                    hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttbRight() : hero.getAnimationAttbLeft());
 
                     if(hero.getCurrentAnimation().isAnimationFinished(atkaRunTime)){//當前第一階段攻擊動畫結束
                         canAtkLv1 = false;
