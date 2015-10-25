@@ -152,7 +152,7 @@ public class PlayScreenTest implements Screen{
         position.x = screenWidth/2;//英雄初始位置X
         position.y = 250;//英雄初始位置Y
         velocity.x = 300;//英雄X軸初始速度
-        velocity.y = -600;//英雄Y軸初始速度
+        velocity.y = -150;//英雄Y軸初始速度
 
         bossPosition.x = 800;
         bossPosition.y = 86;

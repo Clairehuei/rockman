@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
  * Created by 6193 on 2015/10/19.
  */
 public class MenuScreen implements Screen, InputProcessor {
-    private Texture texture=new Texture(Gdx.files.internal("menuscreen.png"));
+    private Texture texture=new Texture(Gdx.files.internal("menuscreen.jpg"));
     private Image splashImage=new Image(texture);
     private Stage stage=new Stage();
     SpriteBatch batch=new SpriteBatch();

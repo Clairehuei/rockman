@@ -15,7 +15,7 @@ public class BackgroundSound {
 //        //sound.loop(0.5f);
 //        sound.play();
 
-        music = Gdx.audio.newMusic(Gdx.files.internal("sound/bgsound1.ogg"));//.ogg的音檔loop才沒有問題,並且檔案大小也比.mp3還小(使用.map會有問題,貌似loop上限,會自動停止)
+        music = Gdx.audio.newMusic(Gdx.files.internal("sound/bgsound2.ogg"));//.ogg的音檔loop才沒有問題,並且檔案大小也比.mp3還小(使用.map會有問題,貌似loop上限,會自動停止)
         music.setLooping(true);
         music.play();
     }
