@@ -34,47 +34,74 @@ import java.util.ArrayList;
  */
 public class PlayScreenTest implements Screen{
 
+    Game game;
+    HomeScreen homeScreen;//返回城鎮(關卡選擇)
+
     private Vector2 position = new Vector2();//英雄當前位置
     private Vector2 bossPosition = new Vector2();//魔王當前位置
     private Vector2 beforePosition = new Vector2();//英雄前一個位置
     private Vector2 velocity = new Vector2();//給予英雄的方向速度
-    private float MaxVelocity = 800f;//終端速度
+    private float MaxVelocity = 800f;//人物空中下降終端速度
+
+
+    //每偵間格時間(因應手機效能有所不同)
     private float deltaTime = 0.0f;
+
+    //所有動畫展示時間
     private float atkaRunTime = 0.0f;//英雄普通攻擊A模式動畫累積時間
     private float atkbRunTime = 0.0f;//英雄普通攻擊B模式動畫累積時間
     private float atkcRunTime = 0.0f;//英雄普通攻擊C模式動畫累積時間
+    private float satkaRunTime = 0.0f;//英雄特殊技能1動畫累積時間
     private float bossHurtRunTime = 0.0f;//魔王受傷動畫累積時間
     private float heroResultRunTime = 0.0f;//英雄戰鬥結果動畫累積時間
     private float bossResultRunTime = 0.0f;//魔王戰鬥結果動畫累積時間
     private float animationTime = 0.0f;
+
+    //偵測手機螢幕的寬/高
     private  float screenWidth;
     private  float screenHeight;
+
+    //背景地圖
     private int[] background = new int[] {0};
     private int[] foreground = new int[] {1};
-    private int[] upperlayer = new int[] {2};
+
+    //與背景地圖障礙物碰撞參數
     private float x1, y1, i1, j1;
     private int tempcount, tempcount1;
-    public int bulletVelocityX = 12;
+
+
+    //攝影機變數
     private OrthographicCamera camera;
     private Viewport viewport;
-    private SpriteBatch batch;
-    private Sprite sprite;
-    private Sprite spriteBoss;
-    private TiledMapTileLayer.Cell cell;
+
+
+    private Sprite sprite;//英雄
+    private Sprite spriteBoss;//BOSS
+    private SpriteBatch batch;//繪製主要腳色
+    private SpriteBatch controlBatch;//繪製玩家操控按鈕
+    private SpriteBatch HUDBatch;//繪製玩家生命值相關資訊
+
+
+
+    private float deltay = 0.0f;
+
+
+    //子彈變數
     Texture bulletRight;
     TextureRegion bulletLeft;
     Bullet bullet, currentBullet;
     ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
-    private float deltay = 0.0f;
+    public int bulletVelocityX = 12;
 
-    private SpriteBatch controlBatch;
-    private SpriteBatch HUDBatch;
-    private BitmapFont font1;
-    private BitmapFont font2;
+    private BitmapFont font1;//英雄血量文字
+    private BitmapFont font2;//BOSS血量文字
+
     private  float jumpY = 0.0f;
     private  float v0 = 300.0f;
-    private boolean heroResultKeep = false;
-    private boolean bossResultKeep = false;
+
+
+    private boolean heroResultKeep = false;//是否開始撥放英雄戰鬥結果(持續)動畫
+    private boolean bossResultKeep = false;//是否開始撥放BOSS戰鬥結果(持續)動畫
 
 
     BackgroundSound bgSound1;//背景音樂
@@ -87,17 +114,20 @@ public class PlayScreenTest implements Screen{
     TiledMapTileLayer foregroundLayer;
     TiledMap tiledMap;
     TiledMapRenderer tiledMapRenderer;
+    private TiledMapTileLayer.Cell cell;
+    private float stageWidth = 0.0f;//背景地圖的長度(寬)
 
     private Skin btnSkin;
     private Stage stage;
 
     //玩家介面操控按鈕 [方向鍵] + [技能鍵]
-    private Button btn_fire;
-    private Button  btn_jump;
     private Button  btn_right;
     private Button  btn_left;
+    private Button  btn_jump;
     private Button  btn_home;
+    private Button  btn_fire;
     private Button  btn_atk1;
+    private Button  btn_satk1;
 
     private boolean isRightTouchDown = false;//判斷是否持續按住 [向右方向鍵]
     private boolean isLeftTouchDown = false;//判斷是否持續按住 [向左方向鍵]
@@ -105,29 +135,26 @@ public class PlayScreenTest implements Screen{
     private boolean isLeftSprintJump = false;//判斷是否為衝刺跳躍[左大跳]
     private boolean isRightSprintJump = false;//判斷是否衝刺跳躍[右大跳]
 
-    Game game;
-    HomeScreen homeScreen;//返回城鎮(關卡選擇)
+
+
     HeroShana hero;//英雄人物
     BossKing1 boss;//魔王
     private int HERO_SCORE = 100;
     private int BOSS_SCORE = 1000;
 
-    private float currentHeroWidth = 0.0f;
-    private float currentHeroHeight = 0.0f;
-//    boolean startGame = false;
-
-    private float stageWidth = 0.0f;
-
+    //判斷是否碰撞到BOSS(無論BOSS面向哪邊).......P1 BOSS P2.......
     boolean touchBossP1 = false;
     boolean touchBossP2 = false;
-    boolean hitOnBoss = false;
+    boolean hitOnBoss = false;//是否擊中BOSS
+
     String gameStatus = "Running";//Running:進行中  Sotp:暫停  Win:勝利  Lose:失敗
 
-    boolean isSearchHero = false;
-    int clickNumber = 0;
-    boolean canAtkLv1 = false;
-    boolean canAtkLv2 = false;
-    boolean canAtkLv3 = false;
+    int clickNumber = 0;//普通攻擊按鈕點擊次數
+
+    //普通攻擊段數
+    boolean canAtkLv1 = false;//普通攻擊第1階段
+    boolean canAtkLv2 = false;//普通攻擊第2階段
+    boolean canAtkLv3 = false;//普通攻擊第3階段
 
     public PlayScreenTest(Game game){
         this.game=game;
@@ -202,6 +229,7 @@ public class PlayScreenTest implements Screen{
         setBtnJump();
         setBtnHome();
         setBtnAtk1();
+        setBtnSatk1();
 
         //場景加入演員
         stage.addActor(btn_right);
@@ -210,6 +238,7 @@ public class PlayScreenTest implements Screen{
         stage.addActor(btn_jump);
         stage.addActor(btn_home);
         stage.addActor(btn_atk1);
+        stage.addActor(btn_satk1);
 
         Gdx.input.setInputProcessor(stage);//將場景加入輸入(觸控)偵測
     }
@@ -333,24 +362,19 @@ public class PlayScreenTest implements Screen{
                     }else if(canAtkLv2){
                         canAtkLv3 = true;
                     }
-//                    if(canAtkLv3){//有第三階段攻擊,尚未結束
-//                        if(canAtkLv2){//有第二階段攻擊,尚未結束
-//                            if(canAtkLv1){//有第一階段攻擊,尚未結束
-//                                canAtkLv2 = true;
-//                            }else{//無第1階段,表示正在進行第2階段攻擊
-//                                canAtkLv3 = true;
-//                            }
-//                        }else{//無第2階段,表示正在進行第三階段攻擊
-//                            canAtkLv1 = true;
-//                        }
-//                    }else if(canAtkLv2){//有第二階段攻擊,尚未結束
-//                        canAtkLv3 = true;
-//                    }else if(canAtkLv1){//有第一階段攻擊,尚未結束
-//                        canAtkLv2 = true;
-//                    }else{//其餘情形列為目前無攻擊狀態
-//                        canAtkLv1 = true;
-//                    }
                 }
+            }
+        });
+    }
+
+
+    private void setBtnSatk1(){
+        btn_satk1 = new Button(btnSkin, "firebutton");
+        btn_satk1.setPosition(Gdx.graphics.getWidth()-138, 300);
+        btn_satk1.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                satk1();
             }
         });
     }
@@ -381,11 +405,8 @@ public class PlayScreenTest implements Screen{
      * @return
      */
     private	boolean isCellBlocked( float x, float y ){
-
         cell = foregroundLayer.getCell( (int)x, (int)y);
-        if (cell != null &&
-                cell.getTile() != null &&
-                cell.getTile().getProperties().containsKey("blocked")){
+        if (cell != null && cell.getTile() != null && cell.getTile().getProperties().containsKey("blocked")){
             return  true;
         }
         return false;
@@ -399,7 +420,6 @@ public class PlayScreenTest implements Screen{
      * @return
      */
     private	boolean isTouchBoss(float x, float y){
-
         if(x+hero.getHero1Frame().getRegionWidth()>=bossPosition.x-5 && x+hero.getHero1Frame().getRegionWidth()<=bossPosition.x){
             touchBossP1 = true;
             touchBossP2 = false;
@@ -424,7 +444,6 @@ public class PlayScreenTest implements Screen{
      * @return
      */
     private	boolean isHitBoss(float x, float y, float w, float h){
-
         if(x+w>=bossPosition.x-5 && x+w<=bossPosition.x){
             if( (y+h > bossPosition.y+boss.getHero1Frame().getRegionHeight() && y< bossPosition.y+boss.getHero1Frame().getRegionHeight())
                     || (y+h<=bossPosition.y+boss.getHero1Frame().getRegionHeight() && y>=bossPosition.y)
@@ -703,7 +722,7 @@ public class PlayScreenTest implements Screen{
                 if(canAtkLv3){
                     if(!canAtkLv2){
                         atkcRunTime+=Gdx.graphics.getDeltaTime();
-                        hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttcRight().getKeyFrame(animationTime, true) : hero.getAnimationAttcLeft().getKeyFrame(animationTime, true));
+                        hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttcRight().getKeyFrame(atkcRunTime, true) : hero.getAnimationAttcLeft().getKeyFrame(atkcRunTime, true));
                         hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttcRight() : hero.getAnimationAttcLeft());
 
                         if(hero.isFacingRight()){
@@ -731,7 +750,7 @@ public class PlayScreenTest implements Screen{
                 if(canAtkLv2){
                     if(!canAtkLv1){
                         atkbRunTime+=Gdx.graphics.getDeltaTime();
-                        hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttaRight().getKeyFrame(animationTime, true) : hero.getAnimationAttaLeft().getKeyFrame(animationTime, true));
+                        hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttaRight().getKeyFrame(atkbRunTime, true) : hero.getAnimationAttaLeft().getKeyFrame(atkbRunTime, true));
                         hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttaRight() : hero.getAnimationAttaLeft());
                         if(hero.isFacingRight()){
                             position.x = position.x+1;
@@ -757,7 +776,7 @@ public class PlayScreenTest implements Screen{
 
                 if(canAtkLv1){
                     atkaRunTime+=Gdx.graphics.getDeltaTime();
-                    hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttbRight().getKeyFrame(animationTime, true) : hero.getAnimationAttbLeft().getKeyFrame(animationTime, true));
+                    hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationAttbRight().getKeyFrame(atkaRunTime, true) : hero.getAnimationAttbLeft().getKeyFrame(atkaRunTime, true));
                     hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationAttbRight() : hero.getAnimationAttbLeft());
 
                     if(hero.getCurrentAnimation().isAnimationFinished(atkaRunTime)){//當前第一階段攻擊動畫結束
@@ -799,6 +818,40 @@ public class PlayScreenTest implements Screen{
 
 
 
+
+                collisionBottom=false;
+                collisionBottom();
+                if (!collisionBottom){
+                    hero.setCurrentAction("Jumping");
+                    velocity.y=-300;
+                }
+
+                //判斷是否擊中目標
+                isHitBoss2(position.x, position.y, hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
+                if (hitOnBoss){//擊中
+                    boss.setCurrentAction("Hurt");
+                    BOSS_SCORE = BOSS_SCORE-1;
+                }
+
+//********************************************************************************
+            }else if (hero.getCurrentAction().equals("Satking1")){
+
+                satkaRunTime+=Gdx.graphics.getDeltaTime();
+                hero.setHero1Frame(hero.isFacingRight() ? hero.getAnimationSatkaRight().getKeyFrame(satkaRunTime, true) : hero.getAnimationSatkaLeft().getKeyFrame(satkaRunTime, true));
+                hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationSatkaRight() : hero.getAnimationSatkaLeft());
+
+                if(hero.getCurrentAnimation().isAnimationFinished(satkaRunTime)) {//當前特殊技能1攻擊動畫結束
+                    satkaRunTime = 0.0f;
+
+                    if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                        hero.setCurrentAction("Walking");
+                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationWalkingRight() : hero.getAnimationWalkingLeft());
+                    }else{
+                        hero.setCurrentAction("Standing");
+                        hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationStandingRight() : hero.getAnimationStandingLeft());
+                    }
+
+                }
 
                 collisionBottom=false;
                 collisionBottom();
@@ -865,9 +918,6 @@ public class PlayScreenTest implements Screen{
             }
 //
 //            //step1. 亂數選擇魔王的行為
-//            if(!isSearchHero){
-//
-//            }
 //
 //            //step2. 根據魔王的行為進行設定相關動作
 //            if(boss.getCurrentAction().equals("Standing")){//發呆
@@ -918,7 +968,7 @@ public class PlayScreenTest implements Screen{
 
             tiledMapRenderer.render(background);
             tiledMapRenderer.render(foreground);
-//        tiledMapRenderer.render(upperlayer);
+
 //	    Display on Screen
             batch.begin();
             spriteBoss.draw(batch);
@@ -1138,7 +1188,7 @@ public class PlayScreenTest implements Screen{
 
             tiledMapRenderer.render(background);
             tiledMapRenderer.render(foreground);
-//        tiledMapRenderer.render(upperlayer);
+
 //	    Display on Screen
             batch.begin();
             spriteBoss.draw(batch);
@@ -1236,6 +1286,10 @@ public class PlayScreenTest implements Screen{
         hero.setCurrentAction("Atking1");
     }
 
+    public void satk1(){
+        hero.setCurrentAction("Satking1");
+    }
+
 
     public void backHome () {
         homeScreen=new HomeScreen(game);
@@ -1249,7 +1303,7 @@ public class PlayScreenTest implements Screen{
      * @return
      */
     public float calJumpY(){
-        float tempY = 0.0f;
+        float tempY;
 
         float g = -10;
 
@@ -1272,9 +1326,6 @@ public class PlayScreenTest implements Screen{
         }else{//跳躍下降中
 
         }
-
-
-
 
         return tempY;
     }

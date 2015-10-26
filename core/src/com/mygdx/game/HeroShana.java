@@ -20,6 +20,7 @@ public class HeroShana extends Hero {
     private static final float FRAME_DURATION_ATK1 = 1.0f / 14.0f;//普通攻擊(A模式)的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_ATK2 = 1.0f / 14.0f;//普通攻擊(B模式)的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_ATK3 = 1.0f / 14.0f;//普通攻擊(C模式)的播放速度 = 每一格動作的播放間隔時間
+    private static final float FRAME_DURATION_SATK1 = 1.0f / 11.0f;//特殊技能1的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_HURT = 1.0f / 15.0f;//受傷的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_JUMP = 1.0f / 15.0f;//跳躍動畫的播放速度(暫時忽略)
 
@@ -35,12 +36,16 @@ public class HeroShana extends Hero {
     private Animation animationStandingRight;//站立(右)動畫
     private Animation animationWalkingLeft;//跑步(左)動畫
     private Animation animationWalkingRight;//跑步(右)動畫
+
     private Animation animationAttaRight;//普通攻擊(A模式)(右)動畫
     private Animation animationAttaLeft;//普通攻擊(A模式)(左)動畫
     private Animation animationAttbRight;//普通攻擊(B模式)(右)動畫
     private Animation animationAttbLeft;//普通攻擊(B模式)(左)動畫
     private Animation animationAttcRight;//普通攻擊(C模式)(右)動畫
     private Animation animationAttcLeft;//普通攻擊(C模式)(左)動畫
+    private Animation animationSatkaRight;//特殊技能1(右)動畫
+    private Animation animationSatkaLeft;//特殊技能1(左)動畫
+
     private Animation animationHurtLeft;//受傷(左)動畫
     private Animation animationHurtRight;//受傷(右)動畫
     private Animation animationWin;//勝利動畫
@@ -132,6 +137,21 @@ public class HeroShana extends Hero {
         frameAtkcRight[6] = hero1Atlas.findRegion("RightATTC7");
         animationAttcRight = new Animation(FRAME_DURATION_ATK3, frameAtkcRight);
 
+        //右邊特殊技能1
+        TextureRegion[] frameSatkaRight = new TextureRegion[11];
+        frameSatkaRight[0] = hero1Atlas.findRegion("SatkRight01");
+        frameSatkaRight[1] = hero1Atlas.findRegion("SatkRight02");
+        frameSatkaRight[2] = hero1Atlas.findRegion("SatkRight03");
+        frameSatkaRight[3] = hero1Atlas.findRegion("SatkRight04");
+        frameSatkaRight[4] = hero1Atlas.findRegion("SatkRight05");
+        frameSatkaRight[5] = hero1Atlas.findRegion("SatkRight06");
+        frameSatkaRight[6] = hero1Atlas.findRegion("SatkRight07");
+        frameSatkaRight[7] = hero1Atlas.findRegion("SatkRight08");
+        frameSatkaRight[8] = hero1Atlas.findRegion("SatkRight09");
+        frameSatkaRight[9] = hero1Atlas.findRegion("SatkRight10");
+        frameSatkaRight[10] = hero1Atlas.findRegion("SatkRight11");
+        animationSatkaRight = new Animation(FRAME_DURATION_SATK1, frameSatkaRight);
+
         //右邊受傷
         TextureRegion[] frameHurtRight = new TextureRegion[3];
         frameHurtRight[0] = hero1Atlas.findRegion("HurtRight");
@@ -215,6 +235,21 @@ public class HeroShana extends Hero {
         frameAtkcLeft[5] = hero1Atlas.findRegion("LeftATTC6");
         frameAtkcLeft[6] = hero1Atlas.findRegion("LeftATTC7");
         animationAttcLeft = new Animation(FRAME_DURATION_ATK3, frameAtkcLeft);
+
+        //左邊特殊技能1
+        TextureRegion[] frameSatkaLeft = new TextureRegion[11];
+        frameSatkaLeft[0] = hero1Atlas.findRegion("SatkLeft01");
+        frameSatkaLeft[1] = hero1Atlas.findRegion("SatkLeft02");
+        frameSatkaLeft[2] = hero1Atlas.findRegion("SatkLeft03");
+        frameSatkaLeft[3] = hero1Atlas.findRegion("SatkLeft04");
+        frameSatkaLeft[4] = hero1Atlas.findRegion("SatkLeft05");
+        frameSatkaLeft[5] = hero1Atlas.findRegion("SatkLeft06");
+        frameSatkaLeft[6] = hero1Atlas.findRegion("SatkLeft07");
+        frameSatkaLeft[7] = hero1Atlas.findRegion("SatkLeft08");
+        frameSatkaLeft[8] = hero1Atlas.findRegion("SatkLeft09");
+        frameSatkaLeft[9] = hero1Atlas.findRegion("SatkLeft10");
+        frameSatkaLeft[10] = hero1Atlas.findRegion("SatkLeft11");
+        animationSatkaLeft = new Animation(FRAME_DURATION_SATK1, frameSatkaLeft);
 
         //左邊受傷
         TextureRegion[] frameHurtLeft = new TextureRegion[3];
@@ -490,5 +525,21 @@ public class HeroShana extends Hero {
 
     public void setAnimationAttcLeft(Animation animationAttcLeft) {
         this.animationAttcLeft = animationAttcLeft;
+    }
+
+    public Animation getAnimationSatkaRight() {
+        return animationSatkaRight;
+    }
+
+    public void setAnimationSatkaRight(Animation animationSatkaRight) {
+        this.animationSatkaRight = animationSatkaRight;
+    }
+
+    public Animation getAnimationSatkaLeft() {
+        return animationSatkaLeft;
+    }
+
+    public void setAnimationSatkaLeft(Animation animationSatkaLeft) {
+        this.animationSatkaLeft = animationSatkaLeft;
     }
 }
