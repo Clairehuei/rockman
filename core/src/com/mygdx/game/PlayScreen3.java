@@ -3,10 +3,8 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -14,8 +12,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -33,16 +29,10 @@ import java.util.ArrayList;
 /**遊戲第3關
  * Created by 6193 on 2015/10/19.
  */
-public class PlayScreen3 implements Screen {
-
-    Game game;
-    HomeScreen homeScreen;//返回城鎮(關卡選擇)
+public class PlayScreen3 extends PlayBase {
 
     private Vector2 bossPosition = new Vector2();//魔王當前位置
     private float MaxVelocity = 800f;//人物空中下降終端速度
-
-    //每偵間格時間(因應手機效能有所不同)
-    private float deltaTime = 0.0f;
 
     //所有動畫展示時間
     private float atkaRunTime = 0.0f;//英雄普通攻擊A模式動畫累積時間
@@ -53,10 +43,6 @@ public class PlayScreen3 implements Screen {
     private float heroResultRunTime = 0.0f;//英雄戰鬥結果動畫累積時間
     private float bossResultRunTime = 0.0f;//魔王戰鬥結果動畫累積時間
     private float animationTime = 0.0f;
-
-    //偵測手機螢幕的寬/高
-    private  float screenWidth;
-    private  float screenHeight;
 
     //背景地圖
     private int[] background = new int[] {0};
@@ -107,12 +93,8 @@ public class PlayScreen3 implements Screen {
     //碰撞判斷
     private boolean collisionLeft, collisionRight, collisionBottom, collisionTop;
 
-    //地圖資源
-    TiledMapTileLayer foregroundLayer;
-    TiledMap tiledMap;
-    TiledMapRenderer tiledMapRenderer;
     private TiledMapTileLayer.Cell cell;
-    private float stageWidth = 0.0f;//背景地圖的長度(寬)
+
 
     private Skin btnSkin;
     private Stage stage;
@@ -132,9 +114,6 @@ public class PlayScreen3 implements Screen {
     private boolean isLeftSprintJump = false;//判斷是否為衝刺跳躍[左大跳]
     private boolean isRightSprintJump = false;//判斷是否衝刺跳躍[右大跳]
 
-
-
-    Rhero hero;//英雄人物
     BossKing1 boss;//魔王
     private int HERO_SCORE = 100;
     private int BOSS_SCORE = 1000;
@@ -159,12 +138,13 @@ public class PlayScreen3 implements Screen {
     }
 
 
+    @Override
     public void init () {
 //        startGame = true;
+        super.init();
         Gdx.app.log("==PlayScreen3.init()===", "start init()");
 
-        screenWidth = Gdx.graphics.getWidth();
-        screenHeight = Gdx.graphics.getHeight();
+
 
         batch = new SpriteBatch();
         HUDBatch = new SpriteBatch();
@@ -182,12 +162,9 @@ public class PlayScreen3 implements Screen {
         bossPosition.y = 86;
 
 
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
-
         camera = new OrthographicCamera();
         viewport = new FitViewport(screenWidth, screenHeight, camera);//設置鏡頭大小
-        camera.setToOrtho(false, w, h);//y軸向上
+        camera.setToOrtho(false, screenWidth, screenHeight);//y軸向上
         camera.update();
 
 //        tiledMap = new TmxMapLoader().load("map/map.tmx");
@@ -578,11 +555,9 @@ public class PlayScreen3 implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1.0f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-// 		Update deltaTime & animationTime
-        deltaTime = Gdx.graphics.getDeltaTime();
+        super.render(delta);
+
         animationTime += Gdx.graphics.getDeltaTime();
 
 //		Set camera to batch and update camera
