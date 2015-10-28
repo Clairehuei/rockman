@@ -6,15 +6,21 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
  * Created by 6193 on 2015/10/28.
  */
 public class CollisionDao {
-    //碰撞判斷
-    boolean collisionLeft, collisionRight, collisionBottom, collisionTop;
+
+    //碰撞方向判斷
+    public boolean collisionLeft;
+    public boolean collisionRight;
+    public boolean collisionBottom;
+    public boolean collisionTop;
+
     //與背景地圖障礙物碰撞參數
     float x1, y1, i1, j1;
     int tempcount, tempcount1;
 
+    //地圖資訊
     TiledMapTileLayer foregroundLayer;
     private TiledMapTileLayer.Cell cell;
-    private String collisionKey = "blocked";
+    private String collisionKey = "blocked";//障礙物屬性
 
 
     /**
@@ -117,8 +123,6 @@ public class CollisionDao {
     }
 
 
-
-
     /**
      * 判斷自己是否碰觸目標
      * @param x
@@ -135,8 +139,6 @@ public class CollisionDao {
             return 0;
         }
     }
-
-
 
 
     public String getCollisionKey() {

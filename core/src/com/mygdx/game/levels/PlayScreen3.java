@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.levels;
 
 
 import com.badlogic.gdx.Game;
@@ -11,6 +11,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.BackgroundSound;
+import com.mygdx.game.BossKing1;
+import com.mygdx.game.CollisionDao;
+import com.mygdx.game.HomeScreen;
+import com.mygdx.game.role.hero.Rshana;
 
 /**遊戲第3關
  * Created by 6193 on 2015/10/19.
@@ -46,8 +51,6 @@ public class PlayScreen3 extends PlayBase {
 
 
     BackgroundSound bgSound1;//背景音樂
-//    Sound gunSound;//子彈音效
-
 
     BossKing1 boss;//魔王
     private int HERO_SCORE = 100;
@@ -111,6 +114,13 @@ public class PlayScreen3 extends PlayBase {
         stage.addActor(((Rshana)hero).btn_satk1);
 
         Gdx.input.setInputProcessor(stage);//將場景加入輸入(觸控)偵測
+    }
+
+    @Override
+    public void backHome() {
+        homeScreen = new HomeScreen(game);
+        this.game.setScreen(homeScreen);
+        dispose();
     }
 
 
@@ -194,7 +204,7 @@ public class PlayScreen3 extends PlayBase {
                 boss.setHero1Frame(boss.isFacingRight()?boss.getAnimationStandingRight().getKeyFrame(animationTime, true):boss.getAnimationStandingLeft().getKeyFrame(animationTime, true));
             }
 
-                //判斷英雄是否擊中目標
+            //判斷英雄是否擊中目標
             isHitBoss2(hero.position.x, hero.position.y, hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
             if (hitOnBoss){//擊中
                 boss.setCurrentAction("Hurt");

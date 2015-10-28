@@ -1,10 +1,12 @@
-package com.mygdx.game;
+package com.mygdx.game.role.hero;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.mygdx.game.role.BaseRole;
+import com.mygdx.game.CollisionDao;
 
 /**遊戲腳色父類別
  * Created by 6193 on 2015/10/27.
@@ -13,21 +15,21 @@ public class Rhero extends Actor implements BaseRole {
 
     public String roleType = "Hero";
 
-    Vector2 position = new Vector2();//英雄當前位置
-    Vector2 beforePosition = new Vector2();//英雄前一個位置
-    Vector2 velocity = new Vector2();//英雄的方向速度
+    public Vector2 position = new Vector2();//英雄當前位置
+    public Vector2 beforePosition = new Vector2();//英雄前一個位置
+    public Vector2 velocity = new Vector2();//英雄的方向速度
 
     public TextureAtlas hero1Atlas;//人物系列圖檔資源
     public TextureRegion hero1Frame;//當前人物的畫面
     public String currentAction = "Standing";//人物當前動作(預設為站立)
     public boolean isFacingRight;//是否面向右邊
     public boolean isJumpAndWalk = false;//是否在空中且跑步狀態
+
     public Animation currentAnimation;//英雄當前執行的動畫
     public Animation animationStandingLeft;//站立(左)動畫
     public Animation animationStandingRight;//站立(右)動畫
     public Animation animationWalkingLeft;//跑步(左)動畫
     public Animation animationWalkingRight;//跑步(右)動畫
-
     public Animation animationHurtLeft;//受傷(左)動畫
     public Animation animationHurtRight;//受傷(右)動畫
     public Animation animationWin;//勝利動畫
@@ -42,9 +44,9 @@ public class Rhero extends Actor implements BaseRole {
     public TextureRegion jumpingRightUp;//右前跳躍(上升中)
     public TextureRegion jumpingRightDown;//右前跳躍(下降中)
 
-    CollisionDao collisionDao;
+    CollisionDao collisionDao;//碰撞邏輯
 
-    float jumpY = 0.0f;//跳躍基準
+    public float jumpY = 0.0f;//跳躍基準
 
     //可個別設定特殊技能/按鈕
     public void setSpecialBtn(){}
@@ -67,7 +69,6 @@ public class Rhero extends Actor implements BaseRole {
     }
 
     public void setHero1Frame(TextureRegion hero1Frame) {
-//        System.out.println("hero1Frame.hashCode() = "+hero1Frame.hashCode());
         this.hero1Frame = hero1Frame;
     }
 

@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.role.hero;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 /**遊戲腳色-夏娜
  * Created by 6193 on 2015/10/27.
  */
-public class Rshana extends Rhero {
+public class Rshana extends com.mygdx.game.role.hero.Rhero {
 
     private static final float FRAME_DURATION = 1.0f / 15.0f;
     private static final float FRAME_DURATION_STAND = 1.0f / 8.0f;//站立動畫的播放速度
@@ -55,8 +55,8 @@ public class Rshana extends Rhero {
     boolean canAtkLv3 = false;//普通攻擊第3階段
 
     Skin btnSkin;
-    Button  btn_atk1;
-    Button  btn_satk1;
+    public Button  btn_atk1;
+    public Button  btn_satk1;
     float v0 = 300.0f;
 
     public Rshana(){

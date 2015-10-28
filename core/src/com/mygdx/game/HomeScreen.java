@@ -28,7 +28,7 @@ public class HomeScreen implements Screen {
 //    PlayScreen1 playScreen1;
     PlayScreenTest playScreenTest;
     PlayScreen2 playScreen2;
-    PlayScreen3 playScreen3;
+    com.mygdx.game.levels.PlayScreen3 playScreen3;
 
     private TextureAtlas stage1Atlas;
     private TextureRegion stage1, stage2, stage3, stage4, stage5;
@@ -90,7 +90,7 @@ public class HomeScreen implements Screen {
         imageStage3.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                playScreen3 = new PlayScreen3(game);
+                playScreen3 = new com.mygdx.game.levels.PlayScreen3(game);
                 game.setScreen(playScreen3);
 
                 return true;

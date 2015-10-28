@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.levels;
 
 
 import com.badlogic.gdx.Game;
@@ -17,18 +17,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.CollisionDao;
+import com.mygdx.game.HomeScreen;
+import com.mygdx.game.role.hero.Rhero;
 
 /**遊戲場景父類別
  * Created by User on 2015/10/26.
  */
-public class PlayBase implements Screen {
+public abstract class PlayBase implements Screen {
 
-    float deltaTime = 0.0f;//每偵間格時間(因應手機效能有所不同)
     Game game;
     HomeScreen homeScreen;//返回城鎮(關卡選擇)
+
     //偵測手機螢幕的寬/高
     float screenWidth;
     float screenHeight;
+
+    float deltaTime = 0.0f;//每偵間格時間(因應手機效能有所不同)
 
     //地圖資源
     TiledMapTileLayer foregroundLayer;
@@ -42,11 +47,10 @@ public class PlayBase implements Screen {
 
     Rhero hero;//英雄人物
 
-    Skin btnSkin;
+    Skin btnSkin;//按鈕風格
     Stage stage;
 
-    CollisionDao collisionDao;
-
+    CollisionDao collisionDao;//碰撞邏輯
 
     //玩家介面操控按鈕 [方向鍵] + [技能鍵]
     Button  btn_right;
@@ -54,16 +58,12 @@ public class PlayBase implements Screen {
     Button  btn_jump;
     Button  btn_home;
 
-
     boolean isRightTouchDown = false;//判斷是否持續按住 [向右方向鍵]
     boolean isLeftTouchDown = false;//判斷是否持續按住 [向左方向鍵]
-
     boolean isLeftSprintJump = false;//判斷是否為衝刺跳躍[左大跳]
     boolean isRightSprintJump = false;//判斷是否衝刺跳躍[右大跳]
 
-    float jumpY = 0.0f;
-
-
+    float jumpY = 0.0f;//跳躍基準位置
 
     public void init () {
         Gdx.app.log("==PlayBase.init()===", "start init()");
@@ -83,7 +83,7 @@ public class PlayBase implements Screen {
         setBtnJump();
         setBtnHome();
 
-        //場景加入演員
+        //場景加入演員(固定班底:操作按鈕)
         stage.addActor(btn_right);
         stage.addActor(btn_left);
         stage.addActor(btn_jump);
@@ -209,14 +209,8 @@ public class PlayBase implements Screen {
     }
 
 
-    public void backHome () {
-        homeScreen=new HomeScreen(game);
-        this.game.setScreen(homeScreen);
-        dispose();
-    }
-
-
-
+    //返回城鎮
+    public abstract void backHome ();
 
 
     @Override
