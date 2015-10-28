@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  */
 public class BossKing1 extends Boss {
 
+    public int HP = 1000;
+
     private static final float FRAME_DURATION = 1.0f / 15.0f;
     private static final float FRAME_DURATION_STAND = 1.0f / 8.0f;//站立動畫的播放速度
     private static final float FRAME_DURATION_RUN = 1.0f / 15.0f;//跑步動畫的播放速度

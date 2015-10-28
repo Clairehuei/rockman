@@ -38,14 +38,11 @@ public class Rshana extends com.mygdx.game.role.hero.Rhero {
     private Animation animationSatkaRight;//特殊技能1(右)動畫
     private Animation animationSatkaLeft;//特殊技能1(左)動畫
 
-
-//    float animationTime = 0.0f;
     //所有動畫展示時間
     private float atkaRunTime = 0.0f;//英雄普通攻擊A模式動畫累積時間
     private float atkbRunTime = 0.0f;//英雄普通攻擊B模式動畫累積時間
     private float atkcRunTime = 0.0f;//英雄普通攻擊C模式動畫累積時間
     private float satkaRunTime = 0.0f;//英雄特殊技能1動畫累積時間
-
 
     int clickNumber = 0;//普通攻擊按鈕點擊次數
 
@@ -370,7 +367,6 @@ public class Rshana extends com.mygdx.game.role.hero.Rhero {
         if(tempY > beforePosition.y) {//跳躍上升中
             if(tempY>=jumpY+110){//到達頂點
                 v0 = 0.0f;
-//                jumpY = 0.0f;
             }else{//未到達頂點
                 v0 = 300.0f;
             }
@@ -382,180 +378,157 @@ public class Rshana extends com.mygdx.game.role.hero.Rhero {
     }
 
 
+    public void keepWalking(float deltaTime, float animationTime){
+        atkaRunTime = 0.0f;
+        atkbRunTime = 0.0f;
+        atkcRunTime = 0.0f;
+        setHero1Frame(isFacingRight() ? getAnimationWalkingRight().getKeyFrame(animationTime, true) : getAnimationWalkingLeft().getKeyFrame(animationTime, true));
 
-    @Override
-    public void updateHeroAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump){
+        collisionDao.collisionLeft = false;
+        collisionDao.collisionRight = false;
 
-        super.updateHeroAction(deltaTime, animationTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
-
-        if(getCurrentAction().equals("Walking")){//跑步
-            atkaRunTime = 0.0f;
-            atkbRunTime = 0.0f;
-            atkcRunTime = 0.0f;
-            setHero1Frame(isFacingRight() ? getAnimationWalkingRight().getKeyFrame(animationTime, true) : getAnimationWalkingLeft().getKeyFrame(animationTime, true));
-
-            collisionDao.collisionLeft = false;
-            collisionDao.collisionRight = false;
-
-            if (isFacingRight()){
-                collisionDao.collisionRight(position.x, position.y);//偵測是否碰撞障礙物
-                if (collisionDao.collisionRight){
-                    velocity.x = 0;
-                } else{
-                    velocity.x = 300;
-                }
-            }
-            if (!isFacingRight()){
-                collisionDao.collisionLeft(position.x, position.y);
-                if (collisionDao.collisionLeft){
-                    velocity.x = 0;
-                } else {
-                    velocity.x = -300;
-                }
-            }
-            position.x = position.x + (velocity.x * deltaTime);
-
-            collisionDao.collisionBottom=false;
-            v0 = collisionDao.collisionBottom(position.x, position.y, isFacingRight, v0);
-
-            if (!collisionDao.collisionBottom){
-                setCurrentAction("Jumping");
-                velocity.y=-300;
-            }
-        }else if(getCurrentAction().equals("Jumping")){//跳躍
-            atkaRunTime = 0.0f;
-            atkbRunTime = 0.0f;
-            atkcRunTime = 0.0f;
-            if (isJumpAndWalk()){
-                if(!isRightSprintJump && !isLeftSprintJump){//原地跳後 才給予方向動力
-                    if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
-                        velocity.x = 550;
-                    }else if(isLeftTouchDown){
-                        velocity.x = -550;
-                    }
-                }
-
-                position.x = position.x + (velocity.x * deltaTime*0.3f);
-            }else{
+        if (isFacingRight()){
+            collisionDao.collisionRight(position.x, position.y);//偵測是否碰撞障礙物
+            if (collisionDao.collisionRight){
                 velocity.x = 0;
+            } else{
+                velocity.x = 300;
             }
-
-            collisionDao.collisionTop=false;
-            collisionDao.collisionTop(position.x, position.y);
-
-            if (collisionDao.collisionTop){
-                velocity.y = -100;
-                setCurrentAction("Jumping");
+        }
+        if (!isFacingRight()){
+            collisionDao.collisionLeft(position.x, position.y);
+            if (collisionDao.collisionLeft){
+                velocity.x = 0;
+            } else {
+                velocity.x = -300;
             }
+        }
+        position.x = position.x + (velocity.x * deltaTime);
 
-            position.y = calJumpY(deltaTime);
+        collisionDao.collisionBottom=false;
+        v0 = collisionDao.collisionBottom(position.x, position.y, isFacingRight, v0);
 
-            if(isFacingRight()){//向右跳躍
-                if(position.y > beforePosition.y){//跳躍上升中
-                    setHero1Frame(getJumpingRightUp());
-                }else{//跳躍下降中
-                    setHero1Frame(getJumpingRightDown());
+        if (!collisionDao.collisionBottom){
+            setCurrentAction("Jumping");
+            velocity.y=-300;
+        }
+    }
+
+
+    public void keepJumping(float deltaTime, boolean isRightSprintJump, boolean isLeftSprintJump, boolean isRightTouchDown, boolean isLeftTouchDown){
+        atkaRunTime = 0.0f;
+        atkbRunTime = 0.0f;
+        atkcRunTime = 0.0f;
+        if (isJumpAndWalk()){
+            if(!isRightSprintJump && !isLeftSprintJump){//原地跳後 才給予方向動力
+                if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
+                    velocity.x = 550;
+                }else if(isLeftTouchDown){
+                    velocity.x = -550;
                 }
-            }else{//向左跳躍
-                if(position.y > beforePosition.y){//跳躍上升中
-                    setHero1Frame(getJumpingLeftUp());
-                }else{//跳躍下降中
-                    setHero1Frame(getJumpingLeftDown());
-                }
             }
 
-            collisionDao.collisionBottom=false;
-            v0 = collisionDao.collisionBottom(position.x, position.y, isFacingRight, v0);
-            if (collisionDao.collisionBottom){//已著地
-                velocity.y = 0;
+            position.x = position.x + (velocity.x * deltaTime*0.3f);
+        }else{
+            velocity.x = 0;
+        }
+
+        collisionDao.collisionTop=false;
+        collisionDao.collisionTop(position.x, position.y);
+
+        if (collisionDao.collisionTop){
+            velocity.y = -100;
+            setCurrentAction("Jumping");
+        }
+
+        position.y = calJumpY(deltaTime);
+
+        if(isFacingRight()){//向右跳躍
+            if(position.y > beforePosition.y){//跳躍上升中
+                setHero1Frame(getJumpingRightUp());
+            }else{//跳躍下降中
+                setHero1Frame(getJumpingRightDown());
+            }
+        }else{//向左跳躍
+            if(position.y > beforePosition.y){//跳躍上升中
+                setHero1Frame(getJumpingLeftUp());
+            }else{//跳躍下降中
+                setHero1Frame(getJumpingLeftDown());
+            }
+        }
+
+        collisionDao.collisionBottom=false;
+        v0 = collisionDao.collisionBottom(position.x, position.y, isFacingRight, v0);
+        if (collisionDao.collisionBottom){//已著地
+            velocity.y = 0;
+            setCurrentAction("Standing");
+            if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                setCurrentAction("Walking");
+            }
+        }else{//尚未著地
+            setCurrentAction("Jumping");
+            if(isLeftTouchDown || isRightTouchDown){//當在空中按住方向鍵時,isJumpAndWalk設為true
+                setIsJumpAndWalk(true);
+            }else{
+                setIsJumpAndWalk(false);
+            }
+        }
+    }
+
+
+    public void keepAtking1(boolean isLeftTouchDown, boolean isRightTouchDown){
+        if(!canAtkLv3 && !canAtkLv2 && !canAtkLv1){
+            if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                setCurrentAction("Walking");
+                setCurrentAnimation(isFacingRight() ? getAnimationWalkingRight() : getAnimationWalkingLeft());
+            }else{
                 setCurrentAction("Standing");
-                if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
-                    setCurrentAction("Walking");
-                }
-            }else{//尚未著地
-                setCurrentAction("Jumping");
-                if(isLeftTouchDown || isRightTouchDown){//當在空中按住方向鍵時,isJumpAndWalk設為true
-                    setIsJumpAndWalk(true);
+                setCurrentAnimation(isFacingRight() ? getAnimationStandingRight() : getAnimationStandingLeft());
+            }
+        }
+
+        if(canAtkLv3){
+            if(!canAtkLv2){
+                atkcRunTime+=Gdx.graphics.getDeltaTime();
+                setHero1Frame(isFacingRight() ? getAnimationAttcRight().getKeyFrame(atkcRunTime, true) : getAnimationAttcLeft().getKeyFrame(atkcRunTime, true));
+                setCurrentAnimation(isFacingRight() ? getAnimationAttcRight() : getAnimationAttcLeft());
+
+                if(isFacingRight()){
+                    position.x = position.x+1;
                 }else{
-                    setIsJumpAndWalk(false);
+                    position.x = position.x-1;
+                }
+
+                if(getCurrentAnimation().isAnimationFinished(atkcRunTime)) {//當前第三階段攻擊動畫結束
+                    canAtkLv3 = false;
+                    atkcRunTime = 0.0f;
+
+                    if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                        setCurrentAction("Walking");
+                        setCurrentAnimation(isFacingRight() ? getAnimationWalkingRight() : getAnimationWalkingLeft());
+                    }else{
+                        setCurrentAction("Standing");
+                        setCurrentAnimation(isFacingRight() ? getAnimationStandingRight() : getAnimationStandingLeft());
+                    }
+
                 }
             }
-        }else if (getCurrentAction().equals("Atking1")){
+        }
 
-            if(!canAtkLv3 && !canAtkLv2 && !canAtkLv1){
-                if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
-                    setCurrentAction("Walking");
-                    setCurrentAnimation(isFacingRight() ? getAnimationWalkingRight() : getAnimationWalkingLeft());
+        if(canAtkLv2){
+            if(!canAtkLv1){
+                atkbRunTime+=Gdx.graphics.getDeltaTime();
+                setHero1Frame(isFacingRight() ? getAnimationAttaRight().getKeyFrame(atkbRunTime, true) : getAnimationAttaLeft().getKeyFrame(atkbRunTime, true));
+                setCurrentAnimation(isFacingRight() ? getAnimationAttaRight() : getAnimationAttaLeft());
+                if(isFacingRight()){
+                    position.x = position.x+1;
                 }else{
-                    setCurrentAction("Standing");
-                    setCurrentAnimation(isFacingRight() ? getAnimationStandingRight() : getAnimationStandingLeft());
+                    position.x = position.x-1;
                 }
-            }
-
-            if(canAtkLv3){
-                if(!canAtkLv2){
-                    atkcRunTime+=Gdx.graphics.getDeltaTime();
-                    setHero1Frame(isFacingRight() ? getAnimationAttcRight().getKeyFrame(atkcRunTime, true) : getAnimationAttcLeft().getKeyFrame(atkcRunTime, true));
-                    setCurrentAnimation(isFacingRight() ? getAnimationAttcRight() : getAnimationAttcLeft());
-
-                    if(isFacingRight()){
-                        position.x = position.x+1;
-                    }else{
-                        position.x = position.x-1;
-                    }
-
-                    if(getCurrentAnimation().isAnimationFinished(atkcRunTime)) {//當前第三階段攻擊動畫結束
-                        canAtkLv3 = false;
-                        atkcRunTime = 0.0f;
-
-                        if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
-                            setCurrentAction("Walking");
-                            setCurrentAnimation(isFacingRight() ? getAnimationWalkingRight() : getAnimationWalkingLeft());
-                        }else{
-                            setCurrentAction("Standing");
-                            setCurrentAnimation(isFacingRight() ? getAnimationStandingRight() : getAnimationStandingLeft());
-                        }
-
-                    }
-                }
-            }
-
-            if(canAtkLv2){
-                if(!canAtkLv1){
-                    atkbRunTime+=Gdx.graphics.getDeltaTime();
-                    setHero1Frame(isFacingRight() ? getAnimationAttaRight().getKeyFrame(atkbRunTime, true) : getAnimationAttaLeft().getKeyFrame(atkbRunTime, true));
-                    setCurrentAnimation(isFacingRight() ? getAnimationAttaRight() : getAnimationAttaLeft());
-                    if(isFacingRight()){
-                        position.x = position.x+1;
-                    }else{
-                        position.x = position.x-1;
-                    }
-                    if(getCurrentAnimation().isAnimationFinished(atkbRunTime)){//當前第二階段攻擊動畫結束
-                        canAtkLv2 = false;
-                        atkbRunTime = 0.0f;
-                        if(!canAtkLv3){//沒有第三階段攻擊
-                            //停止攻擊
-                            if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
-                                setCurrentAction("Walking");
-                                setCurrentAnimation(isFacingRight() ? getAnimationWalkingRight() : getAnimationWalkingLeft());
-                            }else{
-                                setCurrentAction("Standing");
-                                setCurrentAnimation(isFacingRight() ? getAnimationStandingRight() : getAnimationStandingLeft());
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(canAtkLv1){
-                atkaRunTime+=Gdx.graphics.getDeltaTime();
-                setHero1Frame(isFacingRight() ? getAnimationAttbRight().getKeyFrame(atkaRunTime, true) : getAnimationAttbLeft().getKeyFrame(atkaRunTime, true));
-                setCurrentAnimation(isFacingRight() ? getAnimationAttbRight() : getAnimationAttbLeft());
-
-                if(getCurrentAnimation().isAnimationFinished(atkaRunTime)){//當前第一階段攻擊動畫結束
-                    canAtkLv1 = false;
-                    atkaRunTime = 0.0f;
-                    if(!canAtkLv2){//沒有第二階段攻擊
+                if(getCurrentAnimation().isAnimationFinished(atkbRunTime)){//當前第二階段攻擊動畫結束
+                    canAtkLv2 = false;
+                    atkbRunTime = 0.0f;
+                    if(!canAtkLv3){//沒有第三階段攻擊
                         //停止攻擊
                         if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
                             setCurrentAction("Walking");
@@ -567,46 +540,89 @@ public class Rshana extends com.mygdx.game.role.hero.Rhero {
                     }
                 }
             }
-
-            collisionDao.collisionBottom=false;
-            v0 = collisionDao.collisionBottom(position.x, position.y, isFacingRight, v0);
-            if (!collisionDao.collisionBottom){
-                setCurrentAction("Jumping");
-                velocity.y=-300;
-            }
-        } else if (getCurrentAction().equals("Satking1")){
-
-            satkaRunTime+=Gdx.graphics.getDeltaTime();
-            setHero1Frame(isFacingRight() ? getAnimationSatkaRight().getKeyFrame(satkaRunTime, true) : getAnimationSatkaLeft().getKeyFrame(satkaRunTime, true));
-            setCurrentAnimation(isFacingRight() ? getAnimationSatkaRight() : getAnimationSatkaLeft());
-
-            if(getCurrentAnimation().isAnimationFinished(satkaRunTime)) {//當前特殊技能1攻擊動畫結束
-                satkaRunTime = 0.0f;
-
-                if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
-                    setCurrentAction("Walking");
-                    setCurrentAnimation(isFacingRight() ? getAnimationWalkingRight() : getAnimationWalkingLeft());
-                }else{
-                    setCurrentAction("Standing");
-                    setCurrentAnimation(isFacingRight() ? getAnimationStandingRight() : getAnimationStandingLeft());
-                }
-
-            }
-
-            collisionDao.collisionBottom=false;
-            v0 = collisionDao.collisionBottom(position.x, position.y, isFacingRight, v0);
-            if (!collisionDao.collisionBottom){
-                setCurrentAction("Jumping");
-                velocity.y=-300;
-            }
-        } else{//其他列為站立
-            setCurrentAction("Standing");
-            setHero1Frame(isFacingRight() ? getAnimationStandingRight().getKeyFrame(animationTime, true) : getAnimationStandingLeft().getKeyFrame(animationTime, true));
         }
 
+        if(canAtkLv1){
+            atkaRunTime+=Gdx.graphics.getDeltaTime();
+            setHero1Frame(isFacingRight() ? getAnimationAttbRight().getKeyFrame(atkaRunTime, true) : getAnimationAttbLeft().getKeyFrame(atkaRunTime, true));
+            setCurrentAnimation(isFacingRight() ? getAnimationAttbRight() : getAnimationAttbLeft());
+
+            if(getCurrentAnimation().isAnimationFinished(atkaRunTime)){//當前第一階段攻擊動畫結束
+                canAtkLv1 = false;
+                atkaRunTime = 0.0f;
+                if(!canAtkLv2){//沒有第二階段攻擊
+                    //停止攻擊
+                    if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                        setCurrentAction("Walking");
+                        setCurrentAnimation(isFacingRight() ? getAnimationWalkingRight() : getAnimationWalkingLeft());
+                    }else{
+                        setCurrentAction("Standing");
+                        setCurrentAnimation(isFacingRight() ? getAnimationStandingRight() : getAnimationStandingLeft());
+                    }
+                }
+            }
+        }
+
+        collisionDao.collisionBottom=false;
+        v0 = collisionDao.collisionBottom(position.x, position.y, isFacingRight, v0);
+        if (!collisionDao.collisionBottom){
+            setCurrentAction("Jumping");
+            velocity.y=-300;
+        }
     }
 
 
+    public void keepSatking1(boolean isLeftTouchDown, boolean isRightTouchDown){
+        satkaRunTime+=Gdx.graphics.getDeltaTime();
+        setHero1Frame(isFacingRight() ? getAnimationSatkaRight().getKeyFrame(satkaRunTime, true) : getAnimationSatkaLeft().getKeyFrame(satkaRunTime, true));
+        setCurrentAnimation(isFacingRight() ? getAnimationSatkaRight() : getAnimationSatkaLeft());
+
+        if(getCurrentAnimation().isAnimationFinished(satkaRunTime)) {//當前特殊技能1攻擊動畫結束
+            satkaRunTime = 0.0f;
+
+            if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                setCurrentAction("Walking");
+                setCurrentAnimation(isFacingRight() ? getAnimationWalkingRight() : getAnimationWalkingLeft());
+            }else{
+                setCurrentAction("Standing");
+                setCurrentAnimation(isFacingRight() ? getAnimationStandingRight() : getAnimationStandingLeft());
+            }
+
+        }
+
+        collisionDao.collisionBottom=false;
+        v0 = collisionDao.collisionBottom(position.x, position.y, isFacingRight, v0);
+        if (!collisionDao.collisionBottom){
+            setCurrentAction("Jumping");
+            velocity.y=-300;
+        }
+    }
+
+
+    public void keepStanding(float animationTime){
+        setCurrentAction("Standing");
+        setHero1Frame(isFacingRight() ? getAnimationStandingRight().getKeyFrame(animationTime, true) : getAnimationStandingLeft().getKeyFrame(animationTime, true));
+    }
+
+
+    @Override
+    public void updateHeroAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump){
+
+        super.updateHeroAction(deltaTime, animationTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
+
+        if(getCurrentAction().equals("Walking")){//跑步
+            keepWalking(deltaTime, animationTime);
+        }else if(getCurrentAction().equals("Jumping")){//跳躍
+            keepJumping(deltaTime, isRightSprintJump, isLeftSprintJump, isRightTouchDown, isLeftTouchDown);
+        }else if (getCurrentAction().equals("Atking1")){//普通(連續)攻擊
+            keepAtking1(isLeftTouchDown, isRightTouchDown);
+        } else if (getCurrentAction().equals("Satking1")){//特殊技能1
+            keepSatking1(isLeftTouchDown, isRightTouchDown);
+        } else{//其他列為站立
+            keepStanding(animationTime);
+        }
+
+    }
 
 
     //*********************************setter/getter***************************************

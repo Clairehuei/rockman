@@ -17,6 +17,9 @@ import com.mygdx.game.dao.CollisionDao;
 import com.mygdx.game.HomeScreen;
 import com.mygdx.game.role.hero.Rshana;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**遊戲第3關
  * Created by 6193 on 2015/10/19.
  */
@@ -55,6 +58,8 @@ public class PlayScreen3 extends PlayBase {
     BossKing1 boss;//魔王
     private int HERO_SCORE = 100;
     private int BOSS_SCORE = 1000;
+
+    List<BossKing1> monster = new ArrayList<BossKing1>();
 
     boolean hitOnBoss = false;//是否擊中BOSS
 
@@ -98,6 +103,9 @@ public class PlayScreen3 extends PlayBase {
         boss = new BossKing1();
         bossPosition.x = 800;
         bossPosition.y = 86;
+
+        //把BOOS加入本關卡怪物行列
+        monster.add(boss);
 
         //設定本關卡背景音樂
         bgSound1 = new BackgroundSound();
@@ -147,12 +155,12 @@ public class PlayScreen3 extends PlayBase {
 
     @Override
     public void show() {
-
+        Gdx.app.log("show","XXXXXXXXXXXXXXXXXXXXXX");
+        //在render之前執行(僅執行一次)
     }
 
     @Override
     public void render(float delta) {
-
         super.render(delta);
 
         animationTime += Gdx.graphics.getDeltaTime();
@@ -209,6 +217,7 @@ public class PlayScreen3 extends PlayBase {
             if (hitOnBoss){//擊中
                 boss.setCurrentAction("Hurt");
                 BOSS_SCORE = BOSS_SCORE-1;
+                boss.HP = boss.HP-1;
             }
 
             if(spriteBoss!=null){
