@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.game.role.BaseRole;
-import com.mygdx.game.CollisionDao;
+import com.mygdx.game.dao.CollisionDao;
 
-/**遊戲腳色父類別
+/**英雄腳色父類別
  * Created by 6193 on 2015/10/27.
  */
 public class Rhero extends Actor implements BaseRole {

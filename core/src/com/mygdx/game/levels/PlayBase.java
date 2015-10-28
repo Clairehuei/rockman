@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.CollisionDao;
+import com.mygdx.game.dao.CollisionDao;
 import com.mygdx.game.HomeScreen;
 import com.mygdx.game.role.hero.Rhero;
 

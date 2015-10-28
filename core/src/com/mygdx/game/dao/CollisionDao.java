@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.dao;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 

@@ -13,7 +13,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.BackgroundSound;
 import com.mygdx.game.BossKing1;
-import com.mygdx.game.CollisionDao;
+import com.mygdx.game.dao.CollisionDao;
 import com.mygdx.game.HomeScreen;
 import com.mygdx.game.role.hero.Rshana;
 
