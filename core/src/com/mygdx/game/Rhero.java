@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-/**
+/**遊戲腳色父類別
  * Created by 6193 on 2015/10/27.
  */
 public class Rhero extends Actor implements BaseRole {
@@ -42,6 +42,15 @@ public class Rhero extends Actor implements BaseRole {
     public TextureRegion jumpingRightUp;//右前跳躍(上升中)
     public TextureRegion jumpingRightDown;//右前跳躍(下降中)
 
+    CollisionDao collisionDao;
+
+    float jumpY = 0.0f;//跳躍基準
+
+    //可個別設定特殊技能/按鈕
+    public void setSpecialBtn(){}
+
+    //更新英雄行為
+    public void updateHeroAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump){}
 
     //************************************************setter/getter**************************************************
 
@@ -244,5 +253,12 @@ public class Rhero extends Actor implements BaseRole {
 
     public void setVelocity(Vector2 velocity) {
         this.velocity = velocity;
+    }
+    public CollisionDao getCollisionDao() {
+        return collisionDao;
+    }
+
+    public void setCollisionDao(CollisionDao collisionDao) {
+        this.collisionDao = collisionDao;
     }
 }
