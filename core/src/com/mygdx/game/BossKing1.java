@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  */
 public class BossKing1 extends Boss {
 
-    public int HP = 1000;
+
 
     private static final float FRAME_DURATION = 1.0f / 15.0f;
     private static final float FRAME_DURATION_STAND = 1.0f / 8.0f;//站立動畫的播放速度
@@ -26,11 +26,11 @@ public class BossKing1 extends Boss {
     private static final float FRAME_DURATION_JUMP = 1.0f / 15.0f;//跳躍動畫的播放速度(暫時忽略)
 
     private TextureAtlas hero1Atlas;//人物系列圖檔資源
-    private TextureRegion hero1Frame;//當前人物的畫面
 
-    private String currentAction = "Standing";//人物當前動作(預設為站立)
 
-    private boolean isFacingRight;//是否面向右邊
+//    private String currentAction = "Standing";//人物當前動作(預設為站立)
+//
+//    private boolean isFacingRight;//是否面向右邊
     private boolean isJumpAndWalk = false;//是否在空中且跑步狀態
 
     private Animation animationStandingLeft;//站立(左)動畫
@@ -285,22 +285,15 @@ public class BossKing1 extends Boss {
         this.hero1Atlas = hero1Atlas;
     }
 
-    public TextureRegion getHero1Frame() {
-        return hero1Frame;
-    }
 
-    public void setHero1Frame(TextureRegion hero1Frame) {
-//        System.out.println("hero1Frame.hashCode() = "+hero1Frame.hashCode());
-        this.hero1Frame = hero1Frame;
-    }
 
-    public boolean isFacingRight() {
-        return isFacingRight;
-    }
-
-    public void setIsFacingRight(boolean isFacingRight) {
-        this.isFacingRight = isFacingRight;
-    }
+//    public boolean isFacingRight() {
+//        return isFacingRight;
+//    }
+//
+//    public void setIsFacingRight(boolean isFacingRight) {
+//        this.isFacingRight = isFacingRight;
+//    }
 
     public boolean isJumpAndWalk() {
         return isJumpAndWalk;
@@ -318,13 +311,13 @@ public class BossKing1 extends Boss {
         this.animationWalkingLeft = animationWalkingLeft;
     }
 
-    public String getCurrentAction() {
-        return currentAction;
-    }
-
-    public void setCurrentAction(String currentAction) {
-        this.currentAction = currentAction;
-    }
+//    public String getCurrentAction() {
+//        return currentAction;
+//    }
+//
+//    public void setCurrentAction(String currentAction) {
+//        this.currentAction = currentAction;
+//    }
 
     public Animation getAnimationStandingLeft() {
         return animationStandingLeft;

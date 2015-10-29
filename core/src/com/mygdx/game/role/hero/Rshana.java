@@ -8,11 +8,14 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.mygdx.game.Boss;
+
+import java.util.List;
 
 /**遊戲腳色-夏娜
  * Created by 6193 on 2015/10/27.
  */
-public class Rshana extends com.mygdx.game.role.hero.Rhero {
+public class Rshana extends Rhero {
 
     private static final float FRAME_DURATION = 1.0f / 15.0f;
     private static final float FRAME_DURATION_STAND = 1.0f / 8.0f;//站立動畫的播放速度
@@ -294,7 +297,6 @@ public class Rshana extends com.mygdx.game.role.hero.Rhero {
 
     @Override
     public void setSpecialBtn(){
-        super.setSpecialBtn();
         setBtnAtk1();
         setBtnSatk1();
     }
@@ -616,12 +618,30 @@ public class Rshana extends com.mygdx.game.role.hero.Rhero {
             keepJumping(deltaTime, isRightSprintJump, isLeftSprintJump, isRightTouchDown, isLeftTouchDown);
         }else if (getCurrentAction().equals("Atking1")){//普通(連續)攻擊
             keepAtking1(isLeftTouchDown, isRightTouchDown);
+            calAttack();
         } else if (getCurrentAction().equals("Satking1")){//特殊技能1
             keepSatking1(isLeftTouchDown, isRightTouchDown);
+            calAttack();
         } else{//其他列為站立
             keepStanding(animationTime);
         }
 
+    }
+
+
+    public void calAttack(){
+        int i;
+        if(target!=null && target.size()>0){
+            for(Boss t: target){
+                i = collisionDao.isBeAttack(position.x, position.y, getHero1Frame().getRegionWidth(), getHero1Frame().getRegionHeight(),
+                                        t.bossPosition.x, t.bossPosition.y, t.getHero1Frame().getRegionWidth(), t.getHero1Frame().getRegionHeight());
+
+                if(i>0){
+                    t.setCurrentAction("Hurt");
+                    t.HP = t.HP-1;
+                }
+            }
+        }
     }
 
 

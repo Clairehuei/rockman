@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.BackgroundSound;
+import com.mygdx.game.Boss;
 import com.mygdx.game.BossKing1;
 import com.mygdx.game.dao.CollisionDao;
 import com.mygdx.game.HomeScreen;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class PlayScreen3 extends PlayBase {
 
-    private Vector2 bossPosition = new Vector2();//魔王當前位置
+//    private Vector2 bossPosition = new Vector2();//魔王當前位置
     private float MaxVelocity = 800f;//人物空中下降終端速度
 
     //所有動畫展示時間
@@ -59,7 +59,7 @@ public class PlayScreen3 extends PlayBase {
     private int HERO_SCORE = 100;
     private int BOSS_SCORE = 1000;
 
-    List<BossKing1> monster = new ArrayList<BossKing1>();
+    List<Boss> monster = new ArrayList<Boss>();
 
     boolean hitOnBoss = false;//是否擊中BOSS
 
@@ -91,6 +91,14 @@ public class PlayScreen3 extends PlayBase {
         collisionDao = new CollisionDao();
         collisionDao.setForegroundLayer(foregroundLayer);
 
+        //初始化BOSS
+        boss = new BossKing1();
+        boss.bossPosition.x = 800;
+        boss.bossPosition.y = 86;
+
+        //把BOOS加入本關卡怪物行列
+        monster.add(boss);
+
         //初始化英雄
         hero = new Rshana();
         hero.setCollisionDao(collisionDao);
@@ -98,14 +106,9 @@ public class PlayScreen3 extends PlayBase {
         hero.position.y = 250;//英雄初始位置Y
         hero.velocity.x = 300;//英雄X軸初始速度
         hero.velocity.y = -150;//英雄Y軸初始速度
+        hero.setTarget(monster);
 
-        //初始化BOSS
-        boss = new BossKing1();
-        bossPosition.x = 800;
-        bossPosition.y = 86;
 
-        //把BOOS加入本關卡怪物行列
-        monster.add(boss);
 
         //設定本關卡背景音樂
         bgSound1 = new BackgroundSound();
@@ -132,25 +135,25 @@ public class PlayScreen3 extends PlayBase {
     }
 
 
-    /**
-     * 判斷普通攻擊是否攻擊到魔王
-     * @param x
-     * @param y
-     * @return
-     */
-    private	boolean isHitBoss2(float x, float y, float w, float h){
-        if(x+w>=bossPosition.x-10 && x<=bossPosition.x){
-            hitOnBoss = true;
-            return true;
-        }else if(x-10<=bossPosition.x+boss.getHero1Frame().getRegionWidth() && x>bossPosition.x){
-            hitOnBoss = true;
-            return true;
-        }else{
-            hitOnBoss = false;
-        }
-
-        return false;
-    }
+//    /**
+//     * 判斷普通攻擊是否攻擊到魔王
+//     * @param x
+//     * @param y
+//     * @return
+//     */
+//    private	boolean isHitBoss2(float x, float y, float w, float h){
+//        if(x+w>=boss.bossPosition.x-10 && x<=boss.bossPosition.x){
+//            hitOnBoss = true;
+//            return true;
+//        }else if(x-10<=boss.bossPosition.x+boss.getHero1Frame().getRegionWidth() && x>boss.bossPosition.x){
+//            hitOnBoss = true;
+//            return true;
+//        }else{
+//            hitOnBoss = false;
+//        }
+//
+//        return false;
+//    }
 
 
     @Override
@@ -183,7 +186,7 @@ public class PlayScreen3 extends PlayBase {
             }
 
             //將魔王的方向面對英雄
-            if(hero.position.x<=bossPosition.x){
+            if(hero.position.x<=boss.bossPosition.x){
                 boss.setIsFacingRight(false);
             }else{
                 boss.setIsFacingRight(true);
@@ -195,9 +198,9 @@ public class PlayScreen3 extends PlayBase {
                 boss.setCurrentAnimation(boss.isFacingRight() ? boss.getAnimationHurtRight() : boss.getAnimationHurtLeft());
 
                 if(boss.isFacingRight()){
-                    bossPosition.x = bossPosition.x-1;
+                    boss.bossPosition.x = boss.bossPosition.x-1;
                 }else{
-                    bossPosition.x = bossPosition.x+1;
+                    boss.bossPosition.x = boss.bossPosition.x+1;
                 }
 
                 if(boss.getCurrentAnimation().isAnimationFinished(bossHurtRunTime)){
@@ -212,13 +215,13 @@ public class PlayScreen3 extends PlayBase {
                 boss.setHero1Frame(boss.isFacingRight()?boss.getAnimationStandingRight().getKeyFrame(animationTime, true):boss.getAnimationStandingLeft().getKeyFrame(animationTime, true));
             }
 
-            //判斷英雄是否擊中目標
-            isHitBoss2(hero.position.x, hero.position.y, hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
-            if (hitOnBoss){//擊中
-                boss.setCurrentAction("Hurt");
-                BOSS_SCORE = BOSS_SCORE-1;
-                boss.HP = boss.HP-1;
-            }
+//            //判斷英雄是否擊中目標
+//            isHitBoss2(hero.position.x, hero.position.y, hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
+//            if (hitOnBoss){//擊中
+//                boss.setCurrentAction("Hurt");
+//                BOSS_SCORE = BOSS_SCORE-1;
+//                boss.HP = boss.HP-1;
+//            }
 
             if(spriteBoss!=null){
                 spriteBoss.setRegion(boss.getHero1Frame());
@@ -238,7 +241,7 @@ public class PlayScreen3 extends PlayBase {
             sprite.setPosition(hero.position.x, hero.position.y + deltay);//設定人物位置
             sprite.setScale(1.8f);//設定人物大小
 
-            spriteBoss.setPosition(bossPosition.x, bossPosition.y);//設定魔王位置
+            spriteBoss.setPosition(boss.bossPosition.x, boss.bossPosition.y);//設定魔王位置
             spriteBoss.setScale(1.8f);//設定魔王大小
 
             tiledMapRenderer.setView(camera);
@@ -305,9 +308,9 @@ public class PlayScreen3 extends PlayBase {
                 boss.setCurrentAnimation(boss.isFacingRight() ? boss.getAnimationLoseRight() : boss.getAnimationLoseLeft());
 
                 if(boss.isFacingRight()){
-                    bossPosition.x = bossPosition.x-2;
+                    boss.bossPosition.x = boss.bossPosition.x-2;
                 }else{
-                    bossPosition.x = bossPosition.x+2;
+                    boss.bossPosition.x = boss.bossPosition.x+2;
                 }
 
                 if(boss.getCurrentAnimation().isAnimationFinished(bossResultRunTime)){
@@ -336,7 +339,7 @@ public class PlayScreen3 extends PlayBase {
             sprite.setPosition(hero.position.x, hero.position.y + deltay);//設定人物位置
             sprite.setScale(1.8f);//設定人物大小
 
-            spriteBoss.setPosition(bossPosition.x, bossPosition.y);//設定魔王位置
+            spriteBoss.setPosition(boss.bossPosition.x, boss.bossPosition.y);//設定魔王位置
             spriteBoss.setScale(1.8f);//設定魔王大小
 
             tiledMapRenderer.setView(camera);
@@ -416,7 +419,7 @@ public class PlayScreen3 extends PlayBase {
             sprite.setPosition(hero.position.x, hero.position.y + deltay);//設定人物位置
             sprite.setScale(1.8f);//設定人物大小
 
-            spriteBoss.setPosition(bossPosition.x, bossPosition.y);//設定魔王位置
+            spriteBoss.setPosition(boss.bossPosition.x, boss.bossPosition.y);//設定魔王位置
             spriteBoss.setScale(1.8f);//設定魔王大小
 
             tiledMapRenderer.setView(camera);
@@ -444,7 +447,7 @@ public class PlayScreen3 extends PlayBase {
 //	    顯示分數or生命值
         HUDBatch.begin();
         font1.draw(HUDBatch, "HERO:" + HERO_SCORE, 550, 700);
-        font2.draw(HUDBatch, "BOSS:" + BOSS_SCORE, 750, 700);
+        font2.draw(HUDBatch, "BOSS:" + boss.HP, 750, 700);
         HUDBatch.end();
 
         //顯示控制按鈕

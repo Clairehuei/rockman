@@ -5,13 +5,16 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.mygdx.game.Boss;
 import com.mygdx.game.role.BaseRole;
 import com.mygdx.game.dao.CollisionDao;
+
+import java.util.List;
 
 /**英雄腳色父類別
  * Created by 6193 on 2015/10/27.
  */
-public class Rhero extends Actor implements BaseRole {
+public abstract class Rhero extends Actor implements BaseRole {
 
     public String roleType = "Hero";
 
@@ -48,8 +51,10 @@ public class Rhero extends Actor implements BaseRole {
 
     public float jumpY = 0.0f;//跳躍基準
 
+    List<Boss> target;
+
     //可個別設定特殊技能/按鈕
-    public void setSpecialBtn(){}
+    public abstract void setSpecialBtn();
 
     //更新英雄行為
     public void updateHeroAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump){}
@@ -261,5 +266,13 @@ public class Rhero extends Actor implements BaseRole {
 
     public void setCollisionDao(CollisionDao collisionDao) {
         this.collisionDao = collisionDao;
+    }
+
+    public List<Boss> getTarget() {
+        return target;
+    }
+
+    public void setTarget(List<Boss> target) {
+        this.target = target;
     }
 }

@@ -129,7 +129,19 @@ public class CollisionDao {
      * @param y
      * @return
      */
-    private	int isTouchBoss(float x, float y, int selfW, int selfH ,float targetX, float targetY, int targetW, int targetH){
+    public	int isTouchBoss(float x, float y, int selfW, int selfH ,float targetX, float targetY, int targetW, int targetH){
+        // 0:未碰觸   1:從左邊碰觸(self(碰觸)target)   2:從右邊碰觸(target(碰觸)self)
+        if(x + selfW >= targetX-5 && x + selfW <= targetX){
+            return 1;
+        }else if(x-5 <= targetX + targetW && x + selfW >= targetX + targetW){
+            return 2;
+        }else{
+            return 0;
+        }
+    }
+
+
+    public	int isBeAttack(float x, float y, int selfW, int selfH ,float targetX, float targetY, int targetW, int targetH){
         // 0:未碰觸   1:從左邊碰觸(self(碰觸)target)   2:從右邊碰觸(target(碰觸)self)
         if(x + selfW >= targetX-5 && x + selfW <= targetX){
             return 1;
