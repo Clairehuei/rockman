@@ -10,8 +10,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  */
 public class BossKing1 extends Boss {
 
-
-
     private static final float FRAME_DURATION = 1.0f / 15.0f;
     private static final float FRAME_DURATION_STAND = 1.0f / 8.0f;//站立動畫的播放速度
     private static final float FRAME_DURATION_RUN = 1.0f / 15.0f;//跑步動畫的播放速度
@@ -27,10 +25,6 @@ public class BossKing1 extends Boss {
 
     private TextureAtlas hero1Atlas;//人物系列圖檔資源
 
-
-//    private String currentAction = "Standing";//人物當前動作(預設為站立)
-//
-//    private boolean isFacingRight;//是否面向右邊
     private boolean isJumpAndWalk = false;//是否在空中且跑步狀態
 
     private Animation animationStandingLeft;//站立(左)動畫
@@ -285,16 +279,6 @@ public class BossKing1 extends Boss {
         this.hero1Atlas = hero1Atlas;
     }
 
-
-
-//    public boolean isFacingRight() {
-//        return isFacingRight;
-//    }
-//
-//    public void setIsFacingRight(boolean isFacingRight) {
-//        this.isFacingRight = isFacingRight;
-//    }
-
     public boolean isJumpAndWalk() {
         return isJumpAndWalk;
     }
@@ -310,14 +294,6 @@ public class BossKing1 extends Boss {
     public void setAnimationWalkingLeft(Animation animationWalkingLeft) {
         this.animationWalkingLeft = animationWalkingLeft;
     }
-
-//    public String getCurrentAction() {
-//        return currentAction;
-//    }
-//
-//    public void setCurrentAction(String currentAction) {
-//        this.currentAction = currentAction;
-//    }
 
     public Animation getAnimationStandingLeft() {
         return animationStandingLeft;

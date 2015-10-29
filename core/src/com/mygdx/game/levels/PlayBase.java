@@ -154,6 +154,19 @@ public abstract class PlayBase implements Screen {
     }
 
 
+    public void moveCamera(){
+        //調整鏡頭位置
+        if(hero.position.x>=screenWidth/2 && hero.position.x<=(stageWidth-(screenWidth/2))){//中間區域
+            //跟隨英雄
+            camera.position.x = hero.position.x;
+        }else if(hero.position.x<screenWidth/2){//最左邊
+            camera.position.x = screenWidth/2;
+        }else if(hero.position.x>(stageWidth-(screenWidth/2))){//最右邊
+            camera.position.x = stageWidth-(screenWidth/2);
+        }
+    }
+
+
     /**
      * 跳躍鍵設定
      */

@@ -13,10 +13,7 @@ public abstract class Boss extends Actor {
     public TextureRegion hero1Frame;//當前人物的畫面
     public String currentAction = "Standing";//人物當前動作(預設為站立)
     public boolean isFacingRight;//是否面向右邊
-    public int HP = 1000;
-
-
-
+    public int HP = 300;
 
 
     //************************************************setter/getter**************************************************

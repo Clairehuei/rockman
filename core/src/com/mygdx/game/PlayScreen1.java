@@ -29,6 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.sound.background.BackgroundSound;
 
 import java.util.ArrayList;
 
@@ -73,7 +74,7 @@ public class PlayScreen1 implements Screen, InputProcessor {
     private Sprite spriteHero1, spriteHero2, spriteHero3;
 
     //	Sound sound;
-    BackgroundSound bgSound1;
+    com.mygdx.game.sound.background.BackgroundSound bgSound1;
     Sound gunSound;
 
     public enum State {

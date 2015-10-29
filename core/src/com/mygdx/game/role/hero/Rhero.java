@@ -5,10 +5,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.mygdx.game.Boss;
 import com.mygdx.game.role.BaseRole;
 import com.mygdx.game.dao.CollisionDao;
-
+import com.mygdx.game.role.monster.Rmonster;
 import java.util.List;
 
 /**英雄腳色父類別
@@ -17,7 +16,7 @@ import java.util.List;
 public abstract class Rhero extends Actor implements BaseRole {
 
     public String roleType = "Hero";
-
+    public int HP = 100;
     public Vector2 position = new Vector2();//英雄當前位置
     public Vector2 beforePosition = new Vector2();//英雄前一個位置
     public Vector2 velocity = new Vector2();//英雄的方向速度
@@ -51,13 +50,15 @@ public abstract class Rhero extends Actor implements BaseRole {
 
     public float jumpY = 0.0f;//跳躍基準
 
-    List<Boss> target;
+    List<Rmonster> target;//攻擊目標
 
     //可個別設定特殊技能/按鈕
     public abstract void setSpecialBtn();
+    //攻擊目標判斷
+    public abstract void calAttack();
 
     //更新英雄行為
-    public void updateHeroAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump){}
+    public abstract void updateHeroAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump);
 
     //************************************************setter/getter**************************************************
 
@@ -268,11 +269,11 @@ public abstract class Rhero extends Actor implements BaseRole {
         this.collisionDao = collisionDao;
     }
 
-    public List<Boss> getTarget() {
+    public List<Rmonster> getTarget() {
         return target;
     }
 
-    public void setTarget(List<Boss> target) {
+    public void setTarget(List<Rmonster> target) {
         this.target = target;
     }
 }

@@ -9,8 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.game.Boss;
+import com.mygdx.game.role.monster.Rmonster;
 
-import java.util.List;
+import java.util.Iterator;
 
 /**遊戲腳色-夏娜
  * Created by 6193 on 2015/10/27.
@@ -58,6 +59,8 @@ public class Rshana extends Rhero {
     public Button  btn_atk1;
     public Button  btn_satk1;
     float v0 = 300.0f;
+    Iterator<Rmonster> imonster;
+    Rmonster t;
 
     public Rshana(){
         init();
@@ -610,8 +613,6 @@ public class Rshana extends Rhero {
     @Override
     public void updateHeroAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump){
 
-        super.updateHeroAction(deltaTime, animationTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
-
         if(getCurrentAction().equals("Walking")){//跑步
             keepWalking(deltaTime, animationTime);
         }else if(getCurrentAction().equals("Jumping")){//跳躍
@@ -629,16 +630,34 @@ public class Rshana extends Rhero {
     }
 
 
+    @Override
     public void calAttack(){
         int i;
         if(target!=null && target.size()>0){
-            for(Boss t: target){
+
+
+            for(Rmonster t: target){
                 i = collisionDao.isBeAttack(position.x, position.y, getHero1Frame().getRegionWidth(), getHero1Frame().getRegionHeight(),
-                                        t.bossPosition.x, t.bossPosition.y, t.getHero1Frame().getRegionWidth(), t.getHero1Frame().getRegionHeight());
+                        t.position.x, t.position.y, t.getMonsterFrame().getRegionWidth(), t.getMonsterFrame().getRegionHeight());
 
                 if(i>0){
-                    t.setCurrentAction("Hurt");
                     t.HP = t.HP-1;
+                    t.setCurrentAction("Hurt");
+                }
+            }
+
+            imonster = target.iterator();
+            while (imonster.hasNext()) {
+                t = imonster.next();
+                i = collisionDao.isBeAttack(position.x, position.y, getHero1Frame().getRegionWidth(), getHero1Frame().getRegionHeight(),
+                        t.position.x, t.position.y, t.getMonsterFrame().getRegionWidth(), t.getMonsterFrame().getRegionHeight());
+
+                if(i>0){
+                    t.HP = t.HP-1;
+                    t.setCurrentAction("Hurt");
+                    if(t.HP<=0){
+                        imonster.remove();
+                    }
                 }
             }
         }

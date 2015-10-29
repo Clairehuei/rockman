@@ -26,6 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.sound.background.BackgroundSound;
 
 import java.util.ArrayList;
 
@@ -104,7 +105,7 @@ public class PlayScreenTest implements Screen{
     private boolean bossResultKeep = false;//是否開始撥放BOSS戰鬥結果(持續)動畫
 
 
-    BackgroundSound bgSound1;//背景音樂
+    com.mygdx.game.sound.background.BackgroundSound bgSound1;//背景音樂
     Sound gunSound;//子彈音效
 
     //碰撞判斷
