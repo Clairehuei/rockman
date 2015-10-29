@@ -68,7 +68,7 @@ public class Rshana extends Rhero {
 
     public void init(){
         isFacingRight = true;
-        this.setCurrentAction("Jumping");
+        this.setCurrentAction("Standing");
 
         //讀取人物圖檔資源
         hero1Atlas = new TextureAtlas(Gdx.files.internal("hero/shana/heroShana.pack"));
@@ -607,6 +607,7 @@ public class Rshana extends Rhero {
     public void keepStanding(float animationTime){
         setCurrentAction("Standing");
         setHero1Frame(isFacingRight() ? getAnimationStandingRight().getKeyFrame(animationTime, true) : getAnimationStandingLeft().getKeyFrame(animationTime, true));
+        Gdx.app.log("standing","y = "+position.y);
     }
 
 

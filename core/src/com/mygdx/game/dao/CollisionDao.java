@@ -153,6 +153,18 @@ public class CollisionDao {
     }
 
 
+    public	int serchTarget(float x, float y, int selfW, int selfH ,float targetX, float targetY, int serchRange){
+        // 0:未碰觸   1:從左邊碰觸(self(碰觸)target)   2:從右邊碰觸(target(碰觸)self)
+        if(x + selfW >= targetX-serchRange && x + selfW <= targetX){
+            return 1;
+        }else if(x-serchRange <= targetX && x + selfW >= targetX){
+            return 2;
+        }else{
+            return 0;
+        }
+    }
+
+
     public String getCollisionKey() {
         return collisionKey;
     }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.game.role.BaseRole;
+import com.mygdx.game.role.hero.Rhero;
 
 /**遊戲中所有的怪(BOSS 與 小怪)的父類別
  * Created by 6193 on 2015/10/29.
@@ -21,8 +22,11 @@ public abstract class Rmonster extends Actor implements BaseRole {
     public Animation currentAnimation;//怪物當前執行的動畫
     public Animation animationHurtLeft;//受傷(左)動畫
     public Animation animationHurtRight;//受傷(右)動畫
+    public Vector2 velocity = new Vector2();//英雄的方向速度
 
 
+    public Rhero target;
+    public int serchRange = 150;
 
     //怪物的人工智慧
     public abstract void callAI();
@@ -108,5 +112,29 @@ public abstract class Rmonster extends Actor implements BaseRole {
 
     public void setAnimationHurtRight(Animation animationHurtRight) {
         this.animationHurtRight = animationHurtRight;
+    }
+
+    public Rhero getTarget() {
+        return target;
+    }
+
+    public void setTarget(Rhero target) {
+        this.target = target;
+    }
+
+    public int getSerchRange() {
+        return serchRange;
+    }
+
+    public void setSerchRange(int serchRange) {
+        this.serchRange = serchRange;
+    }
+
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(Vector2 velocity) {
+        this.velocity = velocity;
     }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.mygdx.game.dao.CollisionDao;
 
 /**第1關BOSS
  * Created by 6193 on 2015/10/28.
@@ -20,6 +21,7 @@ public class Rboss01 extends Rboss {
     private static final float FRAME_DURATION_ATK1 = 1.0f / 14.0f;//普通攻擊(A模式)的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_ATK2 = 1.0f / 14.0f;//普通攻擊(B模式)的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_ATK3 = 1.0f / 14.0f;//普通攻擊(C模式)的播放速度 = 每一格動作的播放間隔時間
+    private static final float FRAME_DURATION_SATK1 = 1.0f / 11.0f;//特殊技能1的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_HURT = 1.0f / 15.0f;//受傷的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_JUMP = 1.0f / 15.0f;//跳躍動畫的播放速度(暫時忽略)
 
@@ -35,14 +37,19 @@ public class Rboss01 extends Rboss {
     private Animation animationAttbLeft;//普通攻擊(B模式)(左)動畫
     private Animation animationAttcRight;//普通攻擊(C模式)(右)動畫
     private Animation animationAttcLeft;//普通攻擊(C模式)(左)動畫
+    private Animation animationSatkaRight;//特殊技能1(右)動畫
+    private Animation animationSatkaLeft;//特殊技能1(左)動畫
 
     private TextureRegion jumpingLeftUp;//左前跳躍(上升中)
     private TextureRegion jumpingLeftDown;//左前跳躍(下降中)
     private TextureRegion jumpingRightUp;//右前跳躍(上升中)
     private TextureRegion jumpingRightDown;//右前跳躍(下降中)
 
-    private float bossHurtRunTime = 0.0f;
+    private float satkaRunTime = 0.0f;//英雄特殊技能1動畫累積時間
 
+    private float bossHurtRunTime = 0.0f;
+    CollisionDao collisionDao;
+    int serchResult = 0;
 
     public Rboss01(){
         init();
@@ -50,7 +57,7 @@ public class Rboss01 extends Rboss {
 
     public void init(){
         isFacingRight = true;
-        this.setCurrentAction("Jumping");
+
 
         //讀取人物圖檔資源
         monster1Atlas = new TextureAtlas(Gdx.files.internal("hero/shana/heroShana.pack"));
@@ -117,6 +124,21 @@ public class Rboss01 extends Rboss {
         frameAtkcRight[5] = monster1Atlas.findRegion("RightATTC6");
         frameAtkcRight[6] = monster1Atlas.findRegion("RightATTC7");
         animationAttcRight = new Animation(FRAME_DURATION_ATK3, frameAtkcRight);
+
+        //右邊特殊技能1
+        TextureRegion[] frameSatkaRight = new TextureRegion[11];
+        frameSatkaRight[0] = monster1Atlas.findRegion("SatkRight01");
+        frameSatkaRight[1] = monster1Atlas.findRegion("SatkRight02");
+        frameSatkaRight[2] = monster1Atlas.findRegion("SatkRight03");
+        frameSatkaRight[3] = monster1Atlas.findRegion("SatkRight04");
+        frameSatkaRight[4] = monster1Atlas.findRegion("SatkRight05");
+        frameSatkaRight[5] = monster1Atlas.findRegion("SatkRight06");
+        frameSatkaRight[6] = monster1Atlas.findRegion("SatkRight07");
+        frameSatkaRight[7] = monster1Atlas.findRegion("SatkRight08");
+        frameSatkaRight[8] = monster1Atlas.findRegion("SatkRight09");
+        frameSatkaRight[9] = monster1Atlas.findRegion("SatkRight10");
+        frameSatkaRight[10] = monster1Atlas.findRegion("SatkRight11");
+        animationSatkaRight = new Animation(FRAME_DURATION_SATK1, frameSatkaRight);
 
         //右邊受傷
         TextureRegion[] frameHurtRight = new TextureRegion[3];
@@ -202,6 +224,21 @@ public class Rboss01 extends Rboss {
         frameAtkcLeft[6] = monster1Atlas.findRegion("LeftATTC7");
         animationAttcLeft = new Animation(FRAME_DURATION_ATK3, frameAtkcLeft);
 
+        //左邊特殊技能1
+        TextureRegion[] frameSatkaLeft = new TextureRegion[11];
+        frameSatkaLeft[0] = monster1Atlas.findRegion("SatkLeft01");
+        frameSatkaLeft[1] = monster1Atlas.findRegion("SatkLeft02");
+        frameSatkaLeft[2] = monster1Atlas.findRegion("SatkLeft03");
+        frameSatkaLeft[3] = monster1Atlas.findRegion("SatkLeft04");
+        frameSatkaLeft[4] = monster1Atlas.findRegion("SatkLeft05");
+        frameSatkaLeft[5] = monster1Atlas.findRegion("SatkLeft06");
+        frameSatkaLeft[6] = monster1Atlas.findRegion("SatkLeft07");
+        frameSatkaLeft[7] = monster1Atlas.findRegion("SatkLeft08");
+        frameSatkaLeft[8] = monster1Atlas.findRegion("SatkLeft09");
+        frameSatkaLeft[9] = monster1Atlas.findRegion("SatkLeft10");
+        frameSatkaLeft[10] = monster1Atlas.findRegion("SatkLeft11");
+        animationSatkaLeft = new Animation(FRAME_DURATION_SATK1, frameSatkaLeft);
+
         //左邊受傷
         TextureRegion[] frameHurtLeft = new TextureRegion[3];
         frameHurtLeft[0] = monster1Atlas.findRegion("HurtLeft");
@@ -244,16 +281,38 @@ public class Rboss01 extends Rboss {
         frameWinKeep[1] = monster1Atlas.findRegion("WinKeep2");
         frameWinKeep[2] = monster1Atlas.findRegion("WinKeep3");
         animationWinKeep = new Animation(FRAME_DURATION_WINKEEP, frameWinKeep);
+
+        collisionDao = new CollisionDao();
+
+        setCurrentAction("Standing");
+        setMonsterFrame(isFacingRight ? monster1Atlas.findRegion("StandingRight1") : monster1Atlas.findRegion("StandingLeft1"));
     }
 
 
     @Override
     public void callAI() {
-
+        if(target!=null){
+            serchResult = collisionDao.serchTarget(position.x, position.y, getMonsterFrame().getRegionWidth(), getMonsterFrame().getRegionHeight(),
+                    target.position.x, target.position.y, serchRange);
+            if(serchResult==1){
+                setIsFacingRight(false);
+                setCurrentAction("Atk");
+            }else if(serchResult==2){
+                setIsFacingRight(true);
+                setCurrentAction("Atk");
+            }else{
+                setCurrentAction("Standing");
+            }
+        }else{
+            setCurrentAction("Standing");
+        }
     }
 
     @Override
     public void updateMonsterAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump) {
+
+        callAI();
+
         if(getCurrentAction().equals("Hurt")){
             bossHurtRunTime+=Gdx.graphics.getDeltaTime();
             setMonsterFrame(isFacingRight ? getAnimationHurtRight().getKeyFrame(animationTime, true) : getAnimationHurtLeft().getKeyFrame(animationTime, true));
@@ -269,6 +328,29 @@ public class Rboss01 extends Rboss {
                 setCurrentAction("Standing");
                 setCurrentAnimation(isFacingRight ? getAnimationStandingRight() : getAnimationStandingLeft());
                 bossHurtRunTime = 0.0f;
+            }
+        } else if(getCurrentAction().equals("Atk")){
+            serchResult = collisionDao.serchTarget(position.x, position.y, getMonsterFrame().getRegionWidth(), getMonsterFrame().getRegionHeight(),
+                    target.position.x, target.position.y, 5);
+            if(serchResult==1 || serchResult==2){
+                satkaRunTime+=Gdx.graphics.getDeltaTime();
+                setMonsterFrame(isFacingRight ? getAnimationSatkaRight().getKeyFrame(satkaRunTime, true) : getAnimationSatkaLeft().getKeyFrame(satkaRunTime, true));
+                setCurrentAnimation(isFacingRight ? getAnimationSatkaRight() : getAnimationSatkaLeft());
+
+                if(getCurrentAnimation().isAnimationFinished(satkaRunTime)) {//當前特殊技能1攻擊動畫結束
+                    satkaRunTime = 0.0f;
+                }
+            }else{
+                setMonsterFrame(isFacingRight ? getAnimationWalkingRight().getKeyFrame(animationTime, true) : getAnimationWalkingLeft().getKeyFrame(animationTime, true));
+                setCurrentAnimation(isFacingRight ? getAnimationWalkingRight() : getAnimationWalkingLeft());
+
+                if(isFacingRight){
+                    velocity.x = 300;
+                }else{
+                    velocity.x = -300;
+                }
+
+                position.x = position.x + (velocity.x * deltaTime);
             }
         } else {
             setCurrentAction("Standing");
@@ -401,5 +483,19 @@ public class Rboss01 extends Rboss {
         this.animationAttcLeft = animationAttcLeft;
     }
 
+    public Animation getAnimationSatkaRight() {
+        return animationSatkaRight;
+    }
 
+    public void setAnimationSatkaRight(Animation animationSatkaRight) {
+        this.animationSatkaRight = animationSatkaRight;
+    }
+
+    public Animation getAnimationSatkaLeft() {
+        return animationSatkaLeft;
+    }
+
+    public void setAnimationSatkaLeft(Animation animationSatkaLeft) {
+        this.animationSatkaLeft = animationSatkaLeft;
+    }
 }

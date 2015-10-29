@@ -59,7 +59,6 @@ public class PlayScreen3 extends PlayBase {
 
     BackgroundSound bgSound1;//背景音樂
 
-    private float deltay = 0.0f;
 
     public PlayScreen3(Game game){
         this.game = game;
@@ -73,7 +72,7 @@ public class PlayScreen3 extends PlayBase {
         Gdx.app.log("==PlayScreen3.init()===", "start init()");
 
         //設定本關卡地圖
-        tiledMap = new TmxMapLoader().load("map/newmap2.tmx");
+        tiledMap = new TmxMapLoader().load("map/newmap3.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         foregroundLayer = (TiledMapTileLayer) tiledMap.getLayers().get("foreground");
         stageWidth = foregroundLayer.getWidth()*foregroundLayer.getTileWidth();
@@ -90,12 +89,14 @@ public class PlayScreen3 extends PlayBase {
         //初始化BOSS
         boss = new Rboss01();
         boss.position.x = 800;
-        boss.position.y = 86;
+        boss.position.y = 285;
+        boss.velocity.x = 300;//英雄X軸初始速度
+
 
         //初始化怪物
         m1 = new Rboss01();
         m1.position.x = 100;
-        m1.position.y = 86;
+        m1.position.y = 285;
 
         //把BOOS加入本關卡怪物行列
         monster.add(boss);
@@ -105,10 +106,11 @@ public class PlayScreen3 extends PlayBase {
         hero = new Rshana();
         hero.setCollisionDao(collisionDao);
         hero.position.x = screenWidth/2;//英雄初始位置X
-        hero.position.y = 250;//英雄初始位置Y
+        hero.position.y = 285;//英雄初始位置Y
         hero.velocity.x = 300;//英雄X軸初始速度
         hero.velocity.y = -150;//英雄Y軸初始速度
         hero.setTarget(monster);
+        boss.setTarget(hero);
 
         //設定本關卡背景音樂
         bgSound1 = new BackgroundSound();
@@ -194,14 +196,8 @@ public class PlayScreen3 extends PlayBase {
             spriteMonster = new Sprite(m1.getMonsterFrame());
         }
 
-        //人物著地後繪圖位置修正量
-        if(collisionDao.collisionBottom){
-            deltay = 22.0f;
-        }else{
-            deltay = 0.0f;
-        }
 
-        sprite.setPosition(hero.position.x, hero.position.y + deltay);//設定人物位置
+        sprite.setPosition(hero.position.x, hero.position.y);//設定人物位置
         sprite.setScale(1.8f);//設定人物大小
 
         spriteBoss.setPosition(boss.position.x, boss.position.y);//設定魔王位置
@@ -288,14 +284,8 @@ public class PlayScreen3 extends PlayBase {
         spriteBoss.setSize(boss.getMonsterFrame().getRegionWidth(), boss.getMonsterFrame().getRegionHeight());
         spriteBoss.setOrigin(spriteBoss.getWidth() / 2, spriteBoss.getHeight() / 2);
 
-        //人物著地後繪圖位置修正量
-        if(collisionDao.collisionBottom){
-            deltay = 22.0f;
-        }else{
-            deltay = 0.0f;
-        }
 
-        sprite.setPosition(hero.position.x, hero.position.y + deltay);//設定人物位置
+        sprite.setPosition(hero.position.x, hero.position.y);//設定人物位置
         sprite.setScale(1.8f);//設定人物大小
 
         spriteBoss.setPosition(boss.position.x, boss.position.y);//設定魔王位置
@@ -360,14 +350,8 @@ public class PlayScreen3 extends PlayBase {
         spriteBoss.setSize(boss.getMonsterFrame().getRegionWidth(), boss.getMonsterFrame().getRegionHeight());
         spriteBoss.setOrigin(spriteBoss.getWidth() / 2, spriteBoss.getHeight() / 2);
 
-        //人物著地後繪圖位置修正量
-        if(collisionDao.collisionBottom){
-            deltay = 22.0f;
-        }else{
-            deltay = 0.0f;
-        }
 
-        sprite.setPosition(hero.position.x, hero.position.y + deltay);//設定人物位置
+        sprite.setPosition(hero.position.x, hero.position.y);//設定人物位置
         sprite.setScale(1.8f);//設定人物大小
 
         spriteBoss.setPosition(boss.position.x, boss.position.y);//設定魔王位置
