@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="25" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="bbg_fall_grassland" tilewidth="32" tileheight="32" tilecount="1000">
+  <image source="bbg_fall_grassland.jpg" trans="ff00ff" width="1280" height="800"/>
+  <tile id="640">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="641">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="642">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="643">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="644">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="645">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="646">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="647">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="648">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="649">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="650">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="651">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="652">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="653">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="654">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="655">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="656">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="657">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="658">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="659">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="660">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="661">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="662">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="663">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="664">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="665">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="666">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="667">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="668">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="669">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="670">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="671">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="672">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="673">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="674">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="675">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="676">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="677">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="678">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+  <tile id="679">
+   <properties>
+    <property name="blocked" value=""/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="background" width="40" height="25">
+  <data encoding="base64" compression="zlib">
+   eJwt1mPQHmcAhtH0i23btp3GTho3tu3GjW27cWMnjW3btougQdOTybuzZ+4fOzt7/XlmNihYsGDBCUFIQhGaMIQlHOGJQEQiEZkoRCUa0YlBTGIRmzjEJR7xSUBCEpGYJCQlGclJQUpSkZo0wb5f6UhPBjKSicxkISvZyE4OcpKL3OQhL/nITwEKUojCFOFHilKM4pSgJKUoTRnKUo7yVKAilagc6KtCVapRnRrUpBY/U5s61KUe9WlAQxrRmCY0pRnNaUFLWtGaNrSlHe3pQEc60ZkudKUb3elBz0BfL3rTh770oz8D+JWBDGIwQxjKMIYzgpGMYjRjGMs4xjOBiUxiMlOYyjSmM4OZzGI2c5jLPOYH+hawkEUsZglLWcbvLGcFK1nFatawlnWsZwMb2cRmtrCVP9jGdnawk13sZg972cd+DnCQQxzmSKDvGMc5wUlOcZoznOUc57nARS5xmStc5RrXucFNbnGbO9zlHvd5wEMe8ZgnPOUZz3nBS17xmjeBvr/4m394yzve84F/+cgnPvOF//j67cUf3AQRnBCEJBShCUNYwhGeCEQkEpGJQlSiEZ0YxCQWsYnzw/e+eDY+CUhIIhKThKQkIzkpSEkqUpOGtKQjPRnISCYyk4WsZCM7OchJLnKTh7zkIz8FKEghClMk0FfUFqM4JShJKUpThrKUozwVqEglKvMTVahKNapTg5rU4mdqU4e61KM+DWhIIxrThKY0ozktaBnoa23b0JZ2tKcDHelEZ7rQlW50pwc9+YVe9KYPfelHfwbwKwMZxGCGMJRhDGcEIxnFaMYwlnGMD/RNtJOYzBSmMo3pzGAms5jNHOYyj/n8xgIWsojFLGEpy/id5axgJatYzRrWso71bGAjm9jMFrYG+rbZ7exgJ7vYzR72so/9HOAghzjMEY5yjOOc4CSnOM0ZznKO81zgIpe4zBWuco3r3OAmt7jNnUDfPXufBzzkEY95wlOe8ZwXvOQVr3nDn/zF3/zDW97xng/8y0c+8Zkv/MfXb98Ocv4JIjghCEkoQhMm6HtfOBueCEQkEpGJQlSiEZ0YxCQWsYlDXOIRnwQkJBGJSUJSkpGcFKQkFalJQ1rSkZ4MZCQTmckS6Mtms5ODnOQiN3nISz7yU4CCFKIwRfiRohSjOCUoSSlKU4aylKM8FahIJSrzE1WoSjWqU4Oa1Ar01bZ1qEs96tOAhjSiMU1oSjOa04KWtKI1bWhLO9rTgY50ojNd6Eo3utODnvxCL3rTh770oz8DAn0D7SAGM4ShDGM4IxjJKEYzhrGMYzwTmMgkJjOFqUxjOjOYySxmM4e5zGM+v7GAhSxiMUtYyrJA33K7gpWsYjVrWMs61rOBjWxiM1vYyh9sYzs72MkudrOHvexjPwc4yCEOc4SjHOM4JzjJKU5zJtB3zp7nAhe5xGWucJVrXOcGN7nFbe5wl3vc5wEPecRjnvCUZzznBS95xWve8Cd/8Tf/8JZ3vOdDoO+j/cRnvvAfX78989P/A0EEJwQhCUVowhCWcIQnAhGJRGSiEJVoRCcGMYlFbOIQl3jEJwEJSURikgT/3pfMJicFKUlFatKQlnSkJwMZyURmspCVbGQnBznJRW7ykJd85KcABSlEYYrwI0UpRnFKUJJSlA70lbXlKE8FKlKJyvxEFapSjerUoCa1+Jna1KEu9ahPAxrSiMY0oSnNaE4LWtKK1rShLe1oTwc6Bvo62y50pRvd6UFPfqEXvelDX/rRnwH8ykAGMZghDGUYwxnBSEYxmjGMZRzjmcBEJjGZKUxlGtMDfTPtLGYzh7nMYz6/sYCFLGIxS1jKMn5nOStYySpWs4a1rGM9G9jIJjazha38wTa2s4Od7GI3ewJ9++x+DnCQQxzmCEc5xnFOcJJTnOYMZznHeS5wkUtc5gpXucZ1bnCTW9zmDne5x30e8JBHPOZJoO9/Km3hww==
+  </data>
+ </layer>
+ <layer name="foreground" width="40" height="25">
+  <data encoding="base64" compression="zlib">
+   eJwt1mPQHmcAhtH0i23btp3GTho3tu3GjW27cWMnjW3btougQdOTybuzZ+4fOzt7/XlmNihYsGDBCUFIQhGaMIQlHOGJQEQiEZkoRCUa0YlBTGIRmzjEJR7xSUBCEpGYJCQlGclJQUpSkZo0wb5f6UhPBjKSicxkISvZyE4OcpKL3OQhL/nITwEKUojCFOFHilKM4pSgJKUoTRnKUo7yVKAilagc6KtCVapRnRrUpBY/U5s61KUe9WlAQxrRmCY0pRnNaUFLWtGaNrSlHe3pQEc60ZkudKUb3elBz0BfL3rTh770oz8D+JWBDGIwQxjKMIYzgpGMYjRjGMs4xjOBiUxiMlOYyjSmM4OZzGI2c5jLPOYH+hawkEUsZglLWcbvLGcFK1nFatawlnWsZwMb2cRmtrCVP9jGdnawk13sZg972cd+DnCQQxzmSKDvGMc5wUlOcZoznOUc57nARS5xmStc5RrXucFNbnGbO9zlHvd5wEMe8ZgnPOUZz3nBS17xmjeBvr/4m394yzve84F/+cgnPvOF//j67cUf3AQRnBCEJBShCUNYwhGeCEQkEpGJQlSiEZ0YxCQWsYnzw/e+eDY+CUhIIhKThKQkIzkpSEkqUpOGtKQjPRnISCYyk4WsZCM7OchJLnKTh7zkIz8FKEghClMk0FfUFqM4JShJKUpThrKUozwVqEglKvMTVahKNapTg5rU4mdqU4e61KM+DWhIIxrThKY0ozktaBnoa23b0JZ2tKcDHelEZ7rQlW50pwc9+YVe9KYPfelHfwbwKwMZxGCGMJRhDGcEIxnFaMYwlnGMD/RNtJOYzBSmMo3pzGAms5jNHOYyj/n8xgIWsojFLGEpy/id5axgJatYzRrWso71bGAjm9jMFrYG+rbZ7exgJ7vYzR72so/9HOAghzjMEY5yjOOc4CSnOM0ZznKO81zgIpe4zBWuco3r3OAmt7jNnUDfPXufBzzkEY95wlOe8ZwXvOQVr3nDn/zF3/zDW97xng/8y0c+8Zkv/MfXb98Ocv4JIjghCEkoQhMm6HtfOBueCEQkEpGJQlSiEZ0YxCQWsYlDXOIRnwQkJBGJSUJSkpGcFKQkFalJQ1rSkZ4MZCQTmckS6Mtms5ODnOQiN3nISz7yU4CCFKIwRfiRohSjOCUoSSlKU4aylKM8FahIJSrzE1WoSjWqU4Oa1Ar01bZ1qEs96tOAhjSiMU1oSjOa04KWtKI1bWhLO9rTgY50ojNd6Eo3utODnvxCL3rTh770oz8DAn0D7SAGM4ShDGM4IxjJKEYzhrGMYzwTmMgkJjOFqUxjOjOYySxmM4e5zGM+v7GAhSxiMUtYyrJA33K7gpWsYjVrWMs61rOBjWxiM1vYyh9sYzs72MkudrOHvexjPwc4yCEOc4SjHOM4JzjJKU5zJtB3zp7nAhe5xGWucJVrXOcGN7nFbe5wl3vc5wEPecRjnvCUZzznBS95xWve8Cd/8Tf/8JZ3vOdDoO+j/cRnvvAfX78989P/A0EEJwQhCUVowhCWcIQnAhGJRGSiEJVoRCcGMYlFbOIQl3jEJwEJSURikgT/3pfMJicFKUlFatKQlnSkJwMZyURmspCVbGQnBznJRW7ykJd85KcABSlEYYrwI0UpRnFKUJJSlA70lbXlKE8FKlKJyvxEFapSjerUoCa1+Jna1KEu9ahPAxrSiMY0oSnNaE4LWtKK1rShLe1oTwc6Bvo62y50pRvd6UFPfqEXvelDX/rRnwH8ykAGMZghDGUYwxnBSEYxmjGMZRzjmcBEJjGZKUxlGtMDfTPtLGYzh7nMYz6/sYCFLGIxS1jKMn5nOStYySpWs4a1rGM9G9jIJjazha38wTa2s4Od7GI3ewJ9++x+DnCQQxzmCEc5xnFOcJJTnOYMZznHeS5wkUtc5gpXucZ1bnCTW9zmDne5x30e8JBHPOZJoO9/Km3hww==
+  </data>
+ </layer>
+</map>
