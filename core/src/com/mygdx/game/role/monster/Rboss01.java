@@ -311,7 +311,7 @@ public class Rboss01 extends Rboss {
     @Override
     public void updateMonsterAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump) {
 
-        callAI();
+//        callAI();
 
         if(getCurrentAction().equals("Hurt")){
             bossHurtRunTime+=Gdx.graphics.getDeltaTime();
@@ -352,10 +352,49 @@ public class Rboss01 extends Rboss {
 
                 position.x = position.x + (velocity.x * deltaTime);
             }
-        } else {
-            setCurrentAction("Standing");
+        } else if(getCurrentAction().equals("Lose")){
+            resultRunTime+= Gdx.graphics.getDeltaTime();
+            setCurrentAction("Lose");
+            setMonsterFrame(isFacingRight ? getAnimationLoseRight().getKeyFrame(resultRunTime, true) : getAnimationLoseLeft().getKeyFrame(resultRunTime, true));
+            setCurrentAnimation(isFacingRight ? getAnimationLoseRight() : getAnimationLoseLeft());
+
+            if(isFacingRight){
+                position.x = position.x-2;
+            }else{
+                position.x = position.x+2;
+            }
+
+            if(getCurrentAnimation().isAnimationFinished(resultRunTime)){
+                resultRunTime = 0.0f;
+                setCurrentAction("LoseKeep");
+            }
+        } else if(getCurrentAction().equals("LoseKeep")){
+            resultRunTime+= Gdx.graphics.getDeltaTime();
+            setCurrentAction("LoseKeep");
+            setMonsterFrame(isFacingRight ? getAnimationLoseKeepRight().getKeyFrame(resultRunTime, true) : getAnimationLoseKeepLeft().getKeyFrame(resultRunTime, true));
+            setCurrentAnimation(isFacingRight ? getAnimationLoseKeepRight() : getAnimationLoseKeepLeft());
+
+            if(getCurrentAnimation().isAnimationFinished(resultRunTime)){
+                resultRunTime = 0.0f;
+                setCurrentAction("cleanMe");
+                Gdx.app.log("cleanMe", "remove 2 ");
+            }
+        } else if(getCurrentAction().equals("Standing")) {
+//            setCurrentAction("Standing");
             setMonsterFrame(isFacingRight ? getAnimationStandingRight().getKeyFrame(animationTime, true) : getAnimationStandingLeft().getKeyFrame(animationTime, true));
+        } else {
+            Gdx.app.log("otherAction", "exception");
         }
+    }
+
+    @Override
+    public boolean showResult() {
+        return false;
+    }
+
+    @Override
+    public boolean showResultKeep() {
+        return false;
     }
 
     //*********************************setter/getter***************************************

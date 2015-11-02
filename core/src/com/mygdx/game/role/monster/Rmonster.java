@@ -23,6 +23,7 @@ public abstract class Rmonster extends Actor implements BaseRole {
     public Animation animationHurtLeft;//受傷(左)動畫
     public Animation animationHurtRight;//受傷(右)動畫
     public Vector2 velocity = new Vector2();//英雄的方向速度
+    public float resultRunTime = 0.0f;
 
 
     public Rhero target;
@@ -34,6 +35,8 @@ public abstract class Rmonster extends Actor implements BaseRole {
     //更新怪物行為
     public abstract void updateMonsterAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump);
 
+    public abstract boolean showResult();
+    public abstract boolean showResultKeep();
     //************************************************setter/getter**************************************************
     public String getRoleType() {
         return roleType;

@@ -607,7 +607,7 @@ public class Rshana extends Rhero {
     public void keepStanding(float animationTime){
         setCurrentAction("Standing");
         setHero1Frame(isFacingRight() ? getAnimationStandingRight().getKeyFrame(animationTime, true) : getAnimationStandingLeft().getKeyFrame(animationTime, true));
-        Gdx.app.log("standing","y = "+position.y);
+//        Gdx.app.log("standing","y = "+position.y);
     }
 
 
@@ -647,20 +647,20 @@ public class Rshana extends Rhero {
                 }
             }
 
-            imonster = target.iterator();
-            while (imonster.hasNext()) {
-                t = imonster.next();
-                i = collisionDao.isBeAttack(position.x, position.y, getHero1Frame().getRegionWidth(), getHero1Frame().getRegionHeight(),
-                        t.position.x, t.position.y, t.getMonsterFrame().getRegionWidth(), t.getMonsterFrame().getRegionHeight());
-
-                if(i>0){
-                    t.HP = t.HP-1;
-                    t.setCurrentAction("Hurt");
-                    if(t.HP<=0){
-                        imonster.remove();
-                    }
-                }
-            }
+//            imonster = target.iterator();
+//            while (imonster.hasNext()) {
+//                t = imonster.next();
+//                i = collisionDao.isBeAttack(position.x, position.y, getHero1Frame().getRegionWidth(), getHero1Frame().getRegionHeight(),
+//                        t.position.x, t.position.y, t.getMonsterFrame().getRegionWidth(), t.getMonsterFrame().getRegionHeight());
+//
+//                if(i>0){
+//                    t.HP = t.HP-1;
+//                    t.setCurrentAction("Hurt");
+//                    if(t.HP<=0){
+//                        imonster.remove();
+//                    }
+//                }
+//            }
         }
     }
 

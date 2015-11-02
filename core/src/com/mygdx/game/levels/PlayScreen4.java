@@ -11,4 +11,9 @@ public class PlayScreen4 extends PlayBase {
     public void backHome() {
 
     }
+
+    @Override
+    public void checkResult() {
+
+    }
 }

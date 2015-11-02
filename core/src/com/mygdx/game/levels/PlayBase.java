@@ -198,32 +198,43 @@ public abstract class PlayBase implements Screen {
 
 
     public void jump(){
-        hero.setCurrentAction("Jumping");
 
-        if(isRightTouchDown){//當在跑步中按住方向鍵時,額外給予x軸與y軸方向動力
-            hero.setIsJumpAndWalk(true);
-            isRightSprintJump = true;
-            hero.velocity.x = 850;
-            hero.velocity.y = 350;
-        }else if(isLeftTouchDown){
-            hero.setIsJumpAndWalk(true);
-            isLeftSprintJump = true;
-            hero.velocity.x = -850;
-            hero.velocity.y = 350;
-        }else{//原地跳
-            hero.setIsJumpAndWalk(false);
-            isRightSprintJump = false;
-            isLeftSprintJump = false;
-            hero.velocity.y = 300;
-        }
+     if(hero.getCurrentAction().equals("Jumping")){
+         //僅限一段跳躍
+         //TODO...
+     }else{
+         hero.setCurrentAction("Jumping");
 
-        jumpY = hero.position.y;
-        hero.jumpY = jumpY;
+         if(isRightTouchDown){//當在跑步中按住方向鍵時,額外給予x軸與y軸方向動力
+             hero.setIsJumpAndWalk(true);
+             isRightSprintJump = true;
+             hero.velocity.x = 850;
+             hero.velocity.y = 350;
+         }else if(isLeftTouchDown){
+             hero.setIsJumpAndWalk(true);
+             isLeftSprintJump = true;
+             hero.velocity.x = -850;
+             hero.velocity.y = 350;
+         }else{//原地跳
+             hero.setIsJumpAndWalk(false);
+             isRightSprintJump = false;
+             isLeftSprintJump = false;
+             hero.velocity.y = 300;
+         }
+
+         jumpY = hero.position.y;
+         hero.jumpY = jumpY;
+     }
+
+
     }
 
 
     //返回城鎮
     public abstract void backHome ();
+
+    //判斷遊戲結果
+    public abstract void checkResult ();
 
 
     @Override
