@@ -159,27 +159,24 @@ public class PlayScreen3 extends PlayBase {
         while (imonster.hasNext()) {
             t = imonster.next();
 
-//            //將怪物的方向面對英雄
-//            if(hero.position.x<=t.position.x){
-//                t.setIsFacingRight(false);
-//            }else{
-//                t.setIsFacingRight(true);
-//            }
+            //將怪物的方向面對英雄
+            if(hero.position.x<=t.position.x){
+                t.setIsFacingRight(false);
+            }else{
+                t.setIsFacingRight(true);
+            }
 
             //刷新怪物動作
             t.updateMonsterAction(deltaTime, animationTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
 
             if(t.HP<=0){
                 if(t.getCurrentAction().equals("cleanMe")){
-                    Gdx.app.log("cleanMe","remove 1 ");
-//                    imonster.remove();
-                }else{
-                    Gdx.app.log("cleanMe","remove 0 ");
+                    imonster.remove();
+                } else if(t.getCurrentAction().equals("LoseKeep")){
+                    t.setCurrentAction("LoseKeep");
+                } else{
                     t.setCurrentAction("Lose");
                 }
-            }
-            else{
-//                Gdx.app.log("cleanMe","---------------------------------------");
             }
         }
 
