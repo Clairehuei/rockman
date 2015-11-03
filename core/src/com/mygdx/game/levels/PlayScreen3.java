@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -56,11 +58,22 @@ public class PlayScreen3 extends PlayBase {
         init();
     }
 
+//    public TextureAtlas uiAtlas;
+//    public TextureRegion heroblood;
+//    public TextureRegion blood;
+//    private Sprite spriteUi;
 
     @Override
     public void init () {
         super.init();
         Gdx.app.log("==PlayScreen3.init()===", "start init()");
+
+
+//        //讀取hud圖檔資源
+//        uiAtlas = new TextureAtlas(Gdx.files.internal("ui/hud.pack"));
+//        heroblood = uiAtlas.findRegion("heroBlood");
+//        blood = uiAtlas.findRegion("blood");
+//        spriteUi = new Sprite(heroblood);
 
 
 
@@ -333,9 +346,10 @@ public class PlayScreen3 extends PlayBase {
 
         //顯示分數or生命值
         HUDBatch.begin();
-        font1.draw(HUDBatch, "HERO:" + hero.HP, 550, 700);
+//        font1.draw(HUDBatch, "HERO:" + hero.HP, 550, 700);
 //        font2.draw(HUDBatch, "BOSS:" + ((Rboss)monster.get(0)).HP, 750, 700);
 //        font3.draw(HUDBatch, "MONSTER:" + ((Rboss)monster.get(1)).HP, 1000, 700);
+        drawHud();
         HUDBatch.end();
 
 
@@ -347,6 +361,20 @@ public class PlayScreen3 extends PlayBase {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, false);
+    }
+
+
+    public void drawHud(){
+//        spriteUi.setRegion(heroblood);//設定怪物位置
+//        spriteUi.setPosition(90, 655);//設定怪物位置
+//        spriteUi.setScale(1.8f);//設定怪物大小
+//        spriteUi.draw(HUDBatch);
+//
+//        spriteUi.setRegion(blood);
+//        spriteUi.setPosition(120, 665);//設定怪物位置
+////        spriteUi.setScale(1.8f);//設定怪物大小
+//        spriteUi.setScale(0.6f);//設定怪物大小
+//        spriteUi.draw(HUDBatch);
     }
 
 
@@ -362,6 +390,8 @@ public class PlayScreen3 extends PlayBase {
         font2.dispose();
         font3.dispose();
         bgSound1.music.dispose();
+
+//        uiAtlas.dispose();
     }
 
 
@@ -370,7 +400,7 @@ public class PlayScreen3 extends PlayBase {
      */
     public void saveGame(){
         FileHandle file = Gdx.files.local("gameData.txt");
-        file.writeString(String.valueOf(((Rboss)monster.get(0)).HP), false);
+        file.writeString(String.valueOf(((Rboss) monster.get(0)).HP), false);
     }
 
 }

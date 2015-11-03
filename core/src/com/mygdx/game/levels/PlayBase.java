@@ -187,7 +187,7 @@ public abstract class PlayBase implements Screen {
      */
     private void setBtnHome(){
         btn_home = new Button(btnSkin, "jumpbutton");
-        btn_home.setPosition(0, 610);
+        btn_home.setPosition(610, 50);
         btn_home.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
