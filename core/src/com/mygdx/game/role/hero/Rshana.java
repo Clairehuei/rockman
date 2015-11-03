@@ -745,6 +745,4 @@ public class Rshana extends Rhero {
     public void setAnimationSatkaLeft(Animation animationSatkaLeft) {
         this.animationSatkaLeft = animationSatkaLeft;
     }
-
-
 }

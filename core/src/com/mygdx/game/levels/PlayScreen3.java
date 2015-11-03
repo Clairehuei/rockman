@@ -12,7 +12,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.mygdx.game.levels.monsterList.MonsterGroup;
 import com.mygdx.game.levels.monsterList.Mplay03;
-import com.mygdx.game.role.monster.Rboss;
 import com.mygdx.game.role.monster.Rmonster;
 import com.mygdx.game.sound.background.BackgroundSound;
 import com.mygdx.game.dao.CollisionDao;

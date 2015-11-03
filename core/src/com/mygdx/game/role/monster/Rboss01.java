@@ -24,8 +24,6 @@ public class Rboss01 extends Rboss {
     private static final float FRAME_DURATION_HURT = 1.0f / 15.0f;//受傷的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_JUMP = 1.0f / 15.0f;//跳躍動畫的播放速度(暫時忽略)
 
-    private boolean isJumpAndWalk = false;//是否在空中且跑步狀態
-
     private Animation animationStandingLeft;//站立(左)動畫
     private Animation animationStandingRight;//站立(右)動畫
     private Animation animationWalkingLeft;//跑步(左)動畫
@@ -44,9 +42,9 @@ public class Rboss01 extends Rboss {
     private TextureRegion jumpingRightUp;//右前跳躍(上升中)
     private TextureRegion jumpingRightDown;//右前跳躍(下降中)
 
-    private float satkaRunTime = 0.0f;//英雄特殊技能1動畫累積時間
+    private float satkaRunTime = 0.0f;//魔王特殊技能1動畫累積時間
+    private boolean isJumpAndWalk = false;//是否在空中且跑步狀態
 
-//    private float bossHurtRunTime = 0.0f;
     CollisionDao collisionDao;
     int serchResult = 0;
 
@@ -57,11 +55,11 @@ public class Rboss01 extends Rboss {
     public void init(){
         isFacingRight = true;
 
-        //讀取人物圖檔資源
+        //讀取魔王圖檔資源
         monster1Atlas = new TextureAtlas(Gdx.files.internal("hero/shana/heroShana.pack"));
 
-        //開始初始化人物所有動作
-        //*****************************人物右邊設定*****************************
+        //開始初始化魔王所有動作
+        //*****************************魔王右邊設定*****************************
         //右邊跳躍
         jumpingRightUp = monster1Atlas.findRegion("JumpingRight1");
         jumpingRightDown = monster1Atlas.findRegion("JumpingRight2");
@@ -160,7 +158,7 @@ public class Rboss01 extends Rboss {
         animationLoseKeepRight = new Animation(FRAME_DURATION_LOSEKEEP, frameLoseKeepRight);
 
 
-        //*****************************人物左邊設定*****************************
+        //*****************************魔王左邊設定*****************************
         //左邊跳躍
         jumpingLeftUp = monster1Atlas.findRegion("JumpingLeft1");
         jumpingLeftDown = monster1Atlas.findRegion("JumpingLeft2");
@@ -313,7 +311,6 @@ public class Rboss01 extends Rboss {
 
         if(getCurrentAction().equals("Hurt")){
             updateAnimationTime();
-//            bossHurtRunTime+=Gdx.graphics.getDeltaTime();
             setMonsterFrame(isFacingRight ? getAnimationHurtRight().getKeyFrame(animationTime, true) : getAnimationHurtLeft().getKeyFrame(animationTime, true));
             setCurrentAnimation(isFacingRight ? getAnimationHurtRight() : getAnimationHurtLeft());
 
@@ -397,135 +394,102 @@ public class Rboss01 extends Rboss {
     public Animation getAnimationWalkingRight() {
         return animationWalkingRight;
     }
-
     public void setAnimationWalkingRight(Animation animationWalkingRight) {
         this.animationWalkingRight = animationWalkingRight;
     }
-
     public boolean isJumpAndWalk() {
         return isJumpAndWalk;
     }
-
     public void setIsJumpAndWalk(boolean isJumpAndWalk) {
         this.isJumpAndWalk = isJumpAndWalk;
     }
-
     public Animation getAnimationWalkingLeft() {
         return animationWalkingLeft;
     }
-
     public void setAnimationWalkingLeft(Animation animationWalkingLeft) {
         this.animationWalkingLeft = animationWalkingLeft;
     }
-
     public Animation getAnimationStandingLeft() {
         return animationStandingLeft;
     }
-
     public void setAnimationStandingLeft(Animation animationStandingLeft) {
         this.animationStandingLeft = animationStandingLeft;
     }
-
     public Animation getAnimationStandingRight() {
         return animationStandingRight;
     }
-
     public void setAnimationStandingRight(Animation animationStandingRight) {
         this.animationStandingRight = animationStandingRight;
     }
-
     public TextureRegion getJumpingLeftUp() {
         return jumpingLeftUp;
     }
-
     public void setJumpingLeftUp(TextureRegion jumpingLeftUp) {
         this.jumpingLeftUp = jumpingLeftUp;
     }
-
     public TextureRegion getJumpingLeftDown() {
         return jumpingLeftDown;
     }
-
     public void setJumpingLeftDown(TextureRegion jumpingLeftDown) {
         this.jumpingLeftDown = jumpingLeftDown;
     }
-
     public TextureRegion getJumpingRightUp() {
         return jumpingRightUp;
     }
-
     public void setJumpingRightUp(TextureRegion jumpingRightUp) {
         this.jumpingRightUp = jumpingRightUp;
     }
-
     public TextureRegion getJumpingRightDown() {
         return jumpingRightDown;
     }
-
     public void setJumpingRightDown(TextureRegion jumpingRightDown) {
         this.jumpingRightDown = jumpingRightDown;
     }
-
     public Animation getAnimationAttaRight() {
         return animationAttaRight;
     }
-
     public void setAnimationAttaRight(Animation animationAttaRight) {
         this.animationAttaRight = animationAttaRight;
     }
-
     public Animation getAnimationAttaLeft() {
         return animationAttaLeft;
     }
-
     public void setAnimationAttaLeft(Animation animationAttaLeft) {
         this.animationAttaLeft = animationAttaLeft;
     }
-
     public Animation getAnimationAttbRight() {
         return animationAttbRight;
     }
-
     public void setAnimationAttbRight(Animation animationAttbRight) {
         this.animationAttbRight = animationAttbRight;
     }
-
     public Animation getAnimationAttbLeft() {
         return animationAttbLeft;
     }
-
     public void setAnimationAttbLeft(Animation animationAttbLeft) {
         this.animationAttbLeft = animationAttbLeft;
     }
-
     public Animation getAnimationAttcRight() {
         return animationAttcRight;
     }
-
     public void setAnimationAttcRight(Animation animationAttcRight) {
         this.animationAttcRight = animationAttcRight;
     }
-
     public Animation getAnimationAttcLeft() {
         return animationAttcLeft;
     }
-
     public void setAnimationAttcLeft(Animation animationAttcLeft) {
         this.animationAttcLeft = animationAttcLeft;
     }
-
     public Animation getAnimationSatkaRight() {
         return animationSatkaRight;
     }
-
     public void setAnimationSatkaRight(Animation animationSatkaRight) {
         this.animationSatkaRight = animationSatkaRight;
     }
-
     public Animation getAnimationSatkaLeft() {
         return animationSatkaLeft;
     }
-
     public void setAnimationSatkaLeft(Animation animationSatkaLeft) {
         this.animationSatkaLeft = animationSatkaLeft;
     }

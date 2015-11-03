@@ -16,55 +16,41 @@ public abstract class Rboss extends Rmonster implements BaseRole {
     public Animation animationLoseKeepLeft;//死亡持續姿勢(左)動畫
 
 
-
     //************************************************setter/getter**************************************************
     public Animation getAnimationWin() {
         return animationWin;
     }
-
     public void setAnimationWin(Animation animationWin) {
         this.animationWin = animationWin;
     }
-
     public Animation getAnimationLoseRight() {
         return animationLoseRight;
     }
-
     public void setAnimationLoseRight(Animation animationLoseRight) {
         this.animationLoseRight = animationLoseRight;
     }
-
     public Animation getAnimationLoseLeft() {
         return animationLoseLeft;
     }
-
     public void setAnimationLoseLeft(Animation animationLoseLeft) {
         this.animationLoseLeft = animationLoseLeft;
     }
-
     public Animation getAnimationWinKeep() {
         return animationWinKeep;
     }
-
     public void setAnimationWinKeep(Animation animationWinKeep) {
         this.animationWinKeep = animationWinKeep;
     }
-
     public Animation getAnimationLoseKeepRight() {
         return animationLoseKeepRight;
     }
-
     public void setAnimationLoseKeepRight(Animation animationLoseKeepRight) {
         this.animationLoseKeepRight = animationLoseKeepRight;
     }
-
     public Animation getAnimationLoseKeepLeft() {
         return animationLoseKeepLeft;
     }
-
     public void setAnimationLoseKeepLeft(Animation animationLoseKeepLeft) {
         this.animationLoseKeepLeft = animationLoseKeepLeft;
     }
-
-
 }
