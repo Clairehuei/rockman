@@ -3,6 +3,7 @@ package com.mygdx.game.levels;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.mygdx.game.levels.monsterList.MonsterGroup;
 import com.mygdx.game.levels.monsterList.Mplay03;
+import com.mygdx.game.role.monster.Rboss;
 import com.mygdx.game.role.monster.Rmonster;
 import com.mygdx.game.sound.background.BackgroundSound;
 import com.mygdx.game.dao.CollisionDao;
@@ -59,6 +61,8 @@ public class PlayScreen3 extends PlayBase {
     public void init () {
         super.init();
         Gdx.app.log("==PlayScreen3.init()===", "start init()");
+
+
 
         //設定本關卡地圖
         tiledMap = new TmxMapLoader().load("map/newmap4.tmx");
@@ -330,7 +334,7 @@ public class PlayScreen3 extends PlayBase {
         //顯示分數or生命值
         HUDBatch.begin();
         font1.draw(HUDBatch, "HERO:" + hero.HP, 550, 700);
-//        font2.draw(HUDBatch, "BOSS:" + ((Rboss)monster.get(0)).HP, 750, 700);
+        font2.draw(HUDBatch, "BOSS:" + ((Rboss)monster.get(0)).HP, 750, 700);
 //        font3.draw(HUDBatch, "MONSTER:" + ((Rboss)monster.get(1)).HP, 1000, 700);
         HUDBatch.end();
 
@@ -349,6 +353,7 @@ public class PlayScreen3 extends PlayBase {
     @Override
     public void dispose() {
         super.dispose();
+//        saveGame();
         batch.dispose();
         hero.getHero1Atlas().dispose();
         monsterList.cleanAllMonster();
@@ -357,6 +362,15 @@ public class PlayScreen3 extends PlayBase {
         font2.dispose();
         font3.dispose();
         bgSound1.music.dispose();
+    }
+
+
+    /**
+     * 儲存遊戲進度
+     */
+    public void saveGame(){
+        FileHandle file = Gdx.files.local("gameData.txt");
+        file.writeString(String.valueOf(((Rboss)monster.get(0)).HP), false);
     }
 
 }

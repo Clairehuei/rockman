@@ -1,5 +1,7 @@
 package com.mygdx.game.levels.monsterList;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.mygdx.game.role.monster.Rboss01;
 import com.mygdx.game.role.monster.Rmonster;
 
@@ -24,6 +26,7 @@ public class Mplay03 extends MonsterGroup {
         m1.position.y = 382;
 
         setMonster();
+//        readGameSchedule();
     }
 
 
@@ -51,6 +54,38 @@ public class Mplay03 extends MonsterGroup {
     public void cleanAllMonster() {
         boss.getMonster1Atlas().dispose();
         m1.getMonster1Atlas().dispose();
+    }
+
+
+    /**
+     * 讀取遊戲進度
+     */
+    public void readGameSchedule(){
+        FileHandle file;
+        try{
+            file = Gdx.files.local("gameData.txt");
+            if(file!=null){
+                String text = file.readString();
+                if(text!=null && !text.trim().equals("")){
+                    boss.HP = Integer.parseInt(text);
+                }
+            }else{
+                file = Gdx.files.internal("gameData.txt");
+                if(file!=null){
+                    String text = file.readString();
+                    if(text!=null && !text.trim().equals("")){
+                        boss.HP = Integer.parseInt(text);
+                    }
+                }
+            }
+        }catch(Exception e){
+            System.out.println("Exception==>"+e);
+            file = Gdx.files.internal("gameData.txt");
+            String text = file.readString();
+            if(text!=null && !text.trim().equals("")){
+                boss.HP = Integer.parseInt(text);
+            }
+        }
     }
 
 
