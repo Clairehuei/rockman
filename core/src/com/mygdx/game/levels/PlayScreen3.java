@@ -246,70 +246,66 @@ public class PlayScreen3 extends PlayBase {
 
 
     public void gameLose(){
-//        if(!heroResultKeep){//第一次顯示英雄戰鬥結果
-//            heroResultRunTime+=Gdx.graphics.getDeltaTime();
-//            hero.setCurrentAction("Lose");
-//            hero.setHero1Frame(hero.isFacingRight()?hero.getAnimationLoseRight().getKeyFrame(animationTime, true):hero.getAnimationLoseLeft().getKeyFrame(animationTime, true));
-//            hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationLoseRight() : hero.getAnimationLoseLeft());
-//            if(hero.isFacingRight()){
-//                hero.position.x = hero.position.x-2;
-//            }else{
-//                hero.position.x = hero.position.x+2;
-//            }
-//            if(hero.getCurrentAnimation().isAnimationFinished(heroResultRunTime)){
-//                heroResultRunTime = 0.0f;
-//                heroResultKeep = true;
-//            }
-//        }else{//持續顯示英雄戰鬥結果
-//            hero.setCurrentAction("LoseKeep");
-//            hero.setHero1Frame(hero.isFacingRight()?hero.getAnimationLoseKeepRight().getKeyFrame(animationTime, true):hero.getAnimationLoseKeepLeft().getKeyFrame(animationTime, true));
-//            hero.setCurrentAnimation(hero.isFacingRight() ? hero.getAnimationLoseKeepRight() : hero.getAnimationLoseKeepLeft());
-//        }
-//
-//        sprite.setRegion(hero.getHero1Frame());
-//        sprite.setSize(hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
-//        sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
-//
-//        if(!bossResultKeep){//第一次顯示魔王戰鬥結果
-//            bossResultRunTime+=Gdx.graphics.getDeltaTime();
-//            boss.setCurrentAction("Win");
-//            boss.setMonsterFrame(((Rboss)boss).getAnimationWin().getKeyFrame(animationTime, true));
-//            boss.setCurrentAnimation(((Rboss)boss).getAnimationWin());
-//            if(boss.getCurrentAnimation().isAnimationFinished(bossResultRunTime)){
-//                bossResultRunTime = 0.0f;
-//                bossResultKeep = true;
-//            }
-//        }else{//持續顯示魔王戰鬥結果
-//            boss.setCurrentAction("WinKeep");
-//            boss.setMonsterFrame(((Rboss)boss).getAnimationWinKeep().getKeyFrame(animationTime, true));
-//            boss.setCurrentAnimation(((Rboss)boss).getAnimationWinKeep());
-//        }
-//
-//        spriteBoss.setRegion(boss.getMonsterFrame());
-//        spriteBoss.setSize(boss.getMonsterFrame().getRegionWidth(), boss.getMonsterFrame().getRegionHeight());
-//        spriteBoss.setOrigin(spriteBoss.getWidth() / 2, spriteBoss.getHeight() / 2);
-//
-//
-//        sprite.setPosition(hero.position.x, hero.position.y);//設定人物位置
-//        sprite.setScale(1.8f);//設定人物大小
-//
-//        spriteBoss.setPosition(boss.position.x, boss.position.y);//設定魔王位置
-//        spriteBoss.setScale(1.8f);//設定魔王大小
-//
-//
-//        //調整鏡頭位置
-//        moveCamera();
-//
-//        //繪製地圖
-//        tiledMapRenderer.setView(camera);
-//        tiledMapRenderer.render(background);
-//        tiledMapRenderer.render(foreground);
-//
-////	    Display on Screen
-//        batch.begin();
-//        spriteBoss.draw(batch);
-//        sprite.draw(batch);
-//        batch.end();
+        if(!hero.getCurrentAction().equals("Lose") && !hero.getCurrentAction().equals("LoseKeep")){
+            hero.setCurrentAction("Lose");
+        }
+
+        //刷新英雄動作
+        hero.updateHeroAction(deltaTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
+
+        //設定英雄圖片
+        sprite.setRegion(hero.getHero1Frame());
+        sprite.setSize(hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
+        sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+        sprite.setPosition(hero.position.x, hero.position.y);//設定人物位置
+        sprite.setScale(1.8f);//設定人物大小
+
+
+        //刷新所有怪物動作
+        imonster = monster.iterator();
+        while (imonster.hasNext()) {
+            t = imonster.next();
+
+            //將怪物的方向面對英雄
+            if(hero.position.x<=t.position.x){
+                t.setIsFacingRight(false);
+            }else{
+                t.setIsFacingRight(true);
+            }
+
+            //刷新各別怪物勝利動作
+            t.setCurrentAction("Win");
+            t.updateMonsterAction(deltaTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
+        }
+
+        //調整鏡頭位置
+        moveCamera();
+
+        //繪製地圖
+        tiledMapRenderer.setView(camera);
+        tiledMapRenderer.render(background);
+        tiledMapRenderer.render(foreground);
+
+        //開始繪製畫面
+        batch.begin();
+
+            //先繪製所有怪物
+            imonster = monster.iterator();
+            while (imonster.hasNext()) {
+                t = imonster.next();
+
+                spriteMonster.setRegion(t.getMonsterFrame());
+                spriteMonster.setSize(t.getMonsterFrame().getRegionWidth(), t.getMonsterFrame().getRegionHeight());
+                spriteMonster.setOrigin(spriteMonster.getWidth() / 2, spriteMonster.getHeight() / 2);
+                spriteMonster.setPosition(t.position.x, t.position.y);//設定怪物位置
+                spriteMonster.setScale(1.8f);//設定怪物大小
+
+                spriteMonster.draw(batch);
+            }
+
+            sprite.draw(batch);
+
+        batch.end();
     }
 
 

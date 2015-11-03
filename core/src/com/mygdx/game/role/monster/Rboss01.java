@@ -380,6 +380,10 @@ public class Rboss01 extends Rboss {
                 setCurrentAction("cleanMe");
                 beKilled = true;
             }
+        } else if(getCurrentAction().equals("Win")) {
+            updateAnimationTime();
+            setMonsterFrame(isFacingRight ? getAnimationStandingRight().getKeyFrame(animationTime, true) : getAnimationStandingLeft().getKeyFrame(animationTime, true));
+            beforeAction = "Win";
         } else if(getCurrentAction().equals("Standing")) {
             updateAnimationTime();
             setMonsterFrame(isFacingRight ? getAnimationStandingRight().getKeyFrame(animationTime, true) : getAnimationStandingLeft().getKeyFrame(animationTime, true));

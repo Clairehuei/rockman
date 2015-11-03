@@ -626,7 +626,6 @@ public class Rshana extends Rhero {
     public void showWinKeep(){
         resultRunTime+=Gdx.graphics.getDeltaTime();
         setCurrentAction("WinKeep");
-
         setHero1Frame(getAnimationWinKeep().getKeyFrame(resultRunTime, true));
         setCurrentAnimation(getAnimationWinKeep());
     }
@@ -634,11 +633,23 @@ public class Rshana extends Rhero {
 
     public void showLose(){
         updateAnimationTime();
+        resultRunTime+=Gdx.graphics.getDeltaTime();
+        setCurrentAction("Lose");
+        setHero1Frame(isFacingRight() ? getAnimationLoseRight().getKeyFrame(resultRunTime, true) : getAnimationLoseLeft().getKeyFrame(resultRunTime, true));
+        setCurrentAnimation(isFacingRight() ? getAnimationLoseRight() : getAnimationLoseLeft());
+        if(getCurrentAnimation().isAnimationFinished(resultRunTime)){
+            resultRunTime = 0.0f;
+            setCurrentAction("LoseKeep");
+        }
     }
 
 
     public void showLoseKeep(){
         updateAnimationTime();
+        resultRunTime+=Gdx.graphics.getDeltaTime();
+        setCurrentAction("LoseKeep");
+        setHero1Frame(isFacingRight() ? getAnimationLoseKeepRight().getKeyFrame(resultRunTime, true) : getAnimationLoseKeepLeft().getKeyFrame(resultRunTime, true));
+        setCurrentAnimation(isFacingRight() ? getAnimationLoseKeepRight() : getAnimationLoseKeepLeft());
     }
 
 
