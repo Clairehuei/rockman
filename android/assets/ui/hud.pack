@@ -1,0 +1,26 @@
+
+hud.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+heroBlood
+  rotate: false
+  xy: 1, 67
+  size: 221, 48
+  orig: 221, 48
+  offset: 0, 0
+  index: -1
+monsterBlood
+  rotate: false
+  xy: 1, 17
+  size: 221, 48
+  orig: 221, 48
+  offset: 0, 0
+  index: -1
+blood
+  rotate: false
+  xy: 1, 1
+  size: 118, 14
+  orig: 118, 14
+  offset: 0, 0
+  index: -1
