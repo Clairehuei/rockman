@@ -11,7 +11,6 @@ import com.mygdx.game.dao.CollisionDao;
  */
 public class Rboss01 extends Rboss {
 
-    private static final float FRAME_DURATION = 1.0f / 15.0f;
     private static final float FRAME_DURATION_STAND = 1.0f / 8.0f;//站立動畫的播放速度
     private static final float FRAME_DURATION_RUN = 1.0f / 15.0f;//跑步動畫的播放速度
     private static final float FRAME_DURATION_WIN = 1.0f / 8.0f;//勝利動畫的播放速度
@@ -57,7 +56,6 @@ public class Rboss01 extends Rboss {
 
     public void init(){
         isFacingRight = true;
-
 
         //讀取人物圖檔資源
         monster1Atlas = new TextureAtlas(Gdx.files.internal("hero/shana/heroShana.pack"));
@@ -377,25 +375,15 @@ public class Rboss01 extends Rboss {
             if(getCurrentAnimation().isAnimationFinished(resultRunTime)){
                 resultRunTime = 0.0f;
                 setCurrentAction("cleanMe");
-                Gdx.app.log("cleanMe", "remove 2 ");
+                beKilled = true;
             }
         } else if(getCurrentAction().equals("Standing")) {
-//            setCurrentAction("Standing");
             setMonsterFrame(isFacingRight ? getAnimationStandingRight().getKeyFrame(animationTime, true) : getAnimationStandingLeft().getKeyFrame(animationTime, true));
         } else {
             Gdx.app.log("otherAction", "exception");
         }
     }
 
-    @Override
-    public boolean showResult() {
-        return false;
-    }
-
-    @Override
-    public boolean showResultKeep() {
-        return false;
-    }
 
     //*********************************setter/getter***************************************
     public Animation getAnimationWalkingRight() {
@@ -404,10 +392,6 @@ public class Rboss01 extends Rboss {
 
     public void setAnimationWalkingRight(Animation animationWalkingRight) {
         this.animationWalkingRight = animationWalkingRight;
-    }
-
-    public static float getFrameDuration() {
-        return FRAME_DURATION;
     }
 
     public boolean isJumpAndWalk() {

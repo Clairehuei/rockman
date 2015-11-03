@@ -18,7 +18,6 @@ import java.util.Iterator;
  */
 public class Rshana extends Rhero {
 
-    private static final float FRAME_DURATION = 1.0f / 15.0f;
     private static final float FRAME_DURATION_STAND = 1.0f / 8.0f;//站立動畫的播放速度
     private static final float FRAME_DURATION_RUN = 1.0f / 15.0f;//跑步動畫的播放速度
     private static final float FRAME_DURATION_WIN = 1.0f / 8.0f;//勝利動畫的播放速度
@@ -59,8 +58,6 @@ public class Rshana extends Rhero {
     public Button  btn_atk1;
     public Button  btn_satk1;
     float v0 = 300.0f;
-    Iterator<Rmonster> imonster;
-    Rmonster t;
 
     public Rshana(){
         init();
@@ -611,6 +608,39 @@ public class Rshana extends Rhero {
     }
 
 
+    public void showWin(){
+        resultRunTime+=Gdx.graphics.getDeltaTime();
+        setCurrentAction("Win");
+        setHero1Frame(getAnimationWin().getKeyFrame(resultRunTime, true));
+        setCurrentAnimation(getAnimationWin());
+        if(getCurrentAnimation().isAnimationFinished(resultRunTime)){
+            resultRunTime = 0.0f;
+            setCurrentAction("WinKeep");
+        }
+    }
+
+
+    public void showWinKeep(){
+        resultRunTime+=Gdx.graphics.getDeltaTime();
+        setCurrentAction("WinKeep");
+
+        setHero1Frame(getAnimationWinKeep().getKeyFrame(resultRunTime, true));
+        setCurrentAnimation(getAnimationWinKeep());
+    }
+
+
+    public void showLose(){
+
+    }
+
+
+    public void showLoseKeep(){
+
+    }
+
+
+
+
     @Override
     public void updateHeroAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump){
 
@@ -624,10 +654,21 @@ public class Rshana extends Rhero {
         } else if (getCurrentAction().equals("Satking1")){//特殊技能1
             keepSatking1(isLeftTouchDown, isRightTouchDown);
             calAttack();
+        } else if (getCurrentAction().equals("Win")){//勝利
+            showWin();
+        } else if (getCurrentAction().equals("WinKeep")){//勝利(持續動作)
+            showWinKeep();
+        } else if (getCurrentAction().equals("Lose")){//失敗
+            showLose();
+        } else if (getCurrentAction().equals("LoseKeep")){//失敗(持續動作)
+            showLoseKeep();
         } else{//其他列為站立
             keepStanding(animationTime);
         }
 
+        //設定英雄前一個位置(跳躍需要)
+        beforePosition.x = position.x;
+        beforePosition.y = position.y;
     }
 
 
@@ -635,8 +676,6 @@ public class Rshana extends Rhero {
     public void calAttack(){
         int i;
         if(target!=null && target.size()>0){
-
-
             for(Rmonster t: target){
                 i = collisionDao.isBeAttack(position.x, position.y, getHero1Frame().getRegionWidth(), getHero1Frame().getRegionHeight(),
                         t.position.x, t.position.y, t.getMonsterFrame().getRegionWidth(), t.getMonsterFrame().getRegionHeight());
@@ -646,21 +685,6 @@ public class Rshana extends Rhero {
                     t.setCurrentAction("Hurt");
                 }
             }
-
-//            imonster = target.iterator();
-//            while (imonster.hasNext()) {
-//                t = imonster.next();
-//                i = collisionDao.isBeAttack(position.x, position.y, getHero1Frame().getRegionWidth(), getHero1Frame().getRegionHeight(),
-//                        t.position.x, t.position.y, t.getMonsterFrame().getRegionWidth(), t.getMonsterFrame().getRegionHeight());
-//
-//                if(i>0){
-//                    t.HP = t.HP-1;
-//                    t.setCurrentAction("Hurt");
-//                    if(t.HP<=0){
-//                        imonster.remove();
-//                    }
-//                }
-//            }
         }
     }
 

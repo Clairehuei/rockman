@@ -1,6 +1,7 @@
 package com.mygdx.game.android;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;

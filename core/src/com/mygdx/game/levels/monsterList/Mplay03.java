@@ -1,11 +1,9 @@
 package com.mygdx.game.levels.monsterList;
 
-import com.badlogic.gdx.Gdx;
-import com.mygdx.game.role.monster.Rboss;
 import com.mygdx.game.role.monster.Rboss01;
 import com.mygdx.game.role.monster.Rmonster;
 
-/**
+/**怪物清單
  * Created by 6193 on 2015/11/2.
  */
 public class Mplay03 extends MonsterGroup {
@@ -38,6 +36,15 @@ public class Mplay03 extends MonsterGroup {
     @Override
     public void setHero() {
         boss.setTarget(target);
+    }
+
+    @Override
+    public boolean victoryCondition() {
+        if(boss.HP<=0 && boss.beKilled){
+            return true;
+        }
+
+        return false;
     }
 
     @Override

@@ -30,6 +30,7 @@ public abstract class MonsterGroup implements MonsterList{
 
     public abstract void setMonster();
     public abstract void setHero();
+    public abstract boolean victoryCondition();
     public abstract void cleanAllMonster();
 
 }

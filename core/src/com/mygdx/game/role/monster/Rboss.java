@@ -16,6 +16,7 @@ public abstract class Rboss extends Rmonster implements BaseRole {
     public Animation animationLoseKeepLeft;//死亡持續姿勢(左)動畫
 
 
+
     //************************************************setter/getter**************************************************
     public Animation getAnimationWin() {
         return animationWin;
@@ -64,4 +65,6 @@ public abstract class Rboss extends Rmonster implements BaseRole {
     public void setAnimationLoseKeepLeft(Animation animationLoseKeepLeft) {
         this.animationLoseKeepLeft = animationLoseKeepLeft;
     }
+
+
 }

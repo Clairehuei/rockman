@@ -26,6 +26,9 @@ public abstract class Rhero extends Actor implements BaseRole {
     public String currentAction = "Standing";//人物當前動作(預設為站立)
     public boolean isFacingRight;//是否面向右邊
     public boolean isJumpAndWalk = false;//是否在空中且跑步狀態
+    public float resultRunTime = 0.0f;
+    public float animationTime = 0.0f;
+
 
     public Animation currentAnimation;//英雄當前執行的動畫
     public Animation animationStandingLeft;//站立(左)動畫

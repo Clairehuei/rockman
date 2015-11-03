@@ -30,8 +30,6 @@ public class PlayScreen3 extends PlayBase {
     String gameStatus = "Running";//Running:進行中  Sotp:暫停  Win:勝利  Lose:失敗
 
     //所有動畫展示時間
-    private float heroResultRunTime = 0.0f;//英雄戰鬥結果動畫累積時間
-    private float bossResultRunTime = 0.0f;//魔王戰鬥結果動畫累積時間
     private float animationTime = 0.0f;
 
     //背景地圖
@@ -46,9 +44,6 @@ public class PlayScreen3 extends PlayBase {
     private BitmapFont font1;//英雄血量文字
     private BitmapFont font2;//BOSS血量文字
     private BitmapFont font3;//怪物1號血量文字
-
-    private boolean heroResultKeep = false;//是否開始撥放英雄戰鬥結果(持續)動畫
-    private boolean bossResultKeep = false;//是否開始撥放BOSS戰鬥結果(持續)動畫
 
     MonsterGroup monsterList;
     List<Rmonster> monster = new ArrayList<Rmonster>();//本關卡的怪物集合
@@ -111,8 +106,11 @@ public class PlayScreen3 extends PlayBase {
 
         //設定英雄特殊按鈕/技能
         hero.setSpecialBtn();
-        stage.addActor(((Rshana)hero).btn_atk1);
+        stage.addActor(((Rshana) hero).btn_atk1);
         stage.addActor(((Rshana) hero).btn_satk1);
+
+        spriteMonster = new Sprite();
+        sprite = new Sprite();
 
         Gdx.input.setInputProcessor(stage);//將場景加入輸入(觸控)偵測
     }
@@ -126,11 +124,11 @@ public class PlayScreen3 extends PlayBase {
 
     @Override
     public void checkResult() {
-//        if(boss.HP<=0){
-//            gameStatus = "Win";
-//        }else if(hero.HP<=0){
-//            gameStatus = "Lose";
-//        }
+        if(monsterList.victoryCondition()){
+            gameStatus = "Win";
+        }else if(hero.HP<=0){
+            gameStatus = "Lose";
+        }
     }
 
 
@@ -146,15 +144,15 @@ public class PlayScreen3 extends PlayBase {
         //刷新英雄動作
         hero.updateHeroAction(deltaTime, animationTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
 
-        if(sprite!=null){
-            sprite.setRegion(hero.getHero1Frame());
-            sprite.setSize(hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
-            sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
-        }else{
-            sprite = new Sprite(hero.getHero1Frame());
-        }
+        //設定英雄圖片
+        sprite.setRegion(hero.getHero1Frame());
+        sprite.setSize(hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
+        sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
+        sprite.setPosition(hero.position.x, hero.position.y);//設定英雄位置
+        sprite.setScale(1.8f);//設定英雄大小
 
 
+        //刷新所有怪物動作
         imonster = monster.iterator();
         while (imonster.hasNext()) {
             t = imonster.next();
@@ -166,7 +164,7 @@ public class PlayScreen3 extends PlayBase {
                 t.setIsFacingRight(true);
             }
 
-            //刷新怪物動作
+            //刷新各別怪物動作
             t.updateMonsterAction(deltaTime, animationTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
 
             if(t.HP<=0){
@@ -180,15 +178,11 @@ public class PlayScreen3 extends PlayBase {
             }
         }
 
-
-        sprite.setPosition(hero.position.x, hero.position.y);//設定英雄位置
-        sprite.setScale(1.8f);//設定英雄大小
-
-        tiledMapRenderer.setView(camera);
-
         //調整鏡頭位置
         moveCamera();
 
+        //繪製地圖
+        tiledMapRenderer.setView(camera);
         tiledMapRenderer.render(background);
         tiledMapRenderer.render(foreground);
 
@@ -200,7 +194,6 @@ public class PlayScreen3 extends PlayBase {
              while (imonster.hasNext()) {
                  t = imonster.next();
 
-                 spriteMonster = new Sprite(t.getMonsterFrame());
                  spriteMonster.setRegion(t.getMonsterFrame());
                  spriteMonster.setSize(t.getMonsterFrame().getRegionWidth(), t.getMonsterFrame().getRegionHeight());
                  spriteMonster.setOrigin(spriteMonster.getWidth() / 2, spriteMonster.getHeight() / 2);
@@ -215,10 +208,6 @@ public class PlayScreen3 extends PlayBase {
 
          batch.end();
 
-        //設定英雄前一個位置
-        hero.beforePosition.x = hero.position.x;
-        hero.beforePosition.y = hero.position.y;
-
         checkResult();//判斷遊戲結果
     }
 
@@ -229,72 +218,30 @@ public class PlayScreen3 extends PlayBase {
 
 
     public void gameWin(){
-        if(!heroResultKeep){//第一次顯示英雄戰鬥結果
-            heroResultRunTime+=Gdx.graphics.getDeltaTime();
+        if(!hero.getCurrentAction().equals("Win") && !hero.getCurrentAction().equals("WinKeep")){
             hero.setCurrentAction("Win");
-            hero.setHero1Frame(hero.getAnimationWin().getKeyFrame(animationTime, true));
-            hero.setCurrentAnimation(hero.getAnimationWin());
-            if(hero.getCurrentAnimation().isAnimationFinished(heroResultRunTime)){
-                heroResultRunTime = 0.0f;
-                heroResultKeep = true;
-            }
-        }else{//持續顯示英雄戰鬥結果
-            hero.setCurrentAction("WinKeep");
-            hero.setHero1Frame(hero.getAnimationWinKeep().getKeyFrame(animationTime, true));
-            hero.setCurrentAnimation(hero.getAnimationWinKeep());
         }
 
+        //刷新英雄動作
+        hero.updateHeroAction(deltaTime, animationTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
+
+        //設定英雄圖片
         sprite.setRegion(hero.getHero1Frame());
         sprite.setSize(hero.getHero1Frame().getRegionWidth(), hero.getHero1Frame().getRegionHeight());
         sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
-
-//        if(!bossResultKeep){//第一次顯示魔王戰鬥結果
-////            bossResultRunTime+=Gdx.graphics.getDeltaTime();
-////            boss.setCurrentAction("Lose");
-////            boss.setMonsterFrame(boss.isFacingRight() ? ((Rboss)boss).getAnimationLoseRight().getKeyFrame(animationTime, true) : ((Rboss)boss).getAnimationLoseLeft().getKeyFrame(animationTime, true));
-////            boss.setCurrentAnimation(boss.isFacingRight() ? ((Rboss)boss).getAnimationLoseRight() : ((Rboss)boss).getAnimationLoseLeft());
-////
-////            if(boss.isFacingRight()){
-////                boss.position.x = boss.position.x-2;
-////            }else{
-////                boss.position.x = boss.position.x+2;
-////            }
-////
-////            if(boss.getCurrentAnimation().isAnimationFinished(bossResultRunTime)){
-////                bossResultRunTime = 0.0f;
-////                bossResultKeep = true;
-////            }
-//
-////            bossResultKeep = monsterList.showResult();
-//
-//        }else{//持續顯示魔王戰鬥結果
-////            boss.setCurrentAction("LoseKeep");
-////            boss.setMonsterFrame(boss.isFacingRight() ? ((Rboss)boss).getAnimationLoseKeepRight().getKeyFrame(animationTime, true) : ((Rboss)boss).getAnimationLoseKeepLeft().getKeyFrame(animationTime, true));
-////            boss.setCurrentAnimation(boss.isFacingRight()?((Rboss)boss).getAnimationLoseKeepRight():((Rboss)boss).getAnimationLoseKeepLeft());
-////            monsterList.showResultKeep();
-//        }
-
-//        spriteBoss.setRegion(boss.getMonsterFrame());
-//        spriteBoss.setSize(boss.getMonsterFrame().getRegionWidth(), boss.getMonsterFrame().getRegionHeight());
-//        spriteBoss.setOrigin(spriteBoss.getWidth() / 2, spriteBoss.getHeight() / 2);
-
-
         sprite.setPosition(hero.position.x, hero.position.y);//設定人物位置
         sprite.setScale(1.8f);//設定人物大小
-
-//        spriteBoss.setPosition(boss.position.x, boss.position.y);//設定魔王位置
-//        spriteBoss.setScale(1.8f);//設定魔王大小
-
-        tiledMapRenderer.setView(camera);
 
         //調整鏡頭位置
         moveCamera();
 
+        //繪製地圖
+        tiledMapRenderer.setView(camera);
         tiledMapRenderer.render(background);
         tiledMapRenderer.render(foreground);
-//	    Display on Screen
+
+        //開始繪製畫面
         batch.begin();
-//        spriteBoss.draw(batch);
         sprite.draw(batch);
         batch.end();
     }
@@ -351,11 +298,12 @@ public class PlayScreen3 extends PlayBase {
 //        spriteBoss.setPosition(boss.position.x, boss.position.y);//設定魔王位置
 //        spriteBoss.setScale(1.8f);//設定魔王大小
 //
-//        tiledMapRenderer.setView(camera);
 //
 //        //調整鏡頭位置
 //        moveCamera();
 //
+//        //繪製地圖
+//        tiledMapRenderer.setView(camera);
 //        tiledMapRenderer.render(background);
 //        tiledMapRenderer.render(foreground);
 //
