@@ -1,5 +1,6 @@
 package com.mygdx.game.role.hero;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -24,6 +25,7 @@ public abstract class Rhero extends Actor implements BaseRole {
     public TextureAtlas hero1Atlas;//人物系列圖檔資源
     public TextureRegion hero1Frame;//當前人物的畫面
     public String currentAction = "Standing";//人物當前動作(預設為站立)
+    public String beforeAction = "Standing";//人物上一個動作
     public boolean isFacingRight;//是否面向右邊
     public boolean isJumpAndWalk = false;//是否在空中且跑步狀態
     public float resultRunTime = 0.0f;
@@ -61,7 +63,15 @@ public abstract class Rhero extends Actor implements BaseRole {
     public abstract void calAttack();
 
     //更新英雄行為
-    public abstract void updateHeroAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump);
+    public abstract void updateHeroAction(float deltaTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump);
+
+    //刷新動畫時間
+    public void updateAnimationTime(){
+        if(!currentAction.equals(beforeAction)){
+            animationTime = 0.0f;
+        }
+        animationTime+= Gdx.graphics.getDeltaTime();
+    }
 
     //************************************************setter/getter**************************************************
 
@@ -278,5 +288,13 @@ public abstract class Rhero extends Actor implements BaseRole {
 
     public void setTarget(List<Rmonster> target) {
         this.target = target;
+    }
+
+    public String getBeforeAction() {
+        return beforeAction;
+    }
+
+    public void setBeforeAction(String beforeAction) {
+        this.beforeAction = beforeAction;
     }
 }

@@ -29,9 +29,6 @@ public class PlayScreen3 extends PlayBase {
 
     String gameStatus = "Running";//Running:進行中  Sotp:暫停  Win:勝利  Lose:失敗
 
-    //所有動畫展示時間
-    private float animationTime = 0.0f;
-
     //背景地圖
     private int[] background = new int[] {0};
     private int[] foreground = new int[] {1};
@@ -45,8 +42,9 @@ public class PlayScreen3 extends PlayBase {
     private BitmapFont font2;//BOSS血量文字
     private BitmapFont font3;//怪物1號血量文字
 
+    //本關卡的怪物集合
     MonsterGroup monsterList;
-    List<Rmonster> monster = new ArrayList<Rmonster>();//本關卡的怪物集合
+    List<Rmonster> monster = new ArrayList<Rmonster>();
     Iterator<Rmonster> imonster;
     Rmonster t;
 
@@ -89,9 +87,9 @@ public class PlayScreen3 extends PlayBase {
         hero.position.y = 382;//英雄初始位置Y
         hero.velocity.x = 300;//英雄X軸初始速度
         hero.velocity.y = -150;//英雄Y軸初始速度
-        hero.setTarget(monster);
+        hero.setTarget(monster);//設定英雄攻擊目標清單
 
-        monsterList.setTarget(hero);
+        monsterList.setTarget(hero);//設定所有怪物的攻擊目標
 
         //設定本關卡背景音樂
         bgSound1 = new BackgroundSound();
@@ -142,7 +140,7 @@ public class PlayScreen3 extends PlayBase {
     public void gameRun(){
 
         //刷新英雄動作
-        hero.updateHeroAction(deltaTime, animationTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
+        hero.updateHeroAction(deltaTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
 
         //設定英雄圖片
         sprite.setRegion(hero.getHero1Frame());
@@ -165,8 +163,9 @@ public class PlayScreen3 extends PlayBase {
             }
 
             //刷新各別怪物動作
-            t.updateMonsterAction(deltaTime, animationTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
+            t.updateMonsterAction(deltaTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
 
+            //將HP小於0的怪物從怪物清單中剃除
             if(t.HP<=0){
                 if(t.getCurrentAction().equals("cleanMe")){
                     imonster.remove();
@@ -198,7 +197,7 @@ public class PlayScreen3 extends PlayBase {
                  spriteMonster.setSize(t.getMonsterFrame().getRegionWidth(), t.getMonsterFrame().getRegionHeight());
                  spriteMonster.setOrigin(spriteMonster.getWidth() / 2, spriteMonster.getHeight() / 2);
                  spriteMonster.setPosition(t.position.x, t.position.y);//設定怪物位置
-                 spriteMonster.setScale(1.8f);//設定魔王大小
+                 spriteMonster.setScale(1.8f);//設定怪物大小
 
                  spriteMonster.draw(batch);
              }
@@ -223,7 +222,7 @@ public class PlayScreen3 extends PlayBase {
         }
 
         //刷新英雄動作
-        hero.updateHeroAction(deltaTime, animationTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
+        hero.updateHeroAction(deltaTime, isLeftTouchDown, isRightTouchDown, isLeftSprintJump, isRightSprintJump);
 
         //設定英雄圖片
         sprite.setRegion(hero.getHero1Frame());
@@ -319,7 +318,6 @@ public class PlayScreen3 extends PlayBase {
     public void render(float delta) {
         super.render(delta);
 
-        animationTime += Gdx.graphics.getDeltaTime();
         batch.setProjectionMatrix(camera.combined);
         camera.update();
 

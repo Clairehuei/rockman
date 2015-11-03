@@ -46,7 +46,7 @@ public class Rboss01 extends Rboss {
 
     private float satkaRunTime = 0.0f;//英雄特殊技能1動畫累積時間
 
-    private float bossHurtRunTime = 0.0f;
+//    private float bossHurtRunTime = 0.0f;
     CollisionDao collisionDao;
     int serchResult = 0;
 
@@ -307,12 +307,13 @@ public class Rboss01 extends Rboss {
     }
 
     @Override
-    public void updateMonsterAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump) {
+    public void updateMonsterAction(float deltaTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump) {
 
 //        callAI();
 
         if(getCurrentAction().equals("Hurt")){
-            bossHurtRunTime+=Gdx.graphics.getDeltaTime();
+            updateAnimationTime();
+//            bossHurtRunTime+=Gdx.graphics.getDeltaTime();
             setMonsterFrame(isFacingRight ? getAnimationHurtRight().getKeyFrame(animationTime, true) : getAnimationHurtLeft().getKeyFrame(animationTime, true));
             setCurrentAnimation(isFacingRight ? getAnimationHurtRight() : getAnimationHurtLeft());
 
@@ -322,12 +323,14 @@ public class Rboss01 extends Rboss {
                 position.x = position.x+1;
             }
 
-            if(getCurrentAnimation().isAnimationFinished(bossHurtRunTime)){
+            if(getCurrentAnimation().isAnimationFinished(animationTime)){
                 setCurrentAction("Standing");
                 setCurrentAnimation(isFacingRight ? getAnimationStandingRight() : getAnimationStandingLeft());
-                bossHurtRunTime = 0.0f;
+                animationTime = 0.0f;
             }
+            beforeAction = "Hurt";
         } else if(getCurrentAction().equals("Atk")){
+            updateAnimationTime();
             serchResult = collisionDao.serchTarget(position.x, position.y, getMonsterFrame().getRegionWidth(), getMonsterFrame().getRegionHeight(),
                     target.position.x, target.position.y, 5);
             if(serchResult==1 || serchResult==2){
@@ -350,7 +353,9 @@ public class Rboss01 extends Rboss {
 
                 position.x = position.x + (velocity.x * deltaTime);
             }
+            beforeAction = "Atk";
         } else if(getCurrentAction().equals("Lose")){
+            updateAnimationTime();
             resultRunTime+= Gdx.graphics.getDeltaTime();
             setCurrentAction("Lose");
             setMonsterFrame(isFacingRight ? getAnimationLoseRight().getKeyFrame(resultRunTime, true) : getAnimationLoseLeft().getKeyFrame(resultRunTime, true));
@@ -367,6 +372,7 @@ public class Rboss01 extends Rboss {
                 setCurrentAction("LoseKeep");
             }
         } else if(getCurrentAction().equals("LoseKeep")){
+            updateAnimationTime();
             resultRunTime+= Gdx.graphics.getDeltaTime();
             setCurrentAction("LoseKeep");
             setMonsterFrame(isFacingRight ? getAnimationLoseKeepRight().getKeyFrame(resultRunTime, true) : getAnimationLoseKeepLeft().getKeyFrame(resultRunTime, true));
@@ -378,7 +384,9 @@ public class Rboss01 extends Rboss {
                 beKilled = true;
             }
         } else if(getCurrentAction().equals("Standing")) {
+            updateAnimationTime();
             setMonsterFrame(isFacingRight ? getAnimationStandingRight().getKeyFrame(animationTime, true) : getAnimationStandingLeft().getKeyFrame(animationTime, true));
+            beforeAction = "Standing";
         } else {
             Gdx.app.log("otherAction", "exception");
         }

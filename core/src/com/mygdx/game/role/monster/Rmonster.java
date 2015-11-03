@@ -1,5 +1,6 @@
 package com.mygdx.game.role.monster;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,6 +17,7 @@ public abstract class Rmonster extends Actor implements BaseRole {
     public Vector2 position = new Vector2();//怪物當前位置
     public TextureRegion monsterFrame;//當前怪物的畫面
     public String currentAction = "Standing";//怪物當前動作(預設為站立)
+    public String beforeAction = "Standing";//怪物上一個動作
     public boolean isFacingRight;//是否面向右邊
     public int HP = 300;
     public TextureAtlas monster1Atlas;//怪物系列圖檔資源
@@ -24,6 +26,7 @@ public abstract class Rmonster extends Actor implements BaseRole {
     public Animation animationHurtRight;//受傷(右)動畫
     public Vector2 velocity = new Vector2();//英雄的方向速度
     public float resultRunTime = 0.0f;
+    public float animationTime = 0.0f;
     public boolean beKilled = false;
 
 
@@ -34,7 +37,15 @@ public abstract class Rmonster extends Actor implements BaseRole {
     public abstract void callAI();
 
     //更新怪物行為
-    public abstract void updateMonsterAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump);
+    public abstract void updateMonsterAction(float deltaTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump);
+
+    //刷新動畫時間
+    public void updateAnimationTime(){
+        if(!currentAction.equals(beforeAction)){
+            animationTime = 0.0f;
+        }
+        animationTime+= Gdx.graphics.getDeltaTime();
+    }
 
     //************************************************setter/getter**************************************************
     public String getRoleType() {
@@ -145,5 +156,13 @@ public abstract class Rmonster extends Actor implements BaseRole {
 
     public void setBeKilled(boolean beKilled) {
         this.beKilled = beKilled;
+    }
+
+    public String getBeforeAction() {
+        return beforeAction;
+    }
+
+    public void setBeforeAction(String beforeAction) {
+        this.beforeAction = beforeAction;
     }
 }

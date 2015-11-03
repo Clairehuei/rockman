@@ -8,10 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.mygdx.game.Boss;
 import com.mygdx.game.role.monster.Rmonster;
-
-import java.util.Iterator;
 
 /**遊戲腳色-夏娜
  * Created by 6193 on 2015/10/27.
@@ -46,6 +43,7 @@ public class Rshana extends Rhero {
     private float atkbRunTime = 0.0f;//英雄普通攻擊B模式動畫累積時間
     private float atkcRunTime = 0.0f;//英雄普通攻擊C模式動畫累積時間
     private float satkaRunTime = 0.0f;//英雄特殊技能1動畫累積時間
+    private boolean changeAction = false;
 
     int clickNumber = 0;//普通攻擊按鈕點擊次數
 
@@ -380,10 +378,11 @@ public class Rshana extends Rhero {
     }
 
 
-    public void keepWalking(float deltaTime, float animationTime){
+    public void keepWalking(float deltaTime){
         atkaRunTime = 0.0f;
         atkbRunTime = 0.0f;
         atkcRunTime = 0.0f;
+        updateAnimationTime();
         setHero1Frame(isFacingRight() ? getAnimationWalkingRight().getKeyFrame(animationTime, true) : getAnimationWalkingLeft().getKeyFrame(animationTime, true));
 
         collisionDao.collisionLeft = false;
@@ -421,6 +420,7 @@ public class Rshana extends Rhero {
         atkaRunTime = 0.0f;
         atkbRunTime = 0.0f;
         atkcRunTime = 0.0f;
+        updateAnimationTime();
         if (isJumpAndWalk()){
             if(!isRightSprintJump && !isLeftSprintJump){//原地跳後 才給予方向動力
                 if(isRightTouchDown){//當在空中按住方向鍵時,給予x軸方向動力
@@ -479,6 +479,7 @@ public class Rshana extends Rhero {
 
 
     public void keepAtking1(boolean isLeftTouchDown, boolean isRightTouchDown){
+        updateAnimationTime();
         if(!canAtkLv3 && !canAtkLv2 && !canAtkLv1){
             if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
                 setCurrentAction("Walking");
@@ -575,6 +576,7 @@ public class Rshana extends Rhero {
 
 
     public void keepSatking1(boolean isLeftTouchDown, boolean isRightTouchDown){
+        updateAnimationTime();
         satkaRunTime+=Gdx.graphics.getDeltaTime();
         setHero1Frame(isFacingRight() ? getAnimationSatkaRight().getKeyFrame(satkaRunTime, true) : getAnimationSatkaLeft().getKeyFrame(satkaRunTime, true));
         setCurrentAnimation(isFacingRight() ? getAnimationSatkaRight() : getAnimationSatkaLeft());
@@ -601,7 +603,8 @@ public class Rshana extends Rhero {
     }
 
 
-    public void keepStanding(float animationTime){
+    public void keepStanding(){
+        updateAnimationTime();
         setCurrentAction("Standing");
         setHero1Frame(isFacingRight() ? getAnimationStandingRight().getKeyFrame(animationTime, true) : getAnimationStandingLeft().getKeyFrame(animationTime, true));
 //        Gdx.app.log("standing","y = "+position.y);
@@ -630,40 +633,45 @@ public class Rshana extends Rhero {
 
 
     public void showLose(){
-
+        updateAnimationTime();
     }
 
 
     public void showLoseKeep(){
-
+        updateAnimationTime();
     }
 
 
-
-
     @Override
-    public void updateHeroAction(float deltaTime, float animationTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump){
+    public void updateHeroAction(float deltaTime, boolean isLeftTouchDown, boolean isRightTouchDown, boolean isLeftSprintJump, boolean isRightSprintJump){
 
         if(getCurrentAction().equals("Walking")){//跑步
-            keepWalking(deltaTime, animationTime);
+            keepWalking(deltaTime);
+            beforeAction = "Walking";
         }else if(getCurrentAction().equals("Jumping")){//跳躍
             keepJumping(deltaTime, isRightSprintJump, isLeftSprintJump, isRightTouchDown, isLeftTouchDown);
+            beforeAction = "Jumping";
         }else if (getCurrentAction().equals("Atking1")){//普通(連續)攻擊
             keepAtking1(isLeftTouchDown, isRightTouchDown);
             calAttack();
+            beforeAction = "Atking1";
         } else if (getCurrentAction().equals("Satking1")){//特殊技能1
             keepSatking1(isLeftTouchDown, isRightTouchDown);
             calAttack();
+            beforeAction = "Satking1";
         } else if (getCurrentAction().equals("Win")){//勝利
             showWin();
         } else if (getCurrentAction().equals("WinKeep")){//勝利(持續動作)
             showWinKeep();
         } else if (getCurrentAction().equals("Lose")){//失敗
             showLose();
+            beforeAction = "Lose";
         } else if (getCurrentAction().equals("LoseKeep")){//失敗(持續動作)
             showLoseKeep();
+            beforeAction = "LoseKeep";
         } else{//其他列為站立
-            keepStanding(animationTime);
+            keepStanding();
+            beforeAction = "Standing";
         }
 
         //設定英雄前一個位置(跳躍需要)
@@ -687,7 +695,6 @@ public class Rshana extends Rhero {
             }
         }
     }
-
 
     //*********************************setter/getter***************************************
     public Animation getAnimationAttaRight() {
