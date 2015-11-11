@@ -33,6 +33,17 @@ public abstract class Rhero extends Actor implements BaseRole {
 
 
     public Animation currentAnimation;//英雄當前執行的動畫
+
+    public Animation animationJumpingUpLeft;//跳躍(往上)(左)動畫
+    public Animation animationJumpingDownLeft;//跳躍(往下)(左)動畫
+    public Animation animationJumpingDownKeepLeft;//跳躍(持續往下)(左)動畫
+    public Animation animationJumpingDownEndLeft;//跳躍(著地)(左)動畫
+
+    public Animation animationJumpingUpRight;//跳躍(往上)(右)動畫
+    public Animation animationJumpingDownRight;//跳躍(往下)(右)動畫
+    public Animation animationJumpingDownKeepRight;//跳躍(持續往下)(右)動畫
+    public Animation animationJumpingDownEndRight;//跳躍(著地)(右)動畫
+
     public Animation animationStandingLeft;//站立(左)動畫
     public Animation animationStandingRight;//站立(右)動畫
     public Animation animationWalkingLeft;//跑步(左)動畫
@@ -296,5 +307,69 @@ public abstract class Rhero extends Actor implements BaseRole {
 
     public void setBeforeAction(String beforeAction) {
         this.beforeAction = beforeAction;
+    }
+
+    public Animation getAnimationJumpingUpLeft() {
+        return animationJumpingUpLeft;
+    }
+
+    public void setAnimationJumpingUpLeft(Animation animationJumpingUpLeft) {
+        this.animationJumpingUpLeft = animationJumpingUpLeft;
+    }
+
+    public Animation getAnimationJumpingDownLeft() {
+        return animationJumpingDownLeft;
+    }
+
+    public void setAnimationJumpingDownLeft(Animation animationJumpingDownLeft) {
+        this.animationJumpingDownLeft = animationJumpingDownLeft;
+    }
+
+    public Animation getAnimationJumpingDownKeepLeft() {
+        return animationJumpingDownKeepLeft;
+    }
+
+    public void setAnimationJumpingDownKeepLeft(Animation animationJumpingDownKeepLeft) {
+        this.animationJumpingDownKeepLeft = animationJumpingDownKeepLeft;
+    }
+
+    public Animation getAnimationJumpingDownEndLeft() {
+        return animationJumpingDownEndLeft;
+    }
+
+    public void setAnimationJumpingDownEndLeft(Animation animationJumpingDownEndLeft) {
+        this.animationJumpingDownEndLeft = animationJumpingDownEndLeft;
+    }
+
+    public Animation getAnimationJumpingUpRight() {
+        return animationJumpingUpRight;
+    }
+
+    public void setAnimationJumpingUpRight(Animation animationJumpingUpRight) {
+        this.animationJumpingUpRight = animationJumpingUpRight;
+    }
+
+    public Animation getAnimationJumpingDownRight() {
+        return animationJumpingDownRight;
+    }
+
+    public void setAnimationJumpingDownRight(Animation animationJumpingDownRight) {
+        this.animationJumpingDownRight = animationJumpingDownRight;
+    }
+
+    public Animation getAnimationJumpingDownKeepRight() {
+        return animationJumpingDownKeepRight;
+    }
+
+    public void setAnimationJumpingDownKeepRight(Animation animationJumpingDownKeepRight) {
+        this.animationJumpingDownKeepRight = animationJumpingDownKeepRight;
+    }
+
+    public Animation getAnimationJumpingDownEndRight() {
+        return animationJumpingDownEndRight;
+    }
+
+    public void setAnimationJumpingDownEndRight(Animation animationJumpingDownEndRight) {
+        this.animationJumpingDownEndRight = animationJumpingDownEndRight;
     }
 }

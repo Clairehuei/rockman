@@ -26,7 +26,11 @@ public class Rshana extends Rhero {
     private static final float FRAME_DURATION_ATK3 = 1.0f / 14.0f;//普通攻擊(C模式)的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_SATK1 = 1.0f / 11.0f;//特殊技能1的播放速度 = 每一格動作的播放間隔時間
     private static final float FRAME_DURATION_HURT = 1.0f / 15.0f;//受傷的播放速度 = 每一格動作的播放間隔時間
-    private static final float FRAME_DURATION_JUMP = 1.0f / 15.0f;//跳躍動畫的播放速度(暫時忽略)
+
+    private static final float FRAME_DURATION_JUMP_UP = 1.0f / 15.0f;//跳躍動畫(往上)的播放速度
+    private static final float FRAME_DURATION_JUMP_DOWN = 1.0f / 7.0f;//跳躍動畫(往下)的播放速度
+    private static final float FRAME_DURATION_JUMP_DOWN_KEEP = 1.0f / 7.0f;//跳躍動畫(持續往下)的播放速度
+    private static final float FRAME_DURATION_JUMP_DOWN_END = 1.0f / 17.0f;//跳躍動畫(著地)的播放速度
 
     //各別英雄專屬動畫
     private Animation animationAttaRight;//普通攻擊(A模式)(右)動畫
@@ -42,6 +46,12 @@ public class Rshana extends Rhero {
     private float atkaRunTime = 0.0f;//英雄普通攻擊A模式動畫累積時間
     private float atkbRunTime = 0.0f;//英雄普通攻擊B模式動畫累積時間
     private float atkcRunTime = 0.0f;//英雄普通攻擊C模式動畫累積時間
+
+    private float jumpUpRunTime = 0.0f;//英雄跳躍(往上)動畫累積時間
+    private float jumpDownRunTime = 0.0f;//英雄跳躍(往下)動畫累積時間
+    private float jumpDownKeepRunTime = 0.0f;//英雄跳躍(往下)動畫累積時間
+    private float jumpDownEndRunTime = 0.0f;//英雄跳躍(往下)動畫累積時間
+
     private float satkaRunTime = 0.0f;//英雄特殊技能1動畫累積時間
     private boolean changeAction = false;
 
@@ -57,6 +67,9 @@ public class Rshana extends Rhero {
     public Button  btn_satk1;
     float v0 = 300.0f;
 
+    boolean isJumpDownKeep = false;
+    boolean isNeedCalPy = true;
+
     public Rshana(){
         init();
     }
@@ -71,8 +84,35 @@ public class Rshana extends Rhero {
         //開始初始化人物所有動作
         //*****************************人物右邊設定*****************************
         //右邊跳躍
-        jumpingRightUp = hero1Atlas.findRegion("JumpingRight1");
-        jumpingRightDown = hero1Atlas.findRegion("JumpingRight2");
+//        jumpingRightUp = hero1Atlas.findRegion("JumpingRight1");
+//        jumpingRightDown = hero1Atlas.findRegion("JumpingRight2");
+        TextureRegion[] frameJumpingUpRight = new TextureRegion[5];
+        frameJumpingUpRight[0] = hero1Atlas.findRegion("JumpingRight1");
+        frameJumpingUpRight[1] = hero1Atlas.findRegion("JumpingRight2");
+        frameJumpingUpRight[2] = hero1Atlas.findRegion("JumpingRight3");
+        frameJumpingUpRight[3] = hero1Atlas.findRegion("JumpingRight4");
+        frameJumpingUpRight[4] = hero1Atlas.findRegion("JumpingRight5");
+        animationJumpingUpRight = new Animation(FRAME_DURATION_JUMP_UP, frameJumpingUpRight);
+
+        TextureRegion[] frameJumpingDownRight = new TextureRegion[3];
+        frameJumpingDownRight[0] = hero1Atlas.findRegion("JumpingRight6");
+        frameJumpingDownRight[1] = hero1Atlas.findRegion("JumpingRight7");
+        frameJumpingDownRight[2] = hero1Atlas.findRegion("JumpingRight8");
+        animationJumpingDownRight = new Animation(FRAME_DURATION_JUMP_DOWN, frameJumpingDownRight);
+
+        TextureRegion[] frameJumpingDownKeepRight = new TextureRegion[2];
+        frameJumpingDownKeepRight[0] = hero1Atlas.findRegion("JumpingRight7");
+        frameJumpingDownKeepRight[1] = hero1Atlas.findRegion("JumpingRight8");
+        animationJumpingDownKeepRight = new Animation(FRAME_DURATION_JUMP_DOWN_KEEP, frameJumpingDownKeepRight);
+
+        TextureRegion[] frameJumpingDownEndRight = new TextureRegion[4];
+        frameJumpingDownEndRight[0] = hero1Atlas.findRegion("JumpingRight9");
+        frameJumpingDownEndRight[1] = hero1Atlas.findRegion("JumpingRight10");
+        frameJumpingDownEndRight[2] = hero1Atlas.findRegion("JumpingRight10");
+        frameJumpingDownEndRight[3] = hero1Atlas.findRegion("JumpingRight10");
+        animationJumpingDownEndRight = new Animation(FRAME_DURATION_JUMP_DOWN_END, frameJumpingDownEndRight);
+
+
 
         //右邊站立
         TextureRegion[] frameStandingRight = new TextureRegion[6];
@@ -170,8 +210,33 @@ public class Rshana extends Rhero {
 
         //*****************************人物左邊設定*****************************
         //左邊跳躍
-        jumpingLeftUp = hero1Atlas.findRegion("JumpingLeft1");
-        jumpingLeftDown = hero1Atlas.findRegion("JumpingLeft2");
+//        jumpingLeftUp = hero1Atlas.findRegion("JumpingLeft1");
+//        jumpingLeftDown = hero1Atlas.findRegion("JumpingLeft2");
+        TextureRegion[] frameJumpingUpLeft = new TextureRegion[5];
+        frameJumpingUpLeft[0] = hero1Atlas.findRegion("JumpingLeft1");
+        frameJumpingUpLeft[1] = hero1Atlas.findRegion("JumpingLeft2");
+        frameJumpingUpLeft[2] = hero1Atlas.findRegion("JumpingLeft3");
+        frameJumpingUpLeft[3] = hero1Atlas.findRegion("JumpingLeft4");
+        frameJumpingUpLeft[4] = hero1Atlas.findRegion("JumpingLeft5");
+        animationJumpingUpLeft = new Animation(FRAME_DURATION_JUMP_UP, frameJumpingUpLeft);
+
+        TextureRegion[] frameJumpingDownLeft = new TextureRegion[3];
+        frameJumpingDownLeft[0] = hero1Atlas.findRegion("JumpingLeft6");
+        frameJumpingDownLeft[1] = hero1Atlas.findRegion("JumpingLeft7");
+        frameJumpingDownLeft[2] = hero1Atlas.findRegion("JumpingLeft8");
+        animationJumpingDownLeft = new Animation(FRAME_DURATION_JUMP_DOWN, frameJumpingDownLeft);
+
+        TextureRegion[] frameJumpingDownKeepLeft = new TextureRegion[2];
+        frameJumpingDownKeepLeft[0] = hero1Atlas.findRegion("JumpingLeft7");
+        frameJumpingDownKeepLeft[1] = hero1Atlas.findRegion("JumpingLeft8");
+        animationJumpingDownKeepLeft = new Animation(FRAME_DURATION_JUMP_DOWN_KEEP, frameJumpingDownKeepLeft);
+
+        TextureRegion[] frameJumpingDownEndLeft = new TextureRegion[4];
+        frameJumpingDownEndLeft[0] = hero1Atlas.findRegion("JumpingLeft9");
+        frameJumpingDownEndLeft[1] = hero1Atlas.findRegion("JumpingLeft10");
+        frameJumpingDownEndLeft[2] = hero1Atlas.findRegion("JumpingLeft10");
+        frameJumpingDownEndLeft[3] = hero1Atlas.findRegion("JumpingLeft10");
+        animationJumpingDownEndLeft = new Animation(FRAME_DURATION_JUMP_DOWN_END, frameJumpingDownEndLeft);
 
         //左邊站立
         TextureRegion[] frameStandingLeft = new TextureRegion[6];
@@ -443,38 +508,101 @@ public class Rshana extends Rhero {
             setCurrentAction("Jumping");
         }
 
-        position.y = calJumpY(deltaTime);
-
-        if(isFacingRight()){//向右跳躍
-            if(position.y > beforePosition.y){//跳躍上升中
-                setHero1Frame(getJumpingRightUp());
-            }else{//跳躍下降中
-                setHero1Frame(getJumpingRightDown());
-            }
-        }else{//向左跳躍
-            if(position.y > beforePosition.y){//跳躍上升中
-                setHero1Frame(getJumpingLeftUp());
-            }else{//跳躍下降中
-                setHero1Frame(getJumpingLeftDown());
-            }
+        if(isNeedCalPy){
+            position.y = calJumpY(deltaTime);
         }
 
-        collisionDao.collisionBottom=false;
-        v0 = collisionDao.collisionBottom(position.x, position.y, isFacingRight, v0);
-        if (collisionDao.collisionBottom){//已著地
-            velocity.y = 0;
-            setCurrentAction("Standing");
-            if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
-                setCurrentAction("Walking");
-            }
-        }else{//尚未著地
-            setCurrentAction("Jumping");
-            if(isLeftTouchDown || isRightTouchDown){//當在空中按住方向鍵時,isJumpAndWalk設為true
-                setIsJumpAndWalk(true);
-            }else{
-                setIsJumpAndWalk(false);
-            }
-        }
+
+//        if(isFacingRight()){//向右跳躍
+//            if(position.y > beforePosition.y){//跳躍上升中
+//                setHero1Frame(getJumpingRightUp());
+//            }else{//跳躍下降中
+//                setHero1Frame(getJumpingRightDown());
+//            }
+//        }else{//向左跳躍
+//            if(position.y > beforePosition.y){//跳躍上升中
+//                setHero1Frame(getJumpingLeftUp());
+//            }else{//跳躍下降中
+//                setHero1Frame(getJumpingLeftDown());
+//            }
+//        }
+
+         setCurrentAction("Jumping");
+
+         if(position.y > beforePosition.y){//跳躍上升中
+             Gdx.app.log("jump","跳躍上升中");
+             jumpDownRunTime = 0.0f;
+             jumpUpRunTime+=Gdx.graphics.getDeltaTime();
+             setHero1Frame(isFacingRight() ? getAnimationJumpingUpRight().getKeyFrame(jumpUpRunTime, true) : getAnimationJumpingUpLeft().getKeyFrame(jumpUpRunTime, true));
+             setCurrentAnimation(isFacingRight() ? getAnimationJumpingUpRight() : getAnimationJumpingUpLeft());
+         }else{//跳躍下降中
+             jumpUpRunTime = 0.0f;
+             collisionDao.collisionBottom=false;
+             v0 = collisionDao.collisionBottom(position.x, position.y, isFacingRight, v0);
+
+             if (collisionDao.collisionBottom){//已著地
+                 isNeedCalPy = false;
+                 Gdx.app.log("jump","已著地");
+                 isJumpDownKeep = false;
+                 jumpDownKeepRunTime = 0.0f;
+                 velocity.y = 0;
+                 jumpDownEndRunTime+=Gdx.graphics.getDeltaTime();
+                 //撥放著地動畫
+                 setHero1Frame(isFacingRight() ? getAnimationJumpingDownEndRight().getKeyFrame(jumpDownEndRunTime, true) : getAnimationJumpingDownEndLeft().getKeyFrame(jumpDownEndRunTime, true));
+                 setCurrentAnimation(isFacingRight() ? getAnimationJumpingDownEndRight() : getAnimationJumpingDownEndLeft());
+
+                 if(getCurrentAnimation().isAnimationFinished(jumpDownEndRunTime)){
+                     Gdx.app.log("jump","已著地(結束)");
+                     if(isLeftTouchDown || isRightTouchDown){//當持續按住方向鍵時,人物狀態繼續設定為walking
+                         setCurrentAction("Walking");
+                     }else{
+                         setCurrentAction("Standing");
+                     }
+
+                     jumpUpRunTime = 0.0f;
+                     jumpDownRunTime = 0.0f;
+                     jumpDownKeepRunTime = 0.0f;
+                     jumpDownEndRunTime = 0.0f;
+                     isNeedCalPy = true;
+                 }
+             }else{//尚未著地
+                 Gdx.app.log("jump", "尚未著地");
+
+                 if(!isJumpDownKeep){
+                     Gdx.app.log("jump","尚未著地(初始下降)");
+                     jumpDownRunTime+=Gdx.graphics.getDeltaTime();
+                     //撥放下降動畫
+                     setHero1Frame(isFacingRight() ? getAnimationJumpingDownRight().getKeyFrame(jumpDownRunTime, true) : getAnimationJumpingDownLeft().getKeyFrame(jumpDownRunTime, true));
+                     setCurrentAnimation(isFacingRight() ? getAnimationJumpingDownRight() : getAnimationJumpingDownLeft());
+
+                     if(getCurrentAnimation().isAnimationFinished(jumpDownRunTime)){
+                         Gdx.app.log("jump","尚未著地(初始下降結束)");
+                         jumpDownRunTime = 0.0f;
+                         jumpDownKeepRunTime = 0.0f;
+                         isJumpDownKeep = true;
+                     }
+                 }else{
+                     Gdx.app.log("jump","尚未著地(持續下降)");
+                     jumpDownKeepRunTime+=Gdx.graphics.getDeltaTime();
+                     //撥放持續下降動畫
+                     setHero1Frame(isFacingRight() ? getAnimationJumpingDownKeepRight().getKeyFrame(jumpDownKeepRunTime, true) : getAnimationJumpingDownKeepLeft().getKeyFrame(jumpDownKeepRunTime, true));
+                     setCurrentAnimation(isFacingRight() ? getAnimationJumpingDownKeepRight() : getAnimationJumpingDownKeepLeft());
+                 }
+
+
+                 if(isLeftTouchDown || isRightTouchDown){//當在空中按住方向鍵時,isJumpAndWalk設為true
+                     setIsJumpAndWalk(true);
+                 }else{
+                     setIsJumpAndWalk(false);
+                 }
+             }
+         }
+
+
+
+
+
+
     }
 
 

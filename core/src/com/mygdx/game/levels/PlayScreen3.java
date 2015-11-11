@@ -347,8 +347,17 @@ public class PlayScreen3 extends PlayBase {
         //顯示分數or生命值
         HUDBatch.begin();
         font1.draw(HUDBatch, "HERO:" + hero.HP, 550, 700);
-        font2.draw(HUDBatch, "BOSS:" + ((Rboss)monster.get(0)).HP, 750, 700);
-        font3.draw(HUDBatch, "MONSTER:" + ((Rboss)monster.get(1)).HP, 1000, 700);
+
+        //暫定
+        if(monster!=null){
+            if(monster.size()==2){
+                font2.draw(HUDBatch, "BOSS:" + ((Rboss) monster.get(0)).HP, 750, 700);
+                font3.draw(HUDBatch, "MONSTER:" + ((Rboss) monster.get(1)).HP, 1000, 700);
+            }else if(monster.size()==1){
+                font2.draw(HUDBatch, "BOSS:" + ((Rboss) monster.get(0)).HP, 750, 700);
+            }
+        }
+
 //        drawHud();
         HUDBatch.end();
 
