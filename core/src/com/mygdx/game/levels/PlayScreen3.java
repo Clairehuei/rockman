@@ -220,6 +220,7 @@ public class PlayScreen3 extends PlayBase {
 
              //再繪製英雄
              sprite.draw(batch);
+             ((Rshana)hero).updateFly(batch);
 
          batch.end();
 

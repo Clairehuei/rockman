@@ -2,13 +2,18 @@ package com.mygdx.game.role.hero;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.mygdx.game.fly.Fly01;
+import com.mygdx.game.fly.FlyImpl;
 import com.mygdx.game.role.monster.Rmonster;
+
+import java.util.ArrayList;
 
 /**遊戲腳色-夏娜
  * Created by 6193 on 2015/10/27.
@@ -53,7 +58,6 @@ public class Rshana extends Rhero {
     private float jumpDownEndRunTime = 0.0f;//英雄跳躍(往下)動畫累積時間
 
     private float satkaRunTime = 0.0f;//英雄特殊技能1動畫累積時間
-    private boolean changeAction = false;
 
     int clickNumber = 0;//普通攻擊按鈕點擊次數
 
@@ -69,6 +73,12 @@ public class Rshana extends Rhero {
 
     boolean isJumpDownKeep = false;
     boolean isNeedCalPy = true;
+
+    FlyImpl fly1, currentfly1;
+    ArrayList<FlyImpl> flyManager = new ArrayList<FlyImpl>();
+    public int bulletVelocityX = 12;
+    int flyCounter = 0;
+    public TextureRegion fly1Frame;//當前飛行物件的畫面
 
     public Rshana(){
         init();
@@ -362,6 +372,7 @@ public class Rshana extends Rhero {
     public void setSpecialBtn(){
         setBtnAtk1();
         setBtnSatk1();
+        setBtnFly1();
     }
 
 
@@ -412,6 +423,59 @@ public class Rshana extends Rhero {
 
     public void satk1(){
         setCurrentAction("Satking1");
+    }
+
+
+    public void setBtnFly1(){
+        btn_satk1 = new Button(btnSkin, "firebutton");
+        btn_satk1.setPosition(Gdx.graphics.getWidth() - 138, 400);
+        btn_satk1.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                openFire();
+            }
+        });
+    }
+
+
+    public void openFire(){
+        if(isFacingRight()){
+            fly1 = new Fly01(position, bulletVelocityX);
+        }
+        else{
+            fly1 = new Fly01(position, -bulletVelocityX);
+        }
+
+        flyManager.add(fly1);
+    }
+
+
+    public void updateFly(SpriteBatch batch){
+        flyCounter = 0;
+        while (flyCounter < flyManager.size())
+        {
+            currentfly1 = flyManager.get(flyCounter);
+            currentfly1.update();
+
+            if(currentfly1.TempbulletPosition.x> -100 && currentfly1.TempbulletPosition.x < (1280*2 + 100)){
+
+                currentfly1.setFlyFrame(isFacingRight() ? currentfly1.getAnimationFlyRight().getKeyFrame(animationTime, true) : currentfly1.getAnimationFlyLeft().getKeyFrame(animationTime, true));
+
+                if (isFacingRight()){
+                    batch.draw(currentfly1.getFlyFrame(), currentfly1.TempbulletPosition.x+32, currentfly1.TempbulletPosition.y);
+                }
+                else{
+                    batch.draw(currentfly1.getFlyFrame(), currentfly1.TempbulletPosition.x, currentfly1.TempbulletPosition.y);
+                }
+            } else{
+                flyManager.remove(flyCounter);
+                if(flyManager.size() > 0){
+                    flyCounter--;
+                }
+            }
+
+            flyCounter++;
+        }
     }
 
 
@@ -512,21 +576,6 @@ public class Rshana extends Rhero {
             position.y = calJumpY(deltaTime);
         }
 
-
-//        if(isFacingRight()){//向右跳躍
-//            if(position.y > beforePosition.y){//跳躍上升中
-//                setHero1Frame(getJumpingRightUp());
-//            }else{//跳躍下降中
-//                setHero1Frame(getJumpingRightDown());
-//            }
-//        }else{//向左跳躍
-//            if(position.y > beforePosition.y){//跳躍上升中
-//                setHero1Frame(getJumpingLeftUp());
-//            }else{//跳躍下降中
-//                setHero1Frame(getJumpingLeftDown());
-//            }
-//        }
-
          setCurrentAction("Jumping");
 
          if(position.y > beforePosition.y){//跳躍上升中
@@ -597,11 +646,6 @@ public class Rshana extends Rhero {
                  }
              }
          }
-
-
-
-
-
 
     }
 
@@ -883,5 +927,14 @@ public class Rshana extends Rhero {
     }
     public void setAnimationSatkaLeft(Animation animationSatkaLeft) {
         this.animationSatkaLeft = animationSatkaLeft;
+    }
+    public static float getFrameDurationStand() {
+        return FRAME_DURATION_STAND;
+    }
+    public TextureRegion getFly1Frame() {
+        return fly1Frame;
+    }
+    public void setFly1Frame(TextureRegion fly1Frame) {
+        this.fly1Frame = fly1Frame;
     }
 }

@@ -1,0 +1,89 @@
+
+heroFly.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+aFlyLeft1
+  rotate: false
+  xy: 1, 63
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
+aFlyLeft2
+  rotate: false
+  xy: 1, 1
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
+aFlyLeft3
+  rotate: false
+  xy: 151, 63
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
+aFlyLeft4
+  rotate: false
+  xy: 151, 1
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
+aFlyLeft5
+  rotate: false
+  xy: 301, 63
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
+aFlyLeft6
+  rotate: false
+  xy: 301, 1
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
+aFlyRight1
+  rotate: false
+  xy: 451, 63
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
+aFlyRight2
+  rotate: false
+  xy: 451, 1
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
+aFlyRight3
+  rotate: false
+  xy: 601, 63
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
+aFlyRight4
+  rotate: false
+  xy: 601, 1
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
+aFlyRight5
+  rotate: false
+  xy: 751, 63
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
+aFlyRight6
+  rotate: false
+  xy: 751, 1
+  size: 148, 60
+  orig: 148, 60
+  offset: 0, 0
+  index: -1
