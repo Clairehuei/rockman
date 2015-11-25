@@ -14,12 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
  * Created by 6193 on 2015/10/19.
  */
 public class MenuScreen implements Screen, InputProcessor {
-    private Texture texture=new Texture(Gdx.files.internal("menuscreen.jpg"));
-    private Image splashImage=new Image(texture);
-    private Stage stage=new Stage();
-    SpriteBatch batch=new SpriteBatch();
+    private Texture texture = new Texture(Gdx.files.internal("menuscreen.jpg"));
+    private Image splashImage = new Image(texture);
+    private Stage stage = new Stage();
+    SpriteBatch batch = new SpriteBatch();
     Game game;
-    PlayScreen1 playScreen1;
     HomeScreen homeScreen;
 
     public MenuScreen(){
@@ -82,12 +81,8 @@ public class MenuScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-//        playScreen1 = new PlayScreen1(game);
-//        game.setScreen(playScreen1);
-
         homeScreen = new HomeScreen(game);
         game.setScreen(homeScreen);
-
         return false;
     }
 
