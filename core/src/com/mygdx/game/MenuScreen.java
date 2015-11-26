@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 /**應用程式開始畫面
@@ -15,23 +16,43 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
  */
 public class MenuScreen implements Screen, InputProcessor {
     private Texture texture = new Texture(Gdx.files.internal("menuscreen.jpg"));
+    private Texture touchTxtTexture = new Texture(Gdx.files.internal("ui/touchScreen.png"));
     private Image splashImage = new Image(texture);
+    private Image touchImage = new Image(touchTxtTexture);
     private Stage stage = new Stage();
     SpriteBatch batch = new SpriteBatch();
     Game game;
     HomeScreen homeScreen;
+    int screenWidth = Gdx.graphics.getWidth();
+    int screenHeight = Gdx.graphics.getHeight();
 
     public MenuScreen(){
     }
 
     public MenuScreen(Game game){
-        this.game=game;
-        splashImage.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        this.game = game;
+        splashImage.setSize(screenWidth, screenHeight);
     }
 
     @Override
     public void show() {
+        //設定遊戲登入畫面背景
         stage.addActor(splashImage);
+
+        //設定提示玩家點擊螢幕之訊息
+        touchImage.setPosition(screenWidth / 2 - touchImage.getWidth() / 2, screenHeight / 4 - touchImage.getHeight());
+        stage.addActor(touchImage);
+        //加入閃爍效果
+        touchImage.addAction(Actions.forever(Actions.sequence(
+                                                             Actions.alpha(0),
+                                                             Actions.fadeIn(1.0f),
+                                                             Actions.delay(0.5f),
+                                                             Actions.fadeOut(1.0f),
+                                                             Actions.alpha(0)
+                                                           )
+                                           )
+                             );
+
         Gdx.input.setInputProcessor(this);
     }
 
